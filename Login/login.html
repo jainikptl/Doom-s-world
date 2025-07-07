@@ -59,6 +59,7 @@ function signIn(event) {
 
       if (!user.emailVerified) {
         document.getElementById("message").innerText = "❌ Please verify your email before logging in.";
+        user.sendEmailVerification();
         auth.signOut(); // sign out unverified user
         return;
       }
