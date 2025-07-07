@@ -55,17 +55,25 @@ function signIn(event) {
 
   auth.signInWithEmailAndPassword(email, password)
     .then((userCredential) => {
-      const uid = userCredential.user.uid;
+      const user = userCredential.user;
 
-      // Get user document from Firestore
+      if (!user.emailVerified) {
+        document.getElementById("message").innerText = "❌ Please verify your email before logging in.";
+        auth.signOut(); // sign out unverified user
+        return;
+      }
+
+      const uid = user.uid;
+
       return db.collection("users").doc(uid).get();
     })
     .then((doc) => {
+      if (!doc) return;
+
       if (doc.exists) {
         const userData = doc.data();
         const character = userData.character;
 
-        // ✅ Updated paths based on root-level dashboards
         if (character === "candidate") {
           window.location.href = "../candidateDashboard/candidate_dashboard.html";
         } else if (character === "doom") {
@@ -81,6 +89,7 @@ function signIn(event) {
       document.getElementById("message").innerText = "❌ " + error.message;
     });
 }
+
 </script>
 
 </body>
