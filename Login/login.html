@@ -59,7 +59,7 @@ function signIn(event) {
 
       if (!user.emailVerified) {
         document.getElementById("message").innerText = "❌ Please verify your email before logging in.";
-        user.sendEmailVerification();
+
         auth.signOut(); // sign out unverified user
         return;
       }
@@ -88,6 +88,24 @@ function signIn(event) {
     })
     .catch((error) => {
       document.getElementById("message").innerText = "❌ " + error.message;
+    });
+}
+
+function forgotPassword() {
+  const email = document.getElementById("email").value;
+  const message = document.getElementById("message");
+
+  if (!email) {
+    message.innerText = "❗ Please enter your email to reset password.";
+    return;
+  }
+
+  auth.sendPasswordResetEmail(email)
+    .then(() => {
+      message.innerText = "✅ Password reset email sent! Check your inbox.";
+    })
+    .catch((error) => {
+      message.innerText = "❌ " + error.message;
     });
 }
 
