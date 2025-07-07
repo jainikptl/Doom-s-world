@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DoomBoard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Bruno Ace SC', sans-serif;
+      background: url('assets/login_bg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      overflow: hidden;
+      height: 100vh;
+      position: relative;
+    }
+
+    .lightning-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .lightning {
+      position: absolute;
+      width: 4px;
+      height: 60vh;
+      background: linear-gradient(to bottom, #fff, #e0f3ff, #87ceeb, #fff, transparent);
+      opacity: 0;
+      animation: flash 0.15s ease-in-out;
+      box-shadow: 0 0 30px #ffffff, 0 0 60px #87ceeb;
+      filter: blur(1px);
+    }
+
+    @keyframes flash {
+      0% { opacity: 0; transform: scaleY(0) skewX(0deg); }
+      50% { opacity: 1; transform: scaleY(1) skewX(15deg); }
+      100% { opacity: 0; transform: scaleY(0) skewX(-15deg); }
+    }
+
+    .screen-flash {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.15);
+      opacity: 0;
+      z-index: 3;
+      animation: screenFlash 0.20s ease-in-out;
+    }
+
+    @keyframes screenFlash {
+      0% { opacity: 0; }
+      50% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .rain {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .raindrop {
+      position: absolute;
+      width: 1px;
+      height: 20px;
+      background: linear-gradient(to bottom, transparent, rgba(173, 216, 230, 0.6), transparent);
+      animation: fall linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-100vh) rotate(12deg); opacity: 0; }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.8; }
+      100% { transform: translateY(100vh) rotate(12deg); opacity: 0; }
+    }
+
+    .doom-image-container {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 70vh;
+      z-index: 4;
+      animation: floatDoom 4s ease-in-out infinite;
+    }
+
+    .doom-image {
+      height: 100%;
+      object-fit: contain;
+    }
+
+    @keyframes floatDoom {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(-10px); }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="navbar">
+    <div class="logo">⚡ DOOMBOARD</div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Job Board</a>
+      <a href="#">My Profile</a>
+      <a href="#">Chat</a>
+      <a href="#" class="login">Login / Signup</a>
+    </nav>
+  </header>
+
+  <div class="button-container">
+    <a href="Login/login.html" class="btn">Login</a>
+    <a href="signup/signup.html" class="btn">Signup</a>
+  </div>
+
+  <!-- Rain effect -->
+  <div class="rain" id="rain"></div>
+
+  <!-- Lightning effect -->
+  <div class="lightning-container" id="lightning-container"></div>
+
+  <!-- Doom image -->
+  <div class="doom-image-container">
+    <img src="assets/dr_doom.png" alt="Dr. Doom" class="doom-image" />
+  </div>
+
+  <script>
+    // Rain generation
+    function createRain() {
+      const rainContainer = document.getElementById('rain');
+      const rainCount = 200;
+
+      for (let i = 0; i < rainCount; i++) {
+        const raindrop = document.createElement('div');
+        raindrop.classList.add('raindrop');
+        raindrop.style.left = Math.random() * 100 + '%';
+        raindrop.style.animationDelay = Math.random() * 5 + 's';
+        raindrop.style.animationDuration = (Math.random() * 1.5 + 0.8) + 's';
+        rainContainer.appendChild(raindrop);
+      }
+    }
+
+    // Lightning strikes
+    function createLightning() {
+      const lightningContainer = document.getElementById('lightning-container');
+
+      function strike() {
+        const lightning = document.createElement('div');
+        lightning.classList.add('lightning');
+        lightning.style.left = Math.random() * 100 + '%';
+        lightning.style.top = Math.random() * 20 + '%';
+        lightningContainer.appendChild(lightning);
+
+        const flash = document.createElement('div');
+        flash.classList.add('screen-flash');
+        document.body.appendChild(flash);
+
+        setTimeout(() => {
+          lightning.remove();
+          flash.remove();
+        }, 150);
+      }
+
+      function randomStrike() {
+        if (Math.random() < 0.7) {
+          strike();
+        }
+        setTimeout(randomStrike, Math.random() * 6000 + 2000);
+      }
+
+      setTimeout(randomStrike, 1000);
+    }
+
+    createRain();
+    createLightning();
+  </script>
+</body>
+</html>
