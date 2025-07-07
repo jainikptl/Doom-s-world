@@ -13,18 +13,85 @@
   <div class="glass-card">
     <h2 class="logo">LOGIN</h2>
     
-    <form>
+    <form onsubmit="signIn(event)">
       <label>Email</label>
-      <input type="email" placeholder="username@gmail.com" required />
+      <input type="email" id="email" placeholder="username@gmail.com" required />
       
       <label>Password</label>
-      <input type="password" placeholder="Password" required />
+      <input type="password" id="password" placeholder="Password" required />
       
-      <div class="forgot">Forgot Password?</div>
+      <div class="forgot" onclick="forgotPassword()">Forgot Password?</div>
       <button type="submit">Sign in</button>
     </form>
 
     <p class="register">Don't have an account yet? <a href="/./Doom-s-world/signup/signup.html">Register for free</a></p>
+    <p id="message" style="color: white; margin-top: 10px;"></p>
   </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+  <script>
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
+      authDomain: "doom-s-world.firebaseapp.com",
+      projectId: "doom-s-world",
+      storageBucket: "doom-s-world.firebasestorage.app",
+      messagingSenderId: "445783209326",
+      appId: "1:445783209326:web:700e95a429e7d06104fd7f",
+      measurementId: "G-86151LPWTC"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Sign In Function
+    function signIn(event) {
+      event.preventDefault(); // Prevent form from refreshing
+
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          document.getElementById("message").innerText = "✅ Signed In Successfully!";
+          window.location.href = "/./Doom-s-world/candidate_dashboard.html";
+          // Optionally redirect to dashboard after login
+          // window.location.href = "dashboard.html";
+        })
+        .catch(error => {
+          document.getElementById("message").innerText = "❌ " + error.message;
+        });
+    }
+
+    function forgotPassword() {
+  const email = document.getElementById("email").value;
+
+  if (!email) {
+    document.getElementById("message").innerText = "❗ Please enter your email above first.";
+    return;
+  }
+
+  auth.sendPasswordResetEmail(email)
+    .then(() => {
+      document.getElementById("message").innerText = "📧 Password reset link sent to " + email;
+    })
+    .catch(error => {
+      document.getElementById("message").innerText = "❌ " + error.message;
+    });
+}
+
+    // Monitor Auth State
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        console.log("Logged in as:", user.email);
+      } else {
+        console.log("Not logged in");
+      }
+    });
+  </script>
 </body>
 </html>
