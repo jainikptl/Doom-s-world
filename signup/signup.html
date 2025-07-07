@@ -17,18 +17,6 @@
       <label>Full Name</label>
       <input type="text" id="name" placeholder="Victor Von Doom" required />
 
-      <label>Strength</label>
-      <input type="text" id="strength" placeholder="e.g. Lightning" required />
-
-      <label>Weakness</label>
-      <input type="text" id="weakness" placeholder="e.g. Speed" required />
-
-      <label>Rank</label>
-      <input type="text" id="rank" placeholder="e.g. Elite" required />
-
-      <label>Experience</label>
-      <input type="text" id="experience" placeholder="e.g. 3 Battles" required />
-
       <label>Email</label>
       <input type="email" id="email" placeholder="doom@gmail.com" required />
       
@@ -71,10 +59,6 @@
       event.preventDefault();
 
       const name = document.getElementById("name").value;
-      const strength = document.getElementById("strength").value;
-      const weakness = document.getElementById("weakness").value;
-      const rank = document.getElementById("rank").value;
-      const experience = document.getElementById("experience").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("pass").value;
       const confpass = document.getElementById("confpass").value;
@@ -94,10 +78,6 @@
           // Save additional user info to Firestore
           return db.collection("users").doc(uid).set({
             name: name,
-            strength: strength,
-            weakness: weakness,
-            rank: rank,
-            experience: experience,
             email: email,
             character: "candidate"
           });
