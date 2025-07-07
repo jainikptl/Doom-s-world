@@ -79,7 +79,8 @@
           return db.collection("users").doc(uid).set({
             name: name,
             email: email,
-            character: "candidate"
+            character: "candidate",
+            status: "idle"
           });
         })
         .then(() => {
