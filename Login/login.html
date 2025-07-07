@@ -24,7 +24,7 @@
       <button type="submit">Sign in</button>
     </form>
 
-    <p class="register">Don't have an account yet? <a href="/./Doom-s-world/signup/signup.html">Register for free</a></p>
+    <p class="register">Don't have an account yet? <a href="../signup/signup.html">Register for free</a></p>
     <p id="message" style="color: white; margin-top: 10px;"></p>
   </div>
 
@@ -58,7 +58,7 @@
       auth.signInWithEmailAndPassword(email, password)
         .then(userCredential => {
           document.getElementById("message").innerText = "✅ Signed In Successfully!";
-          window.location.href = "/./Doom-s-world/candidate_dashboard.html";
+          window.location.href = "../candidate_dashboard.html";
           // Optionally redirect to dashboard after login
           // window.location.href = "dashboard.html";
         })
