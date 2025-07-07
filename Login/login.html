@@ -20,7 +20,7 @@
       <label>Password</label>
       <input type="password" id="password" placeholder="Password" required />
       
-      <div class="forgot">Forgot Password?</div>
+      <div class="forgot" onclick="forgotPassword()">Forgot Password?</div>
       <button type="submit">Sign in</button>
     </form>
 
@@ -66,6 +66,23 @@
           document.getElementById("message").innerText = "❌ " + error.message;
         });
     }
+
+    function forgotPassword() {
+  const email = document.getElementById("email").value;
+
+  if (!email) {
+    document.getElementById("message").innerText = "❗ Please enter your email above first.";
+    return;
+  }
+
+  auth.sendPasswordResetEmail(email)
+    .then(() => {
+      document.getElementById("message").innerText = "📧 Password reset link sent to " + email;
+    })
+    .catch(error => {
+      document.getElementById("message").innerText = "❌ " + error.message;
+    });
+}
 
     // Monitor Auth State
     auth.onAuthStateChanged(user => {
