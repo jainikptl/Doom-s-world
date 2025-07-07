@@ -28,70 +28,60 @@
     <p id="message" style="color: white; margin-top: 10px;"></p>
   </div>
 
-  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-  <script>
-    // Your Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
-      authDomain: "doom-s-world.firebaseapp.com",
-      projectId: "doom-s-world",
-      storageBucket: "doom-s-world.firebasestorage.app",
-      messagingSenderId: "445783209326",
-      appId: "1:445783209326:web:700e95a429e7d06104fd7f",
-      measurementId: "G-86151LPWTC"
-    };
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
+    authDomain: "doom-s-world.firebaseapp.com",
+    projectId: "doom-s-world",
+    storageBucket: "doom-s-world.appspot.com",
+    messagingSenderId: "445783209326",
+    appId: "1:445783209326:web:700e95a429e7d06104fd7f",
+    measurementId: "G-86151LPWTC"
+  };
 
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    // Sign In Function
-    function signIn(event) {
-      event.preventDefault(); // Prevent form from refreshing
+function signIn(event) {
+  event.preventDefault();
 
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      auth.signInWithEmailAndPassword(email, password)
-        .then(userCredential => {
-          document.getElementById("message").innerText = "✅ Signed In Successfully!";
-          window.location.href = "../candidate_dashboard.html";
-          // Optionally redirect to dashboard after login
-          // window.location.href = "dashboard.html";
-        })
-        .catch(error => {
-          document.getElementById("message").innerText = "❌ " + error.message;
-        });
-    }
-
-    function forgotPassword() {
   const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-  if (!email) {
-    document.getElementById("message").innerText = "❗ Please enter your email above first.";
-    return;
-  }
+  auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      const uid = userCredential.user.uid;
 
-  auth.sendPasswordResetEmail(email)
-    .then(() => {
-      document.getElementById("message").innerText = "📧 Password reset link sent to " + email;
+      // Get user document from Firestore
+      return db.collection("users").doc(uid).get();
     })
-    .catch(error => {
+    .then((doc) => {
+      if (doc.exists) {
+        const userData = doc.data();
+        const character = userData.character;
+
+        // ✅ Updated paths based on root-level dashboards
+        if (character === "candidate") {
+          window.location.href = "../candidate_dashboard.html";
+        } else if (character === "doom") {
+          window.location.href = "../doom_dashboard.html";
+        } else {
+          document.getElementById("message").innerText = "❗ Unknown character type.";
+        }
+      } else {
+        document.getElementById("message").innerText = "❌ User data not found.";
+      }
+    })
+    .catch((error) => {
       document.getElementById("message").innerText = "❌ " + error.message;
     });
 }
+</script>
 
-    // Monitor Auth State
-    auth.onAuthStateChanged(user => {
-      if (user) {
-        console.log("Logged in as:", user.email);
-      } else {
-        console.log("Not logged in");
-      }
-    });
-  </script>
 </body>
 </html>
