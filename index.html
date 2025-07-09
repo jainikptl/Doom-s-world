@@ -11,7 +11,7 @@
       margin: 0;
       padding: 0;
       font-family: 'Bruno Ace SC', sans-serif;
-      background: url('assets/login_bg.jpg') no-repeat center center fixed;
+      background: url('assets/Dr_doom_mainpage.jpg') no-repeat center center fixed;
       background-size: cover;
       overflow: hidden;
       height: 100vh;
@@ -88,30 +88,11 @@
       100% { transform: translateY(100vh) rotate(12deg); opacity: 0; }
     }
 
-    .doom-image-container {
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      height: 70vh;
-      z-index: 4;
-      animation: floatDoom 4s ease-in-out infinite;
-    }
-
-    .doom-image {
-      height: 100%;
-      object-fit: contain;
-    }
-
-    @keyframes floatDoom {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(-10px); }
-    }
   </style>
 </head>
 
 <body>
-  <header class="navbar">
+  <!-- <header class="navbar">
     <div class="logo">⚡ DOOMBOARD</div>
     <nav>
       <a href="#">Home</a>
@@ -120,7 +101,7 @@
       <a href="#">Chat</a>
       <a href="#" class="login">Login / Signup</a>
     </nav>
-  </header>
+  </header> -->
 
   <div class="button-container">
     <a href="Login/login.html" class="btn">Login</a>
@@ -133,10 +114,6 @@
   <!-- Lightning effect -->
   <div class="lightning-container" id="lightning-container"></div>
 
-  <!-- Doom image -->
-  <div class="doom-image-container">
-    <img src="assets/dr_doom.png" alt="Dr. Doom" class="doom-image" />
-  </div>
 
   <script>
     // Rain generation

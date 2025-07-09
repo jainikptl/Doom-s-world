@@ -1,105 +1,588 @@
-@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
-  margin: 0;
-  font-family: 'Bruno Ace SC', sans-serif;
-  background: linear-gradient(to bottom right, #1a1d2e, #040810);
+  font-family: "Bruno Ace SC", sans-serif;
+  background: linear-gradient(135deg, #0a0e1a 0%, #1a0a1a 50%, #1a1d2e 100%);
   color: #aefeff;
+  min-height: 100vh;
 }
 
 .navbar {
-  background: rgba(0, 255, 255, 0.1);
+  background: rgba(255, 0, 100, 0.1);
+  backdrop-filter: blur(20px);
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #00ffff33;
+  border-bottom: 1px solid rgba(255, 0, 100, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .navbar h1 {
-  margin: 0;
   font-size: 1.5rem;
+  background: linear-gradient(45deg, #ff0066, #ff6600);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.navbar a {
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ai-indicator {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 255, 0, 0.1);
+  border-radius: 20px;
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.logout-btn {
   color: #fff;
   text-decoration: none;
   font-size: 0.9rem;
-  background: #003d66;
+  background: linear-gradient(45deg, #cc0033, #ff0044);
   padding: 0.5rem 1rem;
   border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-.container {
+.logout-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(255, 0, 68, 0.3);
+}
+
+.dashboard-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 1.5rem;
   padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
 .card {
   background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(10px);
-  border-radius: 15px;
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
   padding: 1.5rem;
-  box-shadow: 0 0 20px #00ffff44;
+  border: 1px solid rgba(255, 0, 100, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #ff0066, transparent);
+  transition: left 0.5s ease;
+}
+
+.card:hover::before {
+  left: 100%;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(255, 0, 100, 0.2);
+  border-color: rgba(255, 0, 100, 0.4);
 }
 
 .card h2 {
-  margin-top: 0;
-}
-
-.applicant {
   margin-bottom: 1rem;
-  padding: 0.5rem;
-  background: rgba(255, 255, 255, 0.07);
-  border-radius: 8px;
+  font-size: 1.3rem;
+  color: #ff6600;
 }
 
-.actions {
+/* Swipe Card Styles */
+.swipe-container {
+  position: relative;
+  height: 300px;
+  margin-bottom: 1rem;
+}
+
+.candidate-card {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 0, 100, 0.3);
+  transition: all 0.3s ease;
+  cursor: grab;
+}
+
+.candidate-card:active {
+  cursor: grabbing;
+}
+
+.candidate-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.candidate-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid #ff6600;
+}
+
+.candidate-info h3 {
+  font-size: 1.2rem;
+  color: #fff;
+  margin-bottom: 0.5rem;
+}
+
+.candidate-info p {
+  color: #aefeff;
+  font-size: 0.9rem;
+}
+
+.match-score {
+  background: linear-gradient(45deg, #00ff64, #00cc51);
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  color: #000;
+  font-weight: bold;
   margin-top: 0.5rem;
 }
 
-.actions button {
-  margin-right: 10px;
-  padding: 5px 12px;
+.candidate-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.skill {
+  background: linear-gradient(45deg, #003d66, #0077cc);
+  padding: 0.3rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.7rem;
+}
+
+.candidate-bio {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1rem;
+}
+
+.swipe-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.reject-btn,
+.shortlist-btn {
+  padding: 0.8rem 1.5rem;
   border: none;
-  border-radius: 6px;
-  font-family: 'Bruno Ace SC', sans-serif;
+  border-radius: 25px;
+  font-family: "Bruno Ace SC", sans-serif;
+  font-size: 0.9rem;
   cursor: pointer;
-  background-color: #0077cc;
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.reject-btn {
+  background: linear-gradient(45deg, #cc0033, #ff0044);
   color: white;
-  transition: background 0.3s ease;
 }
 
-.actions button.reject {
-  background-color: #cc0033;
+.shortlist-btn {
+  background: linear-gradient(45deg, #00cc51, #00ff64);
+  color: #000;
 }
 
-.actions button:hover {
-  background-color: #00b7ff;
+.reject-btn:hover,
+.shortlist-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
 }
 
-textarea,
-input,
-button {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  margin-top: 10px;
+.swipe-stats {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #aefeff;
+  opacity: 0.8;
+}
+
+/* AI Card Styles */
+.ai-insights {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.insight-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(0, 255, 0, 0.05);
+  border-radius: 10px;
+  border-left: 3px solid #00ff64;
+}
+
+.insight-icon {
+  font-size: 1.5rem;
+}
+
+.insight-content h4 {
+  color: #00ff64;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.insight-content p {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Chat Styles */
+.chat-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.chat-tab {
+  padding: 0.5rem 1rem;
   border: none;
-  font-family: 'Bruno Ace SC', sans-serif;
+  background: rgba(255, 255, 255, 0.1);
+  color: #aefeff;
+  border-radius: 20px;
+  font-family: "Bruno Ace SC", sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-textarea {
-  resize: vertical;
-  min-height: 80px;
+.chat-tab.active {
+  background: linear-gradient(45deg, #ff0066, #ff6600);
+  color: white;
 }
 
-ul {
-  padding-left: 1.2rem;
+.chat-window {
+  height: 150px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 0, 100, 0.2);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.leaderboard ol {
-  padding-left: 1.2rem;
+.message {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.recruiter-message {
+  background: rgba(255, 0, 100, 0.1);
+  border-left: 3px solid #ff0066;
+  text-align: right;
+}
+
+.candidate-message {
+  background: rgba(0, 255, 255, 0.1);
+  border-left: 3px solid #00ffff;
+}
+
+.chat-input {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chat-input input {
+  flex: 1;
+}
+
+/* Video Card Styles */
+.video-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.video-preview {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  border: 2px dashed rgba(255, 0, 100, 0.3);
+}
+
+.test-camera,
+.instant-call,
+.schedule-call,
+.join-call {
+  background: linear-gradient(45deg, #ff6600, #ff9900);
+  border: none;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  color: white;
+  font-family: "Bruno Ace SC", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0.5rem 0;
+  width: 100%;
+}
+
+.test-camera:hover,
+.instant-call:hover,
+.schedule-call:hover,
+.join-call:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(255, 153, 0, 0.3);
+}
+
+.scheduled-calls h4 {
+  color: #ff6600;
+  margin: 1rem 0 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.call-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.call-item span {
+  font-size: 0.8rem;
+}
+
+.join-call {
+  padding: 0.3rem 0.8rem;
+  margin: 0;
+  width: auto;
+}
+
+/* Applications Pipeline */
+.pipeline-stages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stage {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.stage h4 {
+  color: #ff6600;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.applicant-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.quick-approve,
+.quick-reject,
+.quick-view,
+.schedule-btn,
+.contact-btn {
+  padding: 0.3rem 0.6rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.quick-approve {
+  background: #00ff64;
+  color: #000;
+}
+
+.quick-reject {
+  background: #ff0044;
+  color: white;
+}
+
+.quick-view {
+  background: #0077cc;
+  color: white;
+}
+
+.schedule-btn,
+.contact-btn {
+  background: #ff6600;
+  color: white;
+  width: 100%;
+}
+
+/* Analytics Styles */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 0, 100, 0.2);
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ff6600;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #aefeff;
+}
+
+.chart-placeholder {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  border: 2px dashed rgba(255, 0, 100, 0.3);
+}
+
+/* Quick Actions */
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.action-btn {
+  padding: 1rem;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(45deg, #003d66, #0077cc);
+  color: white;
+  font-family: "Bruno Ace SC", sans-serif;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 119, 204, 0.3);
+}
+
+/* Form Elements */
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid rgba(255, 0, 100, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  font-family: "Bruno Ace SC", sans-serif;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #ff0066;
+  box-shadow: 0 0 10px rgba(255, 0, 100, 0.3);
+}
+
+button {
+  font-family: "Bruno Ace SC", sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .video-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .pipeline-stages {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .navbar {
+    padding: 1rem;
+  }
+
+  .navbar h1 {
+    font-size: 1.2rem;
+  }
 }

@@ -2,57 +2,206 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Candidate Dashboard - DoomBoard</title>
+  <title>Candidate Portal - DoomBoard</title>
   <link rel="stylesheet" href="candidate_dashboard.css" />
   <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap" rel="stylesheet" />
 </head>
 <body>
   <div class="navbar">
     <h1>⚡ Candidate Portal</h1>
-    <a href="index.html">Logout</a>
+    <div class="nav-actions">
+      <span class="status-indicator">🟢 Online</span>
+      <a href="../index.html" class="logout-btn">Logout</a>
+    </div>
   </div>
 
-  <div class="container">
-    <section class="card">
-      <h2>📄 Apply as Candidate</h2>
-      <input type="text" placeholder="Your Superpower Title" />
-      <textarea placeholder="Why should Doom select you?"></textarea>
-      <button>Submit Application</button>
+  <div class="dashboard-container">
+    <!-- Profile Section -->
+    <section class="card profile-card">
+      <h2>👤 Your Profile</h2>
+      <div class="profile-content">
+        <div class="avatar-section">
+          <div class="avatar">
+            <img src="/placeholder.svg?height=80&width=80" alt="Profile" id="profileImg">
+          </div>
+          <button class="upload-btn" onclick="document.getElementById('fileInput').click()">
+            📷 Upload Photo
+          </button>
+          <input type="file" id="fileInput" accept="image/*" style="display: none;">
+        </div>
+        <div class="profile-form">
+          <input type="text" placeholder="Your Name" id="candidateName">
+          <input type="text" placeholder="Job Title" id="jobTitle">
+          <textarea placeholder="Bio - Tell recruiters about yourself..." id="bio"></textarea>
+          <button class="save-btn">💾 Save Profile</button>
+        </div>
+      </div>
     </section>
 
-    <section class="card">
-      <h2>📅 Availability Calendar</h2>
-      <input type="date" />
-      <button>Mark Available</button>
+    <!-- Skills Showcase -->
+    <section class="card skills-card">
+      <h2>🎯 Skills Arsenal</h2>
+      <div class="skills-input">
+        <input type="text" placeholder="Add a skill..." id="skillInput">
+        <button onclick="addSkill()">➕ Add</button>
+      </div>
+      <div class="skills-container" id="skillsContainer">
+        <span class="skill-tag">JavaScript</span>
+        <span class="skill-tag">React</span>
+        <span class="skill-tag">Node.js</span>
+      </div>
     </section>
 
-    <section class="card">
-      <h2>💬 Chat with Doom</h2>
-      <textarea placeholder="Type your message..."></textarea>
-      <button>Send</button>
+    <!-- Project Submission -->
+    <section class="card project-card">
+      <h2>🚀 Project Showcase</h2>
+      <input type="text" placeholder="Project Title" id="projectTitle">
+      <input type="url" placeholder="Project URL/GitHub Link" id="projectUrl">
+      <textarea placeholder="Project Description..." id="projectDesc"></textarea>
+      <div class="file-upload">
+        <input type="file" id="projectFile" multiple>
+        <label for="projectFile">📁 Upload Files</label>
+      </div>
+      <button class="submit-btn">🚀 Submit Project</button>
     </section>
 
-    <section class="card">
-      <h2>📹 Schedule Video Call</h2>
-      <input type="datetime-local" />
-      <button>Book Slot</button>
+    <!-- Resume Upload -->
+    <section class="card resume-card">
+      <h2>📄 Resume Manager</h2>
+      <div class="resume-upload">
+        <input type="file" id="resumeFile" accept=".pdf,.doc,.docx">
+        <label for="resumeFile">📎 Upload Resume</label>
+        <div class="resume-preview" id="resumePreview">
+          <p>No resume uploaded yet</p>
+        </div>
+      </div>
+      <button class="update-btn">🔄 Update Resume</button>
     </section>
 
-    <section class="card">
-      <h2>📧 Email Doom</h2>
-      <input type="email" placeholder="your@email.com" />
-      <textarea placeholder="Message for Doom..."></textarea>
-      <button>Send Email</button>
+    <!-- Live Chat -->
+    <section class="card chat-card">
+      <h2>💬 Direct Chat</h2>
+      <div class="chat-window" id="chatWindow">
+        <div class="message recruiter-message">
+          <strong>Recruiter:</strong> Welcome to Doom's World! 👋
+        </div>
+        <div class="message candidate-message">
+          <strong>You:</strong> Thank you! Excited to be here! 🚀
+        </div>
+      </div>
+      <div class="chat-input">
+        <input type="text" placeholder="Type your message..." id="messageInput">
+        <button onclick="sendMessage()">📤 Send</button>
+      </div>
     </section>
 
-    <section class="card leaderboard">
-      <h2>🏆 Leaderboard</h2>
-      <ol>
-        <li>Victor Blaze – 999 points</li>
-        <li>Nova Recruit – 867 points</li>
-        <li>Iron Vortex – 700 points</li>
-      </ol>
+    <!-- Video Interview -->
+    <section class="card video-card">
+      <h2>📹 Video Interviews</h2>
+      <div class="video-section">
+        <div class="video-placeholder">
+          <p>📺 Video call will appear here</p>
+          <button class="test-btn">🎥 Test Camera</button>
+        </div>
+        <div class="interview-schedule">
+          <h3>Upcoming Interviews</h3>
+          <div class="interview-item">
+            <span>📅 Tomorrow 3:00 PM</span>
+            <button class="join-btn">🎯 Join Call</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Application Status -->
+    <section class="card status-card">
+      <h2>📊 Application Status</h2>
+      <div class="status-list">
+        <div class="status-item pending">
+          <span class="company">TechCorp</span>
+          <span class="status">⏳ Pending Review</span>
+        </div>
+        <div class="status-item interview">
+          <span class="company">InnovateLab</span>
+          <span class="status">📞 Interview Scheduled</span>
+        </div>
+        <div class="status-item approved">
+          <span class="company">FutureTech</span>
+          <span class="status">✅ Approved</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section class="card leaderboard-card">
+      <h2>🏆 Candidate Leaderboard</h2>
+      <div class="leaderboard">
+        <div class="rank-item gold">
+          <span class="rank">🥇</span>
+          <span class="name">Victor Blaze</span>
+          <span class="score">999 pts</span>
+        </div>
+        <div class="rank-item silver">
+          <span class="rank">🥈</span>
+          <span class="name">Nova Recruit</span>
+          <span class="score">867 pts</span>
+        </div>
+        <div class="rank-item bronze">
+          <span class="rank">🥉</span>
+          <span class="name">You</span>
+          <span class="score">700 pts</span>
+        </div>
+      </div>
     </section>
   </div>
+
+  <script>
+    function addSkill() {
+      const skillInput = document.getElementById('skillInput');
+      const skillsContainer = document.getElementById('skillsContainer');
+      
+      if (skillInput.value.trim()) {
+        const skillTag = document.createElement('span');
+        skillTag.className = 'skill-tag';
+        skillTag.innerHTML = `${skillInput.value} <span onclick="this.parentElement.remove()">❌</span>`;
+        skillsContainer.appendChild(skillTag);
+        skillInput.value = '';
+      }
+    }
+
+    function sendMessage() {
+      const messageInput = document.getElementById('messageInput');
+      const chatWindow = document.getElementById('chatWindow');
+      
+      if (messageInput.value.trim()) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message candidate-message';
+        messageDiv.innerHTML = `<strong>You:</strong> ${messageInput.value}`;
+        chatWindow.appendChild(messageDiv);
+        messageInput.value = '';
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }
+    }
+
+    // File upload handlers
+    document.getElementById('fileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('profileImg').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById('resumeFile').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      const preview = document.getElementById('resumePreview');
+      if (file) {
+        preview.innerHTML = `<p>📄 ${file.name}</p><p>Size: ${(file.size/1024/1024).toFixed(2)} MB</p>`;
+      }
+    });
+  </script>
 </body>
 </html>
