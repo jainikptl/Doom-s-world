@@ -70,23 +70,25 @@
         return;
       }
 
-      // Create user with Firebase Auth
       auth.createUserWithEmailAndPassword(email, password)
         .then((userCredential) => {
-          const uid = userCredential.user.uid;
+          const user = userCredential.user;
 
-          // Save additional user info to Firestore
-          return db.collection("users").doc(uid).set({
-            name: name,
-            email: email,
-            character: "candidate"
+          // Send verification email
+          return user.sendEmailVerification().then(() => {
+            // Save additional user info to Firestore
+            return db.collection("users").doc(user.uid).set({
+              name: name,
+              email: email,
+              character: "candidate",
+              status: "idle"
+            });
+          }).then(() => {
+            message.innerText = "✅ Verification email sent! Please verify before logging in.";
+            setTimeout(() => {
+              window.location.href = "../Login/login.html";
+            }, 2000);
           });
-        })
-        .then(() => {
-          message.innerText = "✅ Account created and saved to Firestore!";
-          window.location.href = "../Login/login.html";
-          // Optional redirect:
-          // window.location.href = "dashboard.html";
         })
         .catch((error) => {
           message.innerText = "❌ " + error.message;

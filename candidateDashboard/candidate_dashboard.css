@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Bruno Ace SC', sans-serif;
+  background: linear-gradient(to bottom right, #050c1b, #1c1e2e);
+  color: #aefeff;
+}
+
+.navbar {
+  background: rgba(0, 255, 255, 0.1);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #00ffff33;
+}
+
+.navbar h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  background: #003d66;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 0 20px #00ffff44;
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+input,
+textarea,
+button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'Bruno Ace SC', sans-serif;
+}
+
+button {
+  background-color: #0077cc;
+  color: white;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #00b7ff;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.leaderboard ol {
+  padding-left: 1.2rem;
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Candidate Dashboard - DoomBoard</title>
+  <link rel="stylesheet" href="candidate_dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="navbar">
+    <h1>⚡ Candidate Portal</h1>
+    <a href="index.html">Logout</a>
+  </div>
+
+  <div class="container">
+    <section class="card">
+      <h2>📄 Apply as Candidate</h2>
+      <input type="text" placeholder="Your Superpower Title" />
+      <textarea placeholder="Why should Doom select you?"></textarea>
+      <button>Submit Application</button>
+    </section>
+
+    <section class="card">
+      <h2>📅 Availability Calendar</h2>
+      <input type="date" />
+      <button>Mark Available</button>
+    </section>
+
+    <section class="card">
+      <h2>💬 Chat with Doom</h2>
+      <textarea placeholder="Type your message..."></textarea>
+      <button>Send</button>
+    </section>
+
+    <section class="card">
+      <h2>📹 Schedule Video Call</h2>
+      <input type="datetime-local" />
+      <button>Book Slot</button>
+    </section>
+
+    <section class="card">
+      <h2>📧 Email Doom</h2>
+      <input type="email" placeholder="your@email.com" />
+      <textarea placeholder="Message for Doom..."></textarea>
+      <button>Send Email</button>
+    </section>
+
+    <section class="card leaderboard">
+      <h2>🏆 Leaderboard</h2>
+      <ol>
+        <li>Victor Blaze – 999 points</li>
+        <li>Nova Recruit – 867 points</li>
+        <li>Iron Vortex – 700 points</li>
+      </ol>
+    </section>
+  </div>
+</body>
+</html>

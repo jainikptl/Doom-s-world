@@ -1,0 +1,105 @@
+@import url('https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Bruno Ace SC', sans-serif;
+  background: linear-gradient(to bottom right, #1a1d2e, #040810);
+  color: #aefeff;
+}
+
+.navbar {
+  background: rgba(0, 255, 255, 0.1);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #00ffff33;
+}
+
+.navbar h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.navbar a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.9rem;
+  background: #003d66;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 0 20px #00ffff44;
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+.applicant {
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+}
+
+.actions {
+  margin-top: 0.5rem;
+}
+
+.actions button {
+  margin-right: 10px;
+  padding: 5px 12px;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Bruno Ace SC', sans-serif;
+  cursor: pointer;
+  background-color: #0077cc;
+  color: white;
+  transition: background 0.3s ease;
+}
+
+.actions button.reject {
+  background-color: #cc0033;
+}
+
+.actions button:hover {
+  background-color: #00b7ff;
+}
+
+textarea,
+input,
+button {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  border: none;
+  font-family: 'Bruno Ace SC', sans-serif;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+ul {
+  padding-left: 1.2rem;
+}
+
+.leaderboard ol {
+  padding-left: 1.2rem;
+}
