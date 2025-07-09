@@ -1,44 +1,81 @@
+/* signup.css */
+
 @import url('https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap');
 
-body {
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+body {
   font-family: 'Bruno Ace SC', sans-serif;
-  background: url('https://wallpapercave.com/wp/wp11330094.jpg') no-repeat center center fixed;
-  background-size: cover;
+  background-color: #0a0a0a;
+  color: #fff;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  color: #fff;
+  position: relative;
 }
 
+/* Cyber Grid Background */
 .background-overlay {
-  position: absolute;
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(8, 12, 24, 0.6);
-  backdrop-filter: blur(8px);
-  z-index: 0;
+  background-image:
+    linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: -2;
+  animation: gridShift 20s linear infinite;
 }
 
+@keyframes gridShift {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(50px, 50px);
+  }
+}
+
+/* Glass Card */
 .glass-card {
-  position: relative;
-  z-index: 1;
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  backdrop-filter: blur(12px);
+  padding: 40px 50px;
   border-radius: 20px;
-  padding: 40px;
-  width: 320px;
-  box-shadow: 0 8px 32px 0 rgba(0, 255, 255, 0.2);
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  animation: fadeIn 1s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 .logo {
+  font-size: 2rem;
   text-align: center;
-  margin-bottom: 20px;
-  font-size: 1.8rem;
-  color: #aefeff;
+  margin-bottom: 30px;
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
 }
 
 form {
@@ -46,80 +83,59 @@ form {
   flex-direction: column;
 }
 
-input {
-  margin-bottom: 15px;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  font-family: 'Bruno Ace SC', sans-serif;
-}
-
-button[type="submit"] {
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background: #003d66;
-  color: #fff;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-button[type="submit"]:hover {
-  background: #0077cc;
-}
-
-.forgot {
-  text-align: right;
-  margin-bottom: 15px;
-  font-size: 0.8rem;
-  color: #aefeff;
-  cursor: pointer;
-}
-
-.or {
-  text-align: center;
-  margin: 15px 0 10px;
+label {
   font-size: 0.9rem;
+  margin-bottom: 5px;
   color: #ccc;
 }
 
-.social-buttons {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 15px;
-}
-
-.social-buttons button {
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: none;
+input {
+  padding: 10px;
+  margin-bottom: 20px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: white;
+  outline: none;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+input:focus {
+  border-color: #00ffff;
+  box-shadow: 0 0 10px #00ffff;
+}
+
+button {
+  padding: 12px;
+  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  border: none;
+  color: #000;
+  font-weight: bold;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: all 0.3s ease;
+  font-family: 'Bruno Ace SC', sans-serif;
 }
 
-.social-buttons button img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-
-.social-buttons button:hover {
-  background: rgba(255, 255, 255, 0.2);
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
 }
 
 .register {
   text-align: center;
-  font-size: 0.8rem;
+  margin-top: 15px;
+  font-size: 0.9rem;
 }
 
 .register a {
-  color: #00ccff;
+  color: #00ffff;
   text-decoration: none;
+  border-bottom: 1px dashed #00ffff;
+}
+
+.register a:hover {
+  color: #ff00ff;
+  border-bottom-color: #ff00ff;
 }
