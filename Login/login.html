@@ -69,14 +69,11 @@
           if (doc.exists) {
             const userData = doc.data();
             const character = userData.character;
+            const userName = userData.name || userData.email || 'User';
 
-            if (character === "candidate") {
-              window.location.href = "../candidateDashboard/candidate_dashboard.html";
-            } else if (character === "doom") {
-              window.location.href = "../doomDashboard/doom_dashboard.html";
-            } else {
-              document.getElementById("message").innerText = "❗ Unknown character type.";
-            }
+            // Redirect to welcome screen with user info
+            const welcomeUrl = `welcome.html?type=${character}&name=${encodeURIComponent(userName)}`;
+            window.location.href = welcomeUrl;
           } else {
             document.getElementById("message").innerText = "❌ User data not found.";
           }
