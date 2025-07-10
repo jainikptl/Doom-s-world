@@ -156,7 +156,7 @@ body {
 .hero {
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 255, 255, 0.1)),
 
-    url(assets/mainpage_animation.gif);
+    url(assets/Hero_entry\ \(2\).gif);
   background-size: cover, cover, cover;
   background-position: center, center, center;
   background-repeat: no-repeat;
