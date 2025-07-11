@@ -1,301 +1,525 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Doom Control Center</title>
-  <link rel="stylesheet" href="doom_dashboard.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Admin Dashboard</title>
+    <link rel="stylesheet" href="doom_dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="navbar">
-    <h1>⚡ Doom Control Center</h1>
-    <div class="nav-actions">
-      <span class="ai-indicator">🤖 AI Active</span>
-      <a href="../index.html" class="logout-btn">Logout</a>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
     </div>
-  </div>
 
-  <div class="dashboard-container">
-    <!-- Swipe Interface -->
-    <section class="card swipe-card">
-      <h2>👥 Talent Swiper</h2>
-      <div class="swipe-container">
-        <div class="candidate-card active" id="candidateCard">
-          <div class="candidate-header">
-            <img src="/placeholder.svg?height=80&width=80" alt="Candidate" class="candidate-avatar">
-            <div class="candidate-info">
-              <h3>Alex Thunder</h3>
-              <p>Full Stack Developer</p>
-              <div class="match-score">🎯 95% Match</div>
+    <div class="container">
+        <!-- Enhanced Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                        <rect width="32" height="32" rx="8" fill="url(#logoGradient)"/>
+                        <path d="M8 12L16 8L24 12V20L16 24L8 20V12Z" stroke="white" stroke-width="2" fill="none"/>
+                        <defs>
+                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#667eea"/>
+                                <stop offset="100%" style="stop-color:#764ba2"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <h1>AdminPro</h1>
             </div>
-          </div>
-          <div class="candidate-skills">
-            <span class="skill">React</span>
-            <span class="skill">Node.js</span>
-            <span class="skill">Python</span>
-            <span class="skill">AWS</span>
-          </div>
-          <div class="candidate-bio">
-            "Passionate developer with 5 years of experience building scalable web applications. Ready to join Doom's elite team!"
-          </div>
-          <div class="swipe-actions">
-            <button class="reject-btn" onclick="swipeCandidate('reject')">👎 Reject</button>
-            <button class="shortlist-btn" onclick="swipeCandidate('shortlist')">👍 Shortlist</button>
-          </div>
-        </div>
-      </div>
-      <div class="swipe-stats">
-        <span>📊 Reviewed: 15 | Shortlisted: 8 | Rejected: 7</span>
-      </div>
-    </section>
+            
+            <nav class="nav-menu">
+                <div class="nav-item active" data-section="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                    <div class="nav-indicator"></div>
+                </div>
+                <div class="nav-item" data-section="candidates">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-text">Candidates</span>
+                    <div class="nav-indicator"></div>
+                </div>
+                <div class="nav-item" data-section="swipe">
+                    <span class="nav-icon">💫</span>
+                    <span class="nav-text">Selection</span>
+                    <div class="nav-indicator"></div>
+                </div>
+                <div class="nav-item" data-section="inbox">
+                    <span class="nav-icon">📧</span>
+                    <span class="nav-text">Inbox</span>
+                    <span class="nav-badge">12</span>
+                    <div class="nav-indicator"></div>
+                </div>
+                <div class="nav-item" data-section="interviews">
+                    <span class="nav-icon">🎯</span>
+                    <span class="nav-text">Interviews</span>
+                    <div class="nav-indicator"></div>
+                </div>
+                <div class="nav-item" data-section="applications">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">Applications</span>
+                    <div class="nav-indicator"></div>
+                </div>
+                <div class="nav-item" data-section="analytics">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-text">Analytics</span>
+                    <div class="nav-indicator"></div>
+                </div>
+                <div class="nav-item" data-section="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">Settings</span>
+                    <div class="nav-indicator"></div>
+                </div>
+            </nav>
 
-    <!-- AI Recommendations -->
-    <section class="card ai-card">
-      <h2>🤖 AI Recommendations</h2>
-      <div class="ai-insights">
-        <div class="insight-item">
-          <span class="insight-icon">🎯</span>
-          <div class="insight-content">
-            <h4>Perfect Match Found</h4>
-            <p>Sarah Code has 98% compatibility with your requirements</p>
-          </div>
-        </div>
-        <div class="insight-item">
-          <span class="insight-icon">📈</span>
-          <div class="insight-content">
-            <h4>Trending Skills</h4>
-            <p>React, TypeScript, and Cloud Architecture are in high demand</p>
-          </div>
-        </div>
-        <div class="insight-item">
-          <span class="insight-icon">⚡</span>
-          <div class="insight-content">
-            <h4>Quick Hire Alert</h4>
-            <p>3 candidates are available for immediate start</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Real-time Chat -->
-    <section class="card chat-card">
-      <h2>💬 Candidate Chat</h2>
-      <div class="chat-tabs">
-        <button class="chat-tab active">Alex Thunder</button>
-        <button class="chat-tab">Sarah Code</button>
-        <button class="chat-tab">Mike React</button>
-      </div>
-      <div class="chat-window" id="chatWindow">
-        <div class="message candidate-message">
-          <strong>Alex:</strong> Thank you for considering my application! 🚀
-        </div>
-        <div class="message recruiter-message">
-          <strong>Doom:</strong> Your skills are impressive. Let's schedule a call. ⚡
-        </div>
-      </div>
-      <div class="chat-input">
-        <input type="text" placeholder="Type your message..." id="messageInput">
-        <button onclick="sendMessage()">📤 Send</button>
-      </div>
-    </section>
-
-    <!-- One-Click Video Calls -->
-    <section class="card video-card">
-      <h2>📹 Instant Interviews</h2>
-      <div class="video-controls">
-        <div class="video-preview">
-          <p>📺 Video preview</p>
-          <button class="test-camera">🎥 Test Camera</button>
-        </div>
-        <div class="quick-actions">
-          <h3>Quick Interview</h3>
-          <button class="instant-call">⚡ Start Instant Call</button>
-          <button class="schedule-call">📅 Schedule Interview</button>
-          <div class="scheduled-calls">
-            <h4>Today's Interviews</h4>
-            <div class="call-item">
-              <span>2:00 PM - Alex Thunder</span>
-              <button class="join-call">🎯 Join</button>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <img src="/placeholder.svg?height=40&width=40" alt="User Avatar">
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name">John Doe</div>
+                        <div class="user-role">Administrator</div>
+                    </div>
+                </div>
             </div>
-            <div class="call-item">
-              <span>4:30 PM - Sarah Code</span>
-              <button class="join-call">🎯 Join</button>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Enhanced Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <h2 class="page-title">Dashboard Overview</h2>
+                </div>
+                
+                <div class="header-center">
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Search anything...">
+                        <button class="search-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <button class="notification-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <div class="user-menu">
+                        <div class="user-avatar-small">
+                            <img src="/placeholder.svg?height=32&width=32" alt="User">
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Stats Grid with Enhanced Cards -->
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card primary">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">1,247</div>
+                            <div class="stat-label">Total Candidates</div>
+                            <div class="stat-change positive">
+                                <span class="change-icon">↗</span>
+                                <span>12.5% from last week</span>
+                            </div>
+                        </div>
+                        <div class="stat-chart">
+                            <div class="mini-chart" data-values="20,25,30,28,35,40,38"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                <line x1="8" y1="21" x2="16" y2="21"></line>
+                                <line x1="12" y1="17" x2="12" y2="21"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">89</div>
+                            <div class="stat-label">Active Applications</div>
+                            <div class="stat-change positive">
+                                <span class="change-icon">↗</span>
+                                <span>3.2% from yesterday</span>
+                            </div>
+                        </div>
+                        <div class="stat-chart">
+                            <div class="mini-chart" data-values="15,18,22,19,25,28,26"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card warning">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">$156K</div>
+                            <div class="stat-label">Salary Budget</div>
+                            <div class="stat-change negative">
+                                <span class="change-icon">↘</span>
+                                <span>2.1% from last month</span>
+                            </div>
+                        </div>
+                        <div class="stat-chart">
+                            <div class="mini-chart" data-values="35,32,28,30,25,22,24"></div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card info">
+                        <div class="stat-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value">23</div>
+                            <div class="stat-label">Pending Interviews</div>
+                            <div class="stat-change positive">
+                                <span class="change-icon">↗</span>
+                                <span>8.7% from yesterday</span>
+                            </div>
+                        </div>
+                        <div class="stat-chart">
+                            <div class="mini-chart" data-values="10,12,15,18,20,23,21"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <!-- Application Management -->
-    <section class="card applications-card">
-      <h2>📋 Application Pipeline</h2>
-      <div class="pipeline-stages">
-        <div class="stage">
-          <h4>📥 New (12)</h4>
-          <div class="applicant-item">
-            <span>John Doe</span>
-            <div class="quick-actions">
-              <button class="quick-approve">✅</button>
-              <button class="quick-reject">❌</button>
-              <button class="quick-view">👁️</button>
+            <!-- Enhanced Swipe Section -->
+            <div class="swipe-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h3>Candidate Selection</h3>
+                        <p>Swipe through candidates to make quick decisions</p>
+                    </div>
+                    <div class="section-actions">
+                        <span class="candidates-remaining">Remaining: <span id="candidateCount">5</span></span>
+                        <button class="refresh-btn" onclick="resetCandidates()">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="swipe-container" id="swipeContainer">
+                    <!-- Candidate cards will be populated by JavaScript -->
+                </div>
+
+                <div class="swipe-actions">
+                    <button class="action-btn reject-btn" onclick="rejectCandidate()" title="Reject">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                    <button class="action-btn like-btn" onclick="likeCandidate()" title="Like">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"></svg>
+                    </button>
+                    <button class="action-btn accept-btn" onclick="acceptCandidate()" title="Accept">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20,6 9,17 4,12"></polyline>
+                        </svg>
+                    </button>
+                </div>
             </div>
-          </div>
-          <div class="applicant-item">
-            <span>Jane Smith</span>
-            <div class="quick-actions">
-              <button class="quick-approve">✅</button>
-              <button class="quick-reject">❌</button>
-              <button class="quick-view">👁️</button>
+
+            <!-- Enhanced Data Table -->
+            <div class="data-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <h3>Recent Applications</h3>
+                        <p>Track and manage candidate applications</p>
+                    </div>
+                    <div class="section-actions">
+                        <select class="filter-select">
+                            <option>This Month</option>
+                            <option>Last Month</option>
+                            <option>Last Quarter</option>
+                        </select>
+                        <button class="export-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7,10 12,15 17,10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Export
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" class="table-checkbox">
+                                </th>
+                                <th>Candidate</th>
+                                <th>Position</th>
+                                <th>Applied</th>
+                                <th>Experience</th>
+                                <th>Score</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" class="table-checkbox"></td>
+                                <td>
+                                    <div class="candidate-cell">
+                                        <div class="candidate-avatar">RR</div>
+                                        <div class="candidate-info">
+                                            <div class="candidate-name">Reed Richards</div>
+                                            <div class="candidate-email">reed@fantastic4.com</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Senior Scientist</td>
+                                <td>
+                                    <div class="date-cell">
+                                        <div class="date">Nov 15, 2024</div>
+                                        <div class="time">09:30 AM</div>
+                                    </div>
+                                </td>
+                                <td>12 years</td>
+                                <td>
+                                    <div class="score-cell">
+                                        <div class="score-bar">
+                                            <div class="score-fill" style="width: 95%"></div>
+                                        </div>
+                                        <span class="score-text">95/100</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-accepted">Accepted</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-small view-btn" title="View">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                        <button class="action-btn-small edit-btn" title="Edit">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="action-btn-small delete-btn" title="Delete">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="3,6 5,6 21,6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="table-checkbox"></td>
+                                <td>
+                                    <div class="candidate-cell">
+                                        <div class="candidate-avatar">TS</div>
+                                        <div class="candidate-info">
+                                            <div class="candidate-name">Tony Stark</div>
+                                            <div class="candidate-email">tony@starkindustries.com</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Lead Engineer</td>
+                                <td>
+                                    <div class="date-cell">
+                                        <div class="date">Nov 14, 2024</div>
+                                        <div class="time">02:15 PM</div>
+                                    </div>
+                                </td>
+                                <td>15 years</td>
+                                <td>
+                                    <div class="score-cell">
+                                        <div class="score-bar">
+                                            <div class="score-fill" style="width: 92%"></div>
+                                        </div>
+                                        <span class="score-text">92/100</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-interview">Interview</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-small view-btn" title="View">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                        <button class="action-btn-small edit-btn" title="Edit">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="action-btn-small delete-btn" title="Delete">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="3,6 5,6 21,6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="table-checkbox"></td>
+                                <td>
+                                    <div class="candidate-cell">
+                                        <div class="candidate-avatar">BB</div>
+                                        <div class="candidate-info">
+                                            <div class="candidate-name">Bruce Banner</div>
+                                            <div class="candidate-email">bruce@gamma-research.com</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Research Director</td>
+                                <td>
+                                    <div class="date-cell">
+                                        <div class="date">Nov 13, 2024</div>
+                                        <div class="time">11:45 AM</div>
+                                    </div>
+                                </td>
+                                <td>18 years</td>
+                                <td>
+                                    <div class="score-cell">
+                                        <div class="score-bar">
+                                            <div class="score-fill" style="width: 88%"></div>
+                                        </div>
+                                        <span class="score-text">88/100</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-accepted">Accepted</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-small view-btn" title="View">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                        <button class="action-btn-small edit-btn" title="Edit">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="action-btn-small delete-btn" title="Delete">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="3,6 5,6 21,6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><input type="checkbox" class="table-checkbox"></td>
+                                <td>
+                                    <div class="candidate-cell">
+                                        <div class="candidate-avatar">PP</div>
+                                        <div class="candidate-info">
+                                            <div class="candidate-name">Peter Parker</div>
+                                            <div class="candidate-email">peter@dailybugle.com</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>Junior Developer</td>
+                                <td>
+                                    <div class="date-cell">
+                                        <div class="date">Nov 12, 2024</div>
+                                        <div class="time">04:20 PM</div>
+                                    </div>
+                                </td>
+                                <td>3 years</td>
+                                <td>
+                                    <div class="score-cell">
+                                        <div class="score-bar">
+                                            <div class="score-fill" style="width: 76%"></div>
+                                        </div>
+                                        <span class="score-text">76/100</span>
+                                    </div>
+                                </td>
+                                <td><span class="status-badge status-rejected">Rejected</span></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="action-btn-small view-btn" title="View">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                        <button class="action-btn-small edit-btn" title="Edit">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                            </svg>
+                                        </button>
+                                        <button class="action-btn-small delete-btn" title="Delete">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="3,6 5,6 21,6"></polyline>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          </div>
         </div>
-        <div class="stage">
-          <h4>📞 Interview (5)</h4>
-          <div class="applicant-item">
-            <span>Alex Thunder</span>
-            <button class="schedule-btn">📅 Schedule</button>
-          </div>
-        </div>
-        <div class="stage">
-          <h4>✅ Approved (3)</h4>
-          <div class="applicant-item">
-            <span>Sarah Code</span>
-            <button class="contact-btn">📧 Contact</button>
-          </div>
-        </div>
-      </div>
-    </section>
+    </div>
 
-    <!-- Analytics Dashboard -->
-    <section class="card analytics-card">
-      <h2>📊 Recruitment Analytics</h2>
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div class="stat-number">247</div>
-          <div class="stat-label">Total Applications</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number">89%</div>
-          <div class="stat-label">Response Rate</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number">15</div>
-          <div class="stat-label">Interviews Today</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-number">7.2</div>
-          <div class="stat-label">Avg. Days to Hire</div>
-        </div>
-      </div>
-      <div class="chart-placeholder">
-        <p>📈 Hiring trends chart would go here</p>
-      </div>
-    </section>
-
-    <!-- Quick Actions -->
-    <section class="card quick-actions-card">
-      <h2>⚡ Quick Actions</h2>
-      <div class="action-buttons">
-        <button class="action-btn post-job">📝 Post New Job</button>
-        <button class="action-btn bulk-email">📧 Bulk Email</button>
-        <button class="action-btn export-data">📊 Export Data</button>
-        <button class="action-btn ai-search">🔍 AI Search</button>
-        <button class="action-btn schedule-batch">📅 Batch Schedule</button>
-        <button class="action-btn send-offers">💼 Send Offers</button>
-      </div>
-    </section>
-  </div>
-
-  <script>
-    const candidates = [
-      {
-        name: "Alex Thunder",
-        title: "Full Stack Developer",
-        match: 95,
-        skills: ["React", "Node.js", "Python", "AWS"],
-        bio: "Passionate developer with 5 years of experience building scalable web applications. Ready to join Doom's elite team!"
-      },
-      {
-        name: "Sarah Code",
-        title: "Frontend Specialist",
-        match: 98,
-        skills: ["Vue.js", "TypeScript", "CSS", "UX"],
-        bio: "Creative frontend developer with an eye for design and performance optimization."
-      },
-      {
-        name: "Mike React",
-        title: "Backend Engineer",
-        match: 87,
-        skills: ["Java", "Spring", "Docker", "Kubernetes"],
-        bio: "Backend specialist focused on microservices and cloud architecture."
-      }
-    ];
-
-    let currentCandidateIndex = 0;
-
-    function swipeCandidate(action) {
-      const card = document.getElementById('candidateCard');
-      
-      if (action === 'shortlist') {
-        card.style.transform = 'translateX(100%) rotate(20deg)';
-        card.style.background = 'linear-gradient(45deg, rgba(0, 255, 0, 0.2), rgba(0, 255, 0, 0.1))';
-      } else {
-        card.style.transform = 'translateX(-100%) rotate(-20deg)';
-        card.style.background = 'linear-gradient(45deg, rgba(255, 0, 0, 0.2), rgba(255, 0, 0, 0.1))';
-      }
-
-      setTimeout(() => {
-        currentCandidateIndex = (currentCandidateIndex + 1) % candidates.length;
-        loadNextCandidate();
-        card.style.transform = 'translateX(0) rotate(0)';
-        card.style.background = '';
-      }, 300);
-    }
-
-    function loadNextCandidate() {
-      const candidate = candidates[currentCandidateIndex];
-      const card = document.getElementById('candidateCard');
-      
-      card.innerHTML = `
-        <div class="candidate-header">
-          <img src="/placeholder.svg?height=80&width=80" alt="Candidate" class="candidate-avatar">
-          <div class="candidate-info">
-            <h3>${candidate.name}</h3>
-            <p>${candidate.title}</p>
-            <div class="match-score">🎯 ${candidate.match}% Match</div>
-          </div>
-        </div>
-        <div class="candidate-skills">
-          ${candidate.skills.map(skill => `<span class="skill">${skill}</span>`).join('')}
-        </div>
-        <div class="candidate-bio">
-          "${candidate.bio}"
-        </div>
-        <div class="swipe-actions">
-          <button class="reject-btn" onclick="swipeCandidate('reject')">👎 Reject</button>
-          <button class="shortlist-btn" onclick="swipeCandidate('shortlist')">👍 Shortlist</button>
-        </div>
-      `;
-    }
-
-    function sendMessage() {
-      const messageInput = document.getElementById('messageInput');
-      const chatWindow = document.getElementById('chatWindow');
-      
-      if (messageInput.value.trim()) {
-        const messageDiv = document.createElement('div');
-        messageDiv.className = 'message recruiter-message';
-        messageDiv.innerHTML = `<strong>Doom:</strong> ${messageInput.value}`;
-        chatWindow.appendChild(messageDiv);
-        messageInput.value = '';
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-      }
-    }
-
-    // Initialize dashboard
-    document.addEventListener('DOMContentLoaded', function() {
-      loadNextCandidate();
-    });
-  </script>
+    <script src="doom_dashboard.js"></script>
 </body>
 </html>
