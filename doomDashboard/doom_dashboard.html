@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Doom Control Center</title>
+  <link rel="stylesheet" href="doom_dashboard.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <div class="navbar">
+    <h1>⚡ Doom Control Center</h1>
+    <div class="nav-actions">
+      <span class="ai-indicator">🤖 AI Active</span>
+      <a href="../index.html" class="logout-btn">Logout</a>
+    </div>
+  </div>
+
+  <div class="dashboard-container">
+    <!-- Swipe Interface -->
+    <section class="card swipe-card">
+      <h2>👥 Talent Swiper</h2>
+      <div class="swipe-container">
+        <div class="candidate-card active" id="candidateCard">
+          <div class="candidate-header">
+            <img src="/placeholder.svg?height=80&width=80" alt="Candidate" class="candidate-avatar">
+            <div class="candidate-info">
+              <h3>Alex Thunder</h3>
+              <p>Full Stack Developer</p>
+              <div class="match-score">🎯 95% Match</div>
+            </div>
+          </div>
+          <div class="candidate-skills">
+            <span class="skill">React</span>
+            <span class="skill">Node.js</span>
+            <span class="skill">Python</span>
+            <span class="skill">AWS</span>
+          </div>
+          <div class="candidate-bio">
+            "Passionate developer with 5 years of experience building scalable web applications. Ready to join Doom's elite team!"
+          </div>
+          <div class="swipe-actions">
+            <button class="reject-btn" onclick="swipeCandidate('reject')">👎 Reject</button>
+            <button class="shortlist-btn" onclick="swipeCandidate('shortlist')">👍 Shortlist</button>
+          </div>
+        </div>
+      </div>
+      <div class="swipe-stats">
+        <span>📊 Reviewed: 15 | Shortlisted: 8 | Rejected: 7</span>
+      </div>
+    </section>
+
+    <!-- AI Recommendations -->
+    <section class="card ai-card">
+      <h2>🤖 AI Recommendations</h2>
+      <div class="ai-insights">
+        <div class="insight-item">
+          <span class="insight-icon">🎯</span>
+          <div class="insight-content">
+            <h4>Perfect Match Found</h4>
+            <p>Sarah Code has 98% compatibility with your requirements</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">📈</span>
+          <div class="insight-content">
+            <h4>Trending Skills</h4>
+            <p>React, TypeScript, and Cloud Architecture are in high demand</p>
+          </div>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">⚡</span>
+          <div class="insight-content">
+            <h4>Quick Hire Alert</h4>
+            <p>3 candidates are available for immediate start</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Real-time Chat -->
+    <section class="card chat-card">
+      <h2>💬 Candidate Chat</h2>
+      <div class="chat-tabs">
+        <button class="chat-tab active">Alex Thunder</button>
+        <button class="chat-tab">Sarah Code</button>
+        <button class="chat-tab">Mike React</button>
+      </div>
+      <div class="chat-window" id="chatWindow">
+        <div class="message candidate-message">
+          <strong>Alex:</strong> Thank you for considering my application! 🚀
+        </div>
+        <div class="message recruiter-message">
+          <strong>Doom:</strong> Your skills are impressive. Let's schedule a call. ⚡
+        </div>
+      </div>
+      <div class="chat-input">
+        <input type="text" placeholder="Type your message..." id="messageInput">
+        <button onclick="sendMessage()">📤 Send</button>
+      </div>
+    </section>
+
+    <!-- One-Click Video Calls -->
+    <section class="card video-card">
+      <h2>📹 Instant Interviews</h2>
+      <div class="video-controls">
+        <div class="video-preview">
+          <p>📺 Video preview</p>
+          <button class="test-camera">🎥 Test Camera</button>
+        </div>
+        <div class="quick-actions">
+          <h3>Quick Interview</h3>
+          <button class="instant-call">⚡ Start Instant Call</button>
+          <button class="schedule-call">📅 Schedule Interview</button>
+          <div class="scheduled-calls">
+            <h4>Today's Interviews</h4>
+            <div class="call-item">
+              <span>2:00 PM - Alex Thunder</span>
+              <button class="join-call">🎯 Join</button>
+            </div>
+            <div class="call-item">
+              <span>4:30 PM - Sarah Code</span>
+              <button class="join-call">🎯 Join</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Application Management -->
+    <section class="card applications-card">
+      <h2>📋 Application Pipeline</h2>
+      <div class="pipeline-stages">
+        <div class="stage">
+          <h4>📥 New (12)</h4>
+          <div class="applicant-item">
+            <span>John Doe</span>
+            <div class="quick-actions">
+              <button class="quick-approve">✅</button>
+              <button class="quick-reject">❌</button>
+              <button class="quick-view">👁️</button>
+            </div>
+          </div>
+          <div class="applicant-item">
+            <span>Jane Smith</span>
+            <div class="quick-actions">
+              <button class="quick-approve">✅</button>
+              <button class="quick-reject">❌</button>
+              <button class="quick-view">👁️</button>
+            </div>
+          </div>
+        </div>
+        <div class="stage">
+          <h4>📞 Interview (5)</h4>
+          <div class="applicant-item">
+            <span>Alex Thunder</span>
+            <button class="schedule-btn">📅 Schedule</button>
+          </div>
+        </div>
+        <div class="stage">
+          <h4>✅ Approved (3)</h4>
+          <div class="applicant-item">
+            <span>Sarah Code</span>
+            <button class="contact-btn">📧 Contact</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analytics Dashboard -->
+    <section class="card analytics-card">
+      <h2>📊 Recruitment Analytics</h2>
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-number">247</div>
+          <div class="stat-label">Total Applications</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">89%</div>
+          <div class="stat-label">Response Rate</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">15</div>
+          <div class="stat-label">Interviews Today</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number">7.2</div>
+          <div class="stat-label">Avg. Days to Hire</div>
+        </div>
+      </div>
+      <div class="chart-placeholder">
+        <p>📈 Hiring trends chart would go here</p>
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="card quick-actions-card">
+      <h2>⚡ Quick Actions</h2>
+      <div class="action-buttons">
+        <button class="action-btn post-job">📝 Post New Job</button>
+        <button class="action-btn bulk-email">📧 Bulk Email</button>
+        <button class="action-btn export-data">📊 Export Data</button>
+        <button class="action-btn ai-search">🔍 AI Search</button>
+        <button class="action-btn schedule-batch">📅 Batch Schedule</button>
+        <button class="action-btn send-offers">💼 Send Offers</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const candidates = [
+      {
+        name: "Alex Thunder",
+        title: "Full Stack Developer",
+        match: 95,
+        skills: ["React", "Node.js", "Python", "AWS"],
+        bio: "Passionate developer with 5 years of experience building scalable web applications. Ready to join Doom's elite team!"
+      },
+      {
+        name: "Sarah Code",
+        title: "Frontend Specialist",
+        match: 98,
+        skills: ["Vue.js", "TypeScript", "CSS", "UX"],
+        bio: "Creative frontend developer with an eye for design and performance optimization."
+      },
+      {
+        name: "Mike React",
+        title: "Backend Engineer",
+        match: 87,
+        skills: ["Java", "Spring", "Docker", "Kubernetes"],
+        bio: "Backend specialist focused on microservices and cloud architecture."
+      }
+    ];
+
+    let currentCandidateIndex = 0;
+
+    function swipeCandidate(action) {
+      const card = document.getElementById('candidateCard');
+      
+      if (action === 'shortlist') {
+        card.style.transform = 'translateX(100%) rotate(20deg)';
+        card.style.background = 'linear-gradient(45deg, rgba(0, 255, 0, 0.2), rgba(0, 255, 0, 0.1))';
+      } else {
+        card.style.transform = 'translateX(-100%) rotate(-20deg)';
+        card.style.background = 'linear-gradient(45deg, rgba(255, 0, 0, 0.2), rgba(255, 0, 0, 0.1))';
+      }
+
+      setTimeout(() => {
+        currentCandidateIndex = (currentCandidateIndex + 1) % candidates.length;
+        loadNextCandidate();
+        card.style.transform = 'translateX(0) rotate(0)';
+        card.style.background = '';
+      }, 300);
+    }
+
+    function loadNextCandidate() {
+      const candidate = candidates[currentCandidateIndex];
+      const card = document.getElementById('candidateCard');
+      
+      card.innerHTML = `
+        <div class="candidate-header">
+          <img src="/placeholder.svg?height=80&width=80" alt="Candidate" class="candidate-avatar">
+          <div class="candidate-info">
+            <h3>${candidate.name}</h3>
+            <p>${candidate.title}</p>
+            <div class="match-score">🎯 ${candidate.match}% Match</div>
+          </div>
+        </div>
+        <div class="candidate-skills">
+          ${candidate.skills.map(skill => `<span class="skill">${skill}</span>`).join('')}
+        </div>
+        <div class="candidate-bio">
+          "${candidate.bio}"
+        </div>
+        <div class="swipe-actions">
+          <button class="reject-btn" onclick="swipeCandidate('reject')">👎 Reject</button>
+          <button class="shortlist-btn" onclick="swipeCandidate('shortlist')">👍 Shortlist</button>
+        </div>
+      `;
+    }
+
+    function sendMessage() {
+      const messageInput = document.getElementById('messageInput');
+      const chatWindow = document.getElementById('chatWindow');
+      
+      if (messageInput.value.trim()) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message recruiter-message';
+        messageDiv.innerHTML = `<strong>Doom:</strong> ${messageInput.value}`;
+        chatWindow.appendChild(messageDiv);
+        messageInput.value = '';
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      }
+    }
+
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      loadNextCandidate();
+    });
+  </script>
+</body>
+</html>

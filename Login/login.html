@@ -4,84 +4,102 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login - DoomBoard</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Orbitron&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="loginstyle.css" />
 </head>
 <body>
   <div class="background-overlay"></div>
-
+  <div class="cyber-grid"></div>
   <div class="glass-card">
     <h2 class="logo">LOGIN</h2>
-    
     <form onsubmit="signIn(event)">
       <label>Email</label>
       <input type="email" id="email" placeholder="username@gmail.com" required />
-      
       <label>Password</label>
       <input type="password" id="password" placeholder="Password" required />
-      
       <div class="forgot" onclick="forgotPassword()">Forgot Password?</div>
-      <button type="submit">Sign in</button>
+      <button type="submit">Login</button>
     </form>
-
     <p class="register">Don't have an account yet? <a href="../signup/signup.html">Register for free</a></p>
     <p id="message" style="color: white; margin-top: 10px;"></p>
   </div>
 
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
-    authDomain: "doom-s-world.firebaseapp.com",
-    projectId: "doom-s-world",
-    storageBucket: "doom-s-world.appspot.com",
-    messagingSenderId: "445783209326",
-    appId: "1:445783209326:web:700e95a429e7d06104fd7f",
-    measurementId: "G-86151LPWTC"
-  };
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
+      authDomain: "doom-s-world.firebaseapp.com",
+      projectId: "doom-s-world",
+      storageBucket: "doom-s-world.appspot.com",
+      messagingSenderId: "445783209326",
+      appId: "1:445783209326:web:700e95a429e7d06104fd7f",
+      measurementId: "G-86151LPWTC"
+    };
 
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
 
-function signIn(event) {
-  event.preventDefault();
+    function signIn(event) {
+      event.preventDefault();
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
 
-  auth.signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
-      const uid = userCredential.user.uid;
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
 
-      // Get user document from Firestore
-      return db.collection("users").doc(uid).get();
-    })
-    .then((doc) => {
-      if (doc.exists) {
-        const userData = doc.data();
-        const character = userData.character;
+          if (!user.emailVerified) {
+            document.getElementById("message").innerText = "❌ Please verify your email before logging in.";
+            auth.signOut();
+            return;
+          }
 
-        // ✅ Updated paths based on root-level dashboards
-        if (character === "candidate") {
-          window.location.href = "../candidate_dashboard.html";
-        } else if (character === "doom") {
-          window.location.href = "../doom_dashboard.html";
-        } else {
-          document.getElementById("message").innerText = "❗ Unknown character type.";
-        }
-      } else {
-        document.getElementById("message").innerText = "❌ User data not found.";
+          const uid = user.uid;
+
+          return db.collection("users").doc(uid).get();
+        })
+        .then((doc) => {
+          if (!doc) return;
+
+          if (doc.exists) {
+            const userData = doc.data();
+            const character = userData.character;
+            const userName = userData.name || userData.email || 'User';
+
+            // Redirect to welcome screen with user info
+            const welcomeUrl = `welcome.html?type=${character}&name=${encodeURIComponent(userName)}`;
+            window.location.href = welcomeUrl;
+          } else {
+            document.getElementById("message").innerText = "❌ User data not found.";
+          }
+        })
+        .catch((error) => {
+          document.getElementById("message").innerText = "❌ " + error.message;
+        });
+    }
+
+    function forgotPassword() {
+      const email = document.getElementById("email").value;
+      const message = document.getElementById("message");
+
+      if (!email) {
+        message.innerText = "❗ Please enter your email to reset password.";
+        return;
       }
-    })
-    .catch((error) => {
-      document.getElementById("message").innerText = "❌ " + error.message;
-    });
-}
-</script>
 
+      auth.sendPasswordResetEmail(email)
+        .then(() => {
+          message.innerText = "✅ Password reset email sent! Check your inbox.";
+        })
+        .catch((error) => {
+          message.innerText = "❌ " + error.message;
+        });
+    }
+  </script>
 </body>
 </html>
