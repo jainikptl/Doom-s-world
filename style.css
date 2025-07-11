@@ -23,7 +23,7 @@ body {
     linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
   background-size: 50px 50px;
-  animation: gridMove 20s linear infinite;
+  animation: gridMove 10s linear infinite;
   z-index: -2;
 }
 
@@ -91,21 +91,21 @@ body {
 
 .logo {
   font-family: 'Bruno Ace SC', sans-serif;
-  font-size: 2rem;
-  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  font-size: 1.8rem;
+  background: linear-gradient(45deg, #22d3ee, #8b5cf6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  text-shadow: 0 0 20px rgba(62, 62, 62, 0.5);
   animation: glow 2s ease-in-out infinite alternate;
 }
 
 @keyframes glow {
   from {
-    filter: drop-shadow(0 0 5px #00ffff);
+    filter: drop-shadow(0 0 5px #759595);
   }
 
   to {
-    filter: drop-shadow(0 0 20px #00ffff);
+    filter: drop-shadow(0 0 20px #81a2a2);
   }
 }
 
@@ -129,7 +129,7 @@ body {
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  background: linear-gradient(45deg, #22d3ee, #a78bfa);
   transition: width 0.3s ease;
 }
 
@@ -154,7 +154,7 @@ body {
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 255, 255, 0.1)),
+  background: linear-gradient(135deg, #06b5d42c, #786d8a1f),
 
     url(assets/Hero_entry\ \(2\).gif);
   background-size: cover, cover, cover;
