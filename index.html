@@ -24,6 +24,7 @@
                 <a href="#problem">Problem</a>
                 <a href="#solution">Solution</a>
                 <a href="#tech">Tech Stack</a>
+                <a href="#aboutus">About us</a>
             </nav>
         </div>
     </header>
@@ -300,5 +301,24 @@
             }
         }, 2000);
     </script>
+    <div id="about-us-container"></div>
+    <script>
+      fetch('aboutUs/aboutusCard.html')
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById('about-us-container').innerHTML = html;
+    
+          // After injecting the section, load CSS and JS
+          const css = document.createElement('link');
+          css.rel = 'stylesheet';
+          css.href = 'aboutUs/aboutusCard.css';
+          document.head.appendChild(css);
+    
+          const js = document.createElement('script');
+          js.src = 'aboutUs/aboutusCard.js';
+          document.body.appendChild(js);
+        });
+    </script>
+    
 </body>
 </html>
