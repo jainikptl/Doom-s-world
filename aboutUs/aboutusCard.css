@@ -500,4 +500,16 @@
     gap: 2rem;
     padding: 2rem;
   }
+
+  .pc-social-icons i {
+  color: white;
+  font-size: 24px;
+  transition: transform 0.3s ease;
+}
+
+.pc-social-icons a:hover i {
+  transform: scale(1.2);
+  color: #00ffc3;
+}
+
   

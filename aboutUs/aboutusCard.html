@@ -1,67 +1,86 @@
-<!-- About us section -->
-<section id="aboutus" class="section about-us">
-    <div class="pc-card-container">
-      
-      <!-- Card 1 - Jainik -->
-      <div class="pc-card-wrapper">
-        <div class="pc-card">
-          <div class="pc-inside"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile Card</title>
+  <link rel="stylesheet" href="aboutusCard.css" />
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+  <div class="pc-card-container">
+    <!-- CARD 1 -->
+    <div class="pc-card-wrapper">
+      <section class="pc-card">
+        <div class="pc-inside">
           <div class="pc-shine"></div>
           <div class="pc-glare"></div>
-          <div class="pc-avatar-content">
-            <img src="../assets/Jainik_image.jpeg" alt="Avatar" class="avatar" />
-          </div>
-          <div class="pc-content">
-            <div class="pc-details">
-              <h3>Jainik Patel</h3>
-              <p>Web Dev | Visionary</p>
-            </div>
-          </div>
-          <div class="pc-user-info">
-            <div class="pc-user-details">
-              <div class="pc-mini-avatar">
-                <img src="../assets/Jainik_image.jpeg" alt="Mini Avatar" />
-              </div>
-              <div class="pc-user-text">
-                <span class="pc-handle">@jainikptl</span>
-                <span class="pc-status">Web Dev | Visionary</span>
+
+          <div class="pc-content pc-avatar-content">
+            <img class="avatar" src="https://i.imgur.com/QCNbOAo.png" alt="User avatar" />
+            <!-- Only icons in the frame -->
+            <div class="pc-user-info" style="justify-content: center;">
+              <div class="pc-social-icons" style="display: flex; gap: 20px;">
+                <a href="https://github.com/yourusername" target="_blank" aria-label="GitHub">
+                  <i class="fab fa-github" style="color: white; font-size: 24px;"></i>
+                </a>
+                <a href="https://instagram.com/akshatpatel.19" target="_blank" aria-label="Instagram">
+                  <i class="fab fa-instagram" style="color: white; font-size: 24px;"></i>
+                </a>
+                <a href="mailto:your@email.com" aria-label="Email">
+                  <i class="fas fa-envelope" style="color: white; font-size: 24px;"></i>
+                </a>
               </div>
             </div>
-            <div class="pc-contact-btn">Contact</div>
           </div>
-        </div>
-      </div>
-  
-      <!-- Card 2 - Akshat -->
-      <div class="pc-card-wrapper">
-        <div class="pc-card">
-          <div class="pc-inside"></div>
-          <div class="pc-shine"></div>
-          <div class="pc-glare"></div>
-          <div class="pc-avatar-content">
-            <img src="../assets/akshat_image.jpg" alt="Avatar" class="avatar" />
-          </div>
+
           <div class="pc-content">
             <div class="pc-details">
               <h3>Akshat Patel</h3>
-              <p>Backend Maestro | Infra Head</p>
+              <p>Software Engineer</p>
             </div>
-          </div>
-          <div class="pc-user-info">
-            <div class="pc-user-details">
-              <div class="pc-mini-avatar">
-                <img src="../assets/akshat_image.jpg" alt="Mini Avatar" />
-              </div>
-              <div class="pc-user-text">
-                <span class="pc-handle">@akshat</span>
-                <span class="pc-status">Backend Maestro | Infra Head</span>
-              </div>
-            </div>
-            <div class="pc-contact-btn">Contact</div>
           </div>
         </div>
-      </div>
-  
+      </section>
     </div>
-  </section>
-  
+
+    <!-- CARD 2 (duplicate with different links if needed) -->
+    <div class="pc-card-wrapper">
+      <section class="pc-card">
+        <div class="pc-inside">
+          <div class="pc-shine"></div>
+          <div class="pc-glare"></div>
+
+          <div class="pc-content pc-avatar-content">
+            <img class="avatar" src="https://i.imgur.com/QCNbOAo.png" alt="User avatar" />
+            <!-- Only icons in the frame -->
+            <div class="pc-user-info" style="justify-content: center;">
+              <div class="pc-social-icons" style="display: flex; gap: 20px;">
+                <a href="https://github.com/yourusername" target="_blank" aria-label="GitHub">
+                  <i class="fab fa-github" style="color: white; font-size: 24px;"></i>
+                </a>
+                <a href="https://instagram.com/akshatpatel.19" target="_blank" aria-label="Instagram">
+                  <i class="fab fa-instagram" style="color: white; font-size: 24px;"></i>
+                </a>
+                <a href="mailto:your@email.com" aria-label="Email">
+                  <i class="fas fa-envelope" style="color: white; font-size: 24px;"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="pc-content">
+            <div class="pc-details">
+              <h3>Jainik Patel</h3>
+              <p>Web Developer</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="aboutusCard.js"></script>
+</body>
+</html>
