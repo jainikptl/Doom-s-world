@@ -200,6 +200,10 @@
     pointer-events: none;
   }
   
+  .pc-social-icons a {
+    pointer-events: auto !important;
+  }
+  
   .pc-user-info {
     position: absolute;
     bottom: 20px;
