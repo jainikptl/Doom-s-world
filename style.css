@@ -154,9 +154,8 @@ body {
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, #06b5d42c, #786d8a1f),
-
-    url(assets/Hero_entry\ \(2\).gif);
+  background: linear-gradient(135deg, #06b5d411, #786d8a1f),
+  url(assets/Hero_entry\ \(2\).gif);
   background-size: cover, cover, cover;
   background-position: center, center, center;
   background-repeat: no-repeat;
