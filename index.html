@@ -1,335 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PS - Future of Recruitment</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PS - Future of Recruitment</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <!-- Background Effects -->
-    <div class="cyber-grid"></div>
-    <div class="particle-network" id="particle-network"></div>
-    <div class="digital-rain" id="digital-rain"></div>
-    <div class="lightning-container" id="lightning-container"></div>
 
-    <!-- Header -->
-    <header class="header">
-        <div class="nav-container">
-            <div class="logo"><img src="assets/pngegg.png" alt="logo" height="40"> </div>
-            <nav class="nav-links">
-                <a href="#home">Home</a>
-                <a href="#features">Features</a>
-                <a href="#problem">Problem</a>
-                <a href="#solution">Solution</a>
-                <a href="#tech">Tech Stack</a>
-                <a href="#aboutus">About us</a>
-            </nav>
+  <!-- Background Effects -->
+  <div class="cyber-grid"></div>
+  <div id="particle-network" class="particle-network"></div>
+  <div id="digital-rain" class="digital-rain"></div>
+  <div id="lightning-container" class="lightning-container"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="nav-container">
+      <div class="logo">
+        <img src="assets/pngegg.png" alt="Project Logo" height="40" />
+      </div>
+      <nav class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#features">Features</a>
+        <a href="#problem-solution">Overview</a>
+        <a href="#aboutus">About Us</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- Hero Section -->
+    <section id="home" class="section hero">
+      <div class="hero-content">
+        <h1>WELCOME TO THE DIGITAL KINGDOM OF DOCTOR DOOM</h1>
+        <p>The future of recruitment is here. Where talent meets opportunity in a digital universe of endless possibilities.</p>
+        <div class="hero-btn-container">
+          <a href="./Login/login.html" class="btn-link">
+            <button type="button" class="btn">
+              <strong>ENTER</strong>
+              <div id="container-stars"><div id="stars"></div></div>
+              <div id="glow">
+                <div class="circle"></div>
+                <div class="circle"></div>
+              </div>
+            </button>
+          </a>
         </div>
-    </header>
+      </div>
+    </section>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Hero Section -->
-        <section id="home" class="section hero">
-            <div class="hero-content">
-                <h1>WELCOME TO THE DIGITAL KINGDOM OF DOCTOR DOOM</h1>
-                <p>The future of recruitment is here. Where talent meets opportunity in a digital universe of endless possibilities.</p>
-                <div class="hero-btn-container">
-                    <a href="./Login/login.html" class="btn-link">
-                      <button type="button" class="btn">
-                        <strong>ENTER</strong>
-                        <div id="container-stars"><div id="stars"></div></div>
-                        <div id="glow">
-                          <div class="circle"></div>
-                          <div class="circle"></div>
-                        </div>
-                      </button>
-                    </a>
-                  </div>
+    <!-- Features Section -->
+    <section id="features" class="section features">
+      <h2 style="text-align: center; font-size: 3rem; margin-bottom: 20px; color: #00ffff;">CORE FEATURES FOR CANDIDATES</h2>
+      <div class="features-grid">
+
+        <div class="feature-card">
+          <div class="feature-icon">🧭</div>
+          <h3>Personalized Job Recommendations</h3>
+          <p>Get matched with roles that suit your skills, goals, and preferences through our intelligent suggestion engine.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📝</div>
+          <h3>Smart Resume Analyzer</h3>
+          <p>Upload your resume and instantly receive tips to improve it based on the job description and industry trends.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>Mock Interview Practice</h3>
+          <p>Sharpen your skills with guided mock interviews and get real-time AI feedback on your performance.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📹</div>
+          <h3>One-Click Video Interview</h3>
+          <p>Seamlessly attend interviews without downloading any apps—just one click and you're in.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📅</div>
+          <h3>Interview Scheduler & Reminders</h3>
+          <p>Never miss an opportunity—automated scheduling and timely notifications keep you on track.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📚</div>
+          <h3>Interview Preparation Toolkit</h3>
+          <p>Access curated questions, company insights, and expert tips to prepare with confidence.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Problem & Solution Section -->
+    <section id="problem-solution" class="section problem-solution" style="padding: 60px 20px; background: #0a0a0a; color: #fff;">
+      <h2 style="text-align: center; font-size: 3rem; margin-bottom: 40px; color: #00ffff;">THE PROBLEM & OUR SOLUTION</h2>
+
+      <div style="max-width: 1200px; margin: auto;">
+
+        <!-- Problem -->
+        <div style="margin-bottom: 60px;">
+          <p style="font-size: 1.2rem; line-height: 1.8; text-align: center; margin-bottom: 30px;">
+            Recruitment today feels like a maze—for both candidates and recruiters. From clunky platforms to long hiring timelines, the experience is broken on both sides.
+          </p>
+          <div class="problem-stats" style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 30px;">
+            <div class="stat">
+              <div class="stat-number" style="font-size: 2rem; color: #ff00ff;">73%</div>
+              <div class="stat-label">of recruiters struggle with outdated tools</div>
             </div>
-        </section>
-
-        <!-- Features Section -->
-        <section id="features" class="section features">
-            <h2 style="text-align: center; font-size: 3rem; margin-bottom: 20px; color: #00ffff;">CORE FEATURES</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>AI-Powered Matching</h3>
-                    <p>Advanced algorithms that connect perfect candidates with dream opportunities in milliseconds.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📱</div>
-                    <h3>Swipe-to-Select</h3>
-                    <p>Tinder-style candidate browsing that makes recruitment fun, fast, and incredibly efficient.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💬</div>
-                    <h3>Real-Time Chat</h3>
-                    <p>Instant communication between candidates and recruiters with video interview capabilities.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Control Room Dashboard</h3>
-                    <p>Mission control-style interface for recruiters to manage the entire hiring pipeline.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔐</div>
-                    <h3>Secure & Private</h3>
-                    <p>Bank-level security ensuring all data and communications remain completely protected.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📈</div>
-                    <h3>Smart Analytics</h3>
-                    <p>Deep insights and metrics to optimize hiring strategies and candidate experiences.</p>
-                </div>
+            <div class="stat">
+              <div class="stat-number" style="font-size: 2rem; color: #00ffff;">82%</div>
+              <div class="stat-label">of candidates want a better application experience</div>
             </div>
-        </section>
-
-        <!-- Problem Statement Section -->
-        <section id="problem" class="section problem">
-            <div class="problem-content">
-                <h2>THE PROBLEM</h2>
-                <p style="font-size: 1.2rem; line-height: 1.8;">Traditional recruitment is broken. Outdated platforms, endless paperwork, slow processes, and zero engagement. It's time for a revolution.</p>
-                <div class="problem-stats">
-                    <div class="stat">
-                        <div class="stat-number">73%</div>
-                        <div class="stat-label">of recruiters struggle with outdated tools</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">45</div>
-                        <div class="stat-label">days average time to hire</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-number">82%</div>
-                        <div class="stat-label">of candidates want better experience</div>
-                    </div>
-                </div>
+            <div class="stat">
+              <div class="stat-number" style="font-size: 2rem; color: #ffcc00;">45</div>
+              <div class="stat-label">days — the average time to hire</div>
             </div>
-        </section>
+          </div>
+        </div>
 
-        <!-- Solution Section -->
-        <section id="solution" class="section solution">
-            <h2 style="text-align: center; font-size: 3rem; margin-bottom: 20px; color: #ff00ff;">THE SOLUTION</h2>
-            <div class="solution-demo">
-                <div class="demo-card">
-                    <div class="demo-content">
-                        <h3 style="color: #00ffff; margin-bottom: 20px;">For Candidates</h3>
-                        <ul style="text-align: left; line-height: 2;">
-                            <li>✨ Create stunning digital profiles</li>
-                            <li>🎯 Smart job matching</li>
-                            <li>📱 Mobile-first experience</li>
-                            <li>🎥 One-click video interviews</li>
-                            <li>📊 Real-time application tracking</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="demo-card">
-                    <div class="demo-content">
-                        <h3 style="color: #ff00ff; margin-bottom: 20px;">For Recruiters</h3>
-                        <ul style="text-align: left; line-height: 2;">
-                            <li>🎮 Gamified candidate browsing</li>
-                            <li>🤖 AI-powered recommendations</li>
-                            <li>📅 Automated scheduling</li>
-                            <li>🔄 Collaborative hiring tools</li>
-                            <li>📈 Advanced analytics dashboard</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- Solution -->
+        <div class="solution-demo" style="display: flex; gap: 30px; flex-wrap: wrap; justify-content: center;">
+          <div class="demo-card" style="flex: 1; min-width: 280px; background: #1a1a1a; border-radius: 10px; padding: 30px;">
+            <h3 style="color: #00ffff; margin-bottom: 20px;">🙋 For Candidates</h3>
+            <ul style="line-height: 2;">
+              <li>✨ Create stunning digital profiles</li>
+              <li>🎯 Get matched with ideal jobs instantly</li>
+              <li>📱 Enjoy a smooth mobile-first experience</li>
+              <li>🎥 One-click video interviews</li>
+              <li>📊 Real-time tracking of your applications</li>
+            </ul>
+          </div>
 
-        <!-- Tech Stack Section -->
-        <section id="tech" class="section tech-stack">
-            <h2 style="text-align: center; font-size: 3rem; margin-bottom: 20px; color: #ffff00;">TECH STACK</h2>
-            <div class="tech-grid">
-                <div class="tech-item">
-                    <h4>React</h4>
-                    <p>Frontend</p>
-                </div>
-                <div class="tech-item">
-                    <h4>Node.js</h4>
-                    <p>Backend</p>
-                </div>
-                <div class="tech-item">
-                    <h4>MongoDB</h4>
-                    <p>Database</p>
-                </div>
-                <div class="tech-item">
-                    <h4>Socket.io</h4>
-                    <p>Real-time</p>
-                </div>
-                <div class="tech-item">
-                    <h4>WebRTC</h4>
-                    <p>Video Chat</p>
-                </div>
-                <div class="tech-item">
-                    <h4>TensorFlow</h4>
-                    <p>AI/ML</p>
-                </div>
-                <div class="tech-item">
-                    <h4>AWS</h4>
-                    <p>Cloud</p>
-                </div>
-                <div class="tech-item">
-                    <h4>Docker</h4>
-                    <p>Deployment</p>
-                </div>
-            </div>
-        </section>
-    </main>
+          <div class="demo-card" style="flex: 1; min-width: 280px; background: #1a1a1a; border-radius: 10px; padding: 30px;">
+            <h3 style="color: #ff00ff; margin-bottom: 20px;">🏢 For Recruiters</h3>
+            <ul style="line-height: 2;">
+              <li>🎮 Gamified candidate browsing</li>
+              <li>🤖 AI-powered recommendations</li>
+              <li>📅 Automated scheduling & reminders</li>
+              <li>🔄 Real-time collaboration across teams</li>
+              <li>📈 Smart analytics dashboard</li>
+            </ul>
+          </div>
+        </div>
 
-    <script>
-        // Particle Network Animation
-        function createParticleNetwork() {
-            const container = document.getElementById('particle-network');
-            const particleCount = 50;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                container.appendChild(particle);
-            }
+      </div>
+    </section>
+  </main>
+
+  <!-- Load About Us -->
+  <div id="about-us-container"></div>
+  <script>
+    fetch('aboutUs/aboutusCard.html')
+      .then(res => res.text())
+      .then(html => {
+        document.getElementById('about-us-container').innerHTML = html;
+
+        const css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.href = 'aboutUs/aboutusCard.css';
+        document.head.appendChild(css);
+
+        const js = document.createElement('script');
+        js.src = 'aboutUs/aboutusCard.js';
+        document.body.appendChild(js);
+      });
+  </script>
+
+  <!-- Effects & Animations -->
+  <script>
+    // Particle Network
+    function createParticleNetwork() {
+      const container = document.getElementById('particle-network');
+      for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.top = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 6 + 's';
+        container.appendChild(particle);
+      }
+    }
+
+    // Digital Rain
+    function createDigitalRain() {
+      const container = document.getElementById('digital-rain');
+      for (let i = 0; i < 70; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'rain-drop';
+        drop.textContent = 'I';
+        drop.style.left = Math.random() * 100 + '%';
+        drop.style.animationDelay = Math.random() * 3 + 's';
+        drop.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        container.appendChild(drop);
+      }
+    }
+
+    // Lightning Effect
+    function createLightning() {
+      const container = document.getElementById('lightning-container');
+      function strike() {
+        const lightning = document.createElement('div');
+        lightning.className = 'lightning';
+        lightning.style.left = Math.random() * 100 + '%';
+        lightning.style.top = Math.random() * 20 + '%';
+        container.appendChild(lightning);
+
+        const flash = document.createElement('div');
+        flash.className = 'screen-flash';
+        document.body.appendChild(flash);
+
+        setTimeout(() => {
+          lightning.remove();
+          flash.remove();
+        }, 200);
+      }
+
+      function randomStrike() {
+        if (Math.random() < 0.3) strike();
+        setTimeout(randomStrike, Math.random() * 1000 + 100);
+      }
+
+      setTimeout(randomStrike, 2000);
+    }
+
+    // Smooth Scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
+      });
+    });
 
-        // Digital Rain Effect
-        function createDigitalRain() {
-            const container = document.getElementById('digital-rain');
-            const characters = 'I';
-            const rainCount = 150;
-            
-            for (let i = 0; i < rainCount; i++) {
-                const drop = document.createElement('div');
-                drop.className = 'rain-drop';
-                drop.textContent = characters[Math.floor(Math.random() * characters.length)];
-                drop.style.left = Math.random() * 100 + '%';
-                drop.style.animationDelay = Math.random() * 3 + 's';
-                drop.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                container.appendChild(drop);
-            }
+    // Section Animations
+    const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -100px 0px' };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
         }
+      });
+    }, observerOptions);
 
-        // Lightning Effect
-        function createLightning() {
-            const container = document.getElementById('lightning-container');
-            
-            function strike() {
-                const lightning = document.createElement('div');
-                lightning.className = 'lightning';
-                lightning.style.left = Math.random() * 100 + '%';
-                lightning.style.top = Math.random() * 20 + '%';
-                container.appendChild(lightning);
-                
-                const flash = document.createElement('div');
-                flash.className = 'screen-flash';
-                document.body.appendChild(flash);
-                
-                setTimeout(() => {
-                    lightning.remove();
-                    flash.remove();
-                }, 200);
-            }
-            
-            function randomStrike() {
-                if (Math.random() < 0.3) {
-                    strike();
-                }
-                setTimeout(randomStrike, Math.random() * 1000 + 100);
-            }
-            
-            setTimeout(randomStrike, 2000);
-        }
+    document.querySelectorAll('.section').forEach(section => {
+      section.style.opacity = '0';
+      section.style.transform = 'translateY(50px)';
+      section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+      observer.observe(section);
+    });
 
-        // Parallax Scrolling Effect
-        function handleParallax() {
-            const scrolled = window.pageYOffset;
-            const parallaxElements = document.querySelectorAll('.hero::before');
-            
-            parallaxElements.forEach(element => {
-                const speed = 0.5;
-                element.style.transform = `translateY(${scrolled * speed}px)`;
-            });
-        }
+    // Logo Glitch Effect
+    const logo = document.querySelector('.logo');
+    setInterval(() => {
+      if (Math.random() < 0.1) {
+        logo.style.textShadow = '2px 0 #ff00ff, -2px 0 #00ffff';
+        setTimeout(() => {
+          logo.style.textShadow = '0 0 20px rgba(0, 255, 255, 0.5)';
+        }, 100);
+      }
+    }, 2000);
 
-        // Smooth Scrolling for Navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-
-        // Initialize Effects
-        createParticleNetwork();
-        createDigitalRain();
-        createLightning();
-
-        // Event Listeners
-        window.addEventListener('scroll', handleParallax);
-
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        }, observerOptions);
-
-        // Observe all sections
-        document.querySelectorAll('.section').forEach(section => {
-            section.style.opacity = '0';
-            section.style.transform = 'translateY(50px)';
-            section.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-            observer.observe(section);
-        });
-
-        // Glitch Effect on Logo
-        const logo = document.querySelector('.logo');
-        setInterval(() => {
-            if (Math.random() < 0.1) {
-                logo.style.textShadow = '2px 0 #ff00ff, -2px 0 #00ffff';
-                setTimeout(() => {
-                    logo.style.textShadow = '0 0 20px rgba(0, 255, 255, 0.5)';
-                }, 100);
-            }
-        }, 2000);
-    </script>
-    <div id="about-us-container"></div>
-    <script>
-      fetch('aboutUs/aboutusCard.html')
-        .then(res => res.text())
-        .then(html => {
-          document.getElementById('about-us-container').innerHTML = html;
-    
-          // After injecting the section, load CSS and JS
-          const css = document.createElement('link');
-          css.rel = 'stylesheet';
-          css.href = 'aboutUs/aboutusCard.css';
-          document.head.appendChild(css);
-    
-          const js = document.createElement('script');
-          js.src = 'aboutUs/aboutusCard.js';
-          document.body.appendChild(js);
-        });
-    </script>
-    
+    // Init All Effects
+    createParticleNetwork();
+    createDigitalRain();
+    createLightning();
+  </script>
 </body>
 </html>

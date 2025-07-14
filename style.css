@@ -522,72 +522,6 @@ strong {
   opacity: 0.8;
 }
 
-/* Solution Section */
-.solution {
-  background: rgba(0, 0, 0, 0.95);
-}
-
-.solution-demo {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: center;
-  margin-top: 60px;
-}
-
-.demo-card {
-  background: linear-gradient(135deg, rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
-  padding: 40px;
-  border-radius: 20px;
-  border: 1px solid rgba(0, 255, 255, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.demo-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: conic-gradient(from 0deg, transparent, rgba(0, 255, 255, 0.1), transparent);
-  animation: rotate 4s linear infinite;
-}
-
-.demo-content {
-  position: relative;
-  z-index: 10;
-}
-
-/* Tech Stack Section */
-.tech-stack {
-  background: linear-gradient(135deg, rgba(255, 255, 0, 0.1), rgba(0, 0, 0, 0.9));
-}
-
-.tech-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 30px;
-  margin-top: 60px;
-}
-
-.tech-item {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 15px;
-  text-align: center;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.tech-item:hover {
-  transform: scale(1.1);
-  background: rgba(255, 255, 0, 0.2);
-  box-shadow: 0 10px 30px rgba(255, 255, 0, 0.3);
-}
-
-
 /* Lightning and Rain Effects */
 .lightning-container {
   position: fixed;
@@ -665,7 +599,7 @@ strong {
 
 .rain-drop {
   position: absolute;
-  color: #00ffff;
+  color: #ffffff;
   font-size: 12px;
   opacity: 0.7;
   animation: fall 3s linear infinite;
@@ -728,3 +662,4 @@ strong {
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(45deg, #ff00ff, #00ffff);
 }
+
