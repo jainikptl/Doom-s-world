@@ -137,6 +137,19 @@ body {
   width: 100%;
 }
 
+.header {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transform: translateY(-20px); /* subtle slide up */
+}
+
+.header.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
 /* Main Content */
 .main-content {
   margin-top: 80px;
@@ -163,6 +176,21 @@ body {
   position: relative;
   overflow: hidden;
 }
+
+/* Hide hero content on scroll */
+.hidden-hero {
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
+}
+.hidden-hero {
+  opacity: 0;
+  transform: translateY(-100%);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
+}
+
 
 /* .hero::before {
   content: '';
@@ -194,7 +222,7 @@ body {
   font-family: 'Bruno Ace SC', sans-serif;
   font-size: 4rem;
   margin-bottom: 20px;
-  background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00);
+  background: linear-gradient(45deg, #f5434f, #ffffff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   animation: textGlow 3s ease-in-out infinite alternate;
@@ -202,11 +230,11 @@ body {
 
 @keyframes textGlow {
   from {
-    filter: drop-shadow(0 0 10px #00ffff);
+    filter: drop-shadow(0 0 10px #631e29);
   }
 
   to {
-    filter: drop-shadow(0 0 30px #ff00ff);
+    filter: drop-shadow(0 0 30px #f5434f);
   }
 }
 
