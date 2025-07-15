@@ -1,5 +1,47 @@
 // Professional Admin Dashboard JavaScript
 
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+// ✅ Your Firebase config here
+const firebaseConfig = {
+  apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
+  authDomain: "doom-s-world.firebaseapp.com",
+  projectId: "doom-s-world",
+  storageBucket: "doom-s-world.firebasestorage.app",
+  messagingSenderId: "445783209326",
+  appId: "1:445783209326:web:700e95a429e7d06104fd7f",
+  measurementId: "G-86151LPWTC"
+};
+
+// ✅ Initialize Firebase and Firestore
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+async function loadDashboardStats() {
+  // Count users where character == "candidate"
+  const usersSnap = await getDocs(query(collection(db, "users"), where("character", "==", "candidate")));
+  document.getElementById("totalCandidates").textContent = usersSnap.size;
+
+  // Count applications where isActive == true
+  const appsSnap = await getDocs(query(collection(db, "applications"), where("isActive", "==", true)));
+  document.getElementById("totalApplications").textContent = appsSnap.size;
+
+  // Count interviews where status == "pending"
+  const interviewSnap = await getDocs(query(collection(db, "interview"), where("status", "==", "pending")));
+  document.getElementById("pendingInterviews").textContent = interviewSnap.size;
+}
+
+// ✅ Load stats
+loadDashboardStats();
+
+
 // Sample candidate data with enhanced information
 const candidates = [
     {
