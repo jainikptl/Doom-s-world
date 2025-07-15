@@ -154,7 +154,7 @@ body {
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, #06b5d411, #786d8a1f),
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
   url(assets/Dr_doom\ _magic\ \(1\)\ \(1\).jpg);
   background-size: cover, cover, cover;
   background-position: center, center, center;
@@ -164,7 +164,7 @@ body {
   overflow: hidden;
 }
 
-.hero::before {
+/* .hero::before {
   content: '';
   position: absolute;
   top: -50%;
@@ -173,7 +173,7 @@ body {
   height: 200%;
   background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
   animation: rotate 20s linear infinite;
-}
+} */
 
 @keyframes rotate {
   0% {
