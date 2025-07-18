@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile - Candidate Portal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0f0f23 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(15, 15, 35, 0.9);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(34, 197, 94, 0.3);
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #22c55e;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #cbd5e1;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(34, 197, 94, 0.2);
+            color: #ffffff;
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            color: #ffffff;
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+            opacity: 0.8;
+        }
+
+        .notification-badge {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(15, 15, 35, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(34, 197, 94, 0.1), rgba(22, 163, 74, 0.1));
+            z-index: -1;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+        }
+
+        .profile-avatar-large:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(34, 197, 94, 0.4);
+        }
+
+        .avatar-edit {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 36px;
+            height: 36px;
+            background: #1f2937;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            border: 3px solid rgba(34, 197, 94, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .avatar-edit:hover {
+            background: #22c55e;
+            transform: scale(1.1);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .profile-title {
+            font-size: 20px;
+            color: #cbd5e1;
+            margin-bottom: 16px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #22c55e;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(34, 197, 94, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .profile-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .section-card {
+            background: rgba(15, 15, 35, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.2);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
+            font-size: 24px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #22c55e;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(15, 15, 35, 0.6);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .experience-item {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .experience-item:hover {
+            transform: translateX(5px);
+            background: rgba(34, 197, 94, 0.15);
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .experience-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #22c55e;
+            margin-bottom: 4px;
+        }
+
+        .experience-company {
+            color: #cbd5e1;
+            font-size: 16px;
+        }
+
+        .experience-duration {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-left: auto;
+        }
+
+        .experience-description {
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+
+        .add-experience-btn {
+            background: rgba(34, 197, 94, 0.1);
+            border: 2px dashed rgba(34, 197, 94, 0.3);
+            color: #22c55e;
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .add-experience-btn:hover {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: #22c55e;
+            transform: translateY(-2px);
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(34, 197, 94, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .contact-details {
+            flex: 1;
+        }
+
+        .contact-label {
+            font-size: 12px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .completion-bar {
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .completion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .completion-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #22c55e;
+        }
+
+        .completion-percentage {
+            font-size: 24px;
+            font-weight: 700;
+            color: #22c55e;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(34, 197, 94, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .floating-save {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(45deg, #22c55e, #16a34a);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .floating-save:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                position: relative;
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-content {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <div class="logo-icon">🚀</div>
+            <div class="logo-text">Candidate Portal</div>
+        </div>
+        
+        <nav>
+            <a href="../candidate_dashboard.html" class="nav-item">
+                <div class="nav-icon">📊</div>
+                Dashboard
+            </a>
+            
+            <a href="profile.html" class="nav-item active">
+                <div class="nav-icon">👤</div>
+                Your Profile
+            </a>
+            
+            <a href="skills.html" class="nav-item">
+                <div class="nav-icon">🎯</div>
+                Skills Arsenal
+            </a>
+            
+            <a href="projects.html" class="nav-item">
+                <div class="nav-icon">🛠️</div>
+                Projects
+            </a>
+            
+            <a href="resume.html" class="nav-item">
+                <div class="nav-icon">📄</div>
+                Resume
+            </a>
+            
+            <a href="chat.html" class="nav-item">
+                <div class="nav-icon">💬</div>
+                Direct Chat
+            </a>
+            
+            <a href="interviews.html" class="nav-item">
+                <div class="nav-icon">🎤</div>
+                Interviews
+                <div class="notification-badge">1</div>
+            </a>
+            
+            <a href="applications.html" class="nav-item">
+                <div class="nav-icon">📋</div>
+                Applications
+                <div class="notification-badge">3</div>
+            </a>
+            
+            <a href="leaderboard.html" class="nav-item">
+                <div class="nav-icon">🏆</div>
+                Leaderboard
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-content">
+        <div class="completion-bar">
+            <div class="completion-header">
+                <div class="completion-title">Profile Completion</div>
+                <div class="completion-percentage">89%</div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 89%"></div>
+            </div>
+        </div>
+
+        <div class="header">
+            <div class="profile-header">
+                <div class="profile-avatar-large">
+                    👤
+                    <div class="avatar-edit">📷</div>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name">Alex Johnson</div>
+                    <div class="profile-title">Senior Software Engineer</div>
+                    <div class="profile-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">5+</span>
+                            <span class="stat-label">Years Experience</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">25</span>
+                            <span class="stat-label">Projects</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number">12</span>
+                            <span class="stat-label">Skills</span>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn btn-primary">
+                            ✏️ Edit Profile
+                        </button>
+                        <button class="btn btn-secondary">
+                            📄 View Resume
+                        </button>
+                        <button class="btn btn-secondary">
+                            🔗 Copy Profile Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">📝</div>
+                    <div class="section-title">Personal Information</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" value="Alex Johnson">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Professional Title</label>
+                    <input type="text" class="form-input" value="Senior Software Engineer">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">About Me</label>
+                    <textarea class="form-input form-textarea" placeholder="Tell us about yourself...">Passionate software engineer with 5+ years of experience in full-stack development. Specializing in React, Node.js, and cloud technologies. Love creating innovative solutions and mentoring junior developers.</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" class="form-input" value="San Francisco, CA">
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">📧</div>
+                    <div class="section-title">Contact Information</div>
+                </div>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-details">
+                            <div class="contact-label">Email</div>
+                            <div class="contact-value">alex.johnson@email.com</div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">📱</div>
+                        <div class="contact-details">
+                            <div class="contact-label">Phone</div>
+                            <div class="contact-value">+1 (555) 123-4567</div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">🌐</div>
+                        <div class="contact-details">
+                            <div class="contact-label">Website</div>
+                            <div class="contact-value">alexjohnson.dev</div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">💼</div>
+                        <div class="contact-details">
+                            <div class="contact-label">LinkedIn</div>
+                            <div class="contact-value">linkedin.com/in/alexjohnson</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">💼</div>
+                    <div class="section-title">Work Experience</div>
+                </div>
+                
+                <div class="experience-item">
+                    <div class="experience-header">
+                        <div>
+                            <div class="experience-title">Senior Software Engineer</div>
+                            <div class="experience-company">TechCorp Solutions</div>
+                        </div>
+                        <div class="experience-duration">2021 - Present</div>
+                    </div>
+                    <div class="experience-description">
+                        Lead development of scalable web applications using React and Node.js. Mentor junior developers and architect cloud solutions serving 100K+ users.
+                    </div>
+                </div>
+                
+                <div class="experience-item">
+                    <div class="experience-header">
+                        <div>
+                            <div class="experience-title">Software Engineer</div>
+                            <div class="experience-company">StartupXYZ</div>
+                        </div>
+                        <div class="experience-duration">2019 - 2021</div>
+                    </div>
+                    <div class="experience-description">
+                        Developed full-stack applications and implemented CI/CD pipelines. Contributed to 40% increase in application performance.
+                    </div>
+                </div>
+                
+                <button class="add-experience-btn">
+                    ➕ Add Experience
+                </button>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <div class="section-icon">🎓</div>
+                    <div class="section-title">Education & Certifications</div>
+                </div>
+                
+                <div class="experience-item">
+                    <div class="experience-header">
+                        <div>
+                            <div class="experience-title">Bachelor of Computer Science</div>
+                            <div class="experience-company">Stanford University</div>
+                        </div>
+                        <div class="experience-duration">2015 - 2019</div>
+                    </div>
+                    <div class="experience-description">
+                        Graduated with honors. Specialized in software engineering and algorithms.
+                    </div>
+                </div>
+                
+                <div class="experience-item">
+                    <div class="experience-header">
+                        <div>
+                            <div class="experience-title">AWS Certified Solutions Architect</div>
+                            <div class="experience-company">Amazon Web Services</div>
+                        </div>
+                        <div class="experience-duration">2022</div>
+                    </div>
+                    <div class="experience-description">
+                        Professional level certification in cloud architecture and solutions design.
+                    </div>
+                </div>
+                
+                <button class="add-experience-btn">
+                    ➕ Add Education
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <button class="floating-save">
+        💾 Save Changes
+    </button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate progress bar
+            const progressBar = document.querySelector('.progress-fill');
+            const percentage = progressBar.style.width;
+            progressBar.style.width = '0%';
+            setTimeout(() => {
+                progressBar.style.width = percentage;
+            }, 500);
+
+            // Avatar upload simulation
+            const avatarEdit = document.querySelector('.avatar-edit');
+            avatarEdit.addEventListener('click', function() {
+                alert('Avatar upload feature coming soon!');
+            });
+
+            // Copy profile link
+            const copyBtn = document.querySelector('.btn-secondary:last-child');
+            copyBtn.addEventListener('click', function() {
+                navigator.clipboard.writeText('https://candidateportal.com/profile/alexjohnson');
+                this.innerHTML = '✅ Copied!';
+                setTimeout(() => {
+                    this.innerHTML = '🔗 Copy Profile Link';
+                }, 2000);
+            });
+
+            // Auto-save functionality
+            const inputs = document.querySelectorAll('.form-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    // Show save indicator
+                    const saveBtn = document.querySelector('.floating-save');
+                    saveBtn.style.background = 'linear-gradient(45deg, #f59e0b, #d97706)';
+                    saveBtn.innerHTML = '⏳ Saving...';
+                    
+                    setTimeout(() => {
+                        saveBtn.style.background = 'linear-gradient(45deg, #22c55e, #16a34a)';
+                        saveBtn.innerHTML = '✅ Saved!';
+                        setTimeout(() => {
+                            saveBtn.innerHTML = '💾 Save Changes';
+                        }, 1000);
+                    }, 1000);
+                });
+            });
+
+            // Add experience functionality
+            const addBtns = document.querySelectorAll('.add-experience-btn');
+            addBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    alert('Add experience form coming soon!');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
