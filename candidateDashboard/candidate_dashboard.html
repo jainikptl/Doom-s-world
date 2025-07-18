@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dr. Doom - Candidate Portal</title>
+    <title>Candidate Portal - Modern Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="candidate_dashboard.css">
 </head>
 <body>
@@ -11,152 +13,265 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="sidebar">
             <button class="toggle-btn" onclick="toggleSidebar()">
-                <span id="toggleIcon">◀</span>
+                <i class="fas fa-chevron-left" id="toggleIcon"></i>
             </button>
             
             <div class="sidebar-header">
                 <div class="logo">
-                    <div class="logo-icon">⚡</div>
-                    <div class="logo-text">Candidate Portal</div>
+                    <i class="fas fa-rocket"></i>
                 </div>
+                <div class="logo-text">Portal</div>
             </div>
             
-            <nav>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link active" onclick="showSection('dashboard')">
-                            <div class="nav-icon">🏠</div>
-                            <span class="nav-text">Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('profile')">
-                            <div class="nav-icon">👤</div>
-                            <span class="nav-text">Your Profile</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('skills')">
-                            <div class="nav-icon">🎯</div>
-                            <span class="nav-text">Skills Arsenal</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('projects')">
-                            <div class="nav-icon">🚀</div>
-                            <span class="nav-text">Project Showcase</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('resume')">
-                            <div class="nav-icon">📄</div>
-                            <span class="nav-text">Resume Manager</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('chat')">
-                            <div class="nav-icon">💬</div>
-                            <span class="nav-text">Direct Chat</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('interviews')">
-                            <div class="nav-icon">🎥</div>
-                            <span class="nav-text">Video Interviews</span>
-                            <span class="nav-badge">1</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('applications')">
-                            <div class="nav-icon">📋</div>
-                            <span class="nav-text">Application Status</span>
-                            <span class="nav-badge">3</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('leaderboard')">
-                            <div class="nav-icon">🏆</div>
-                            <span class="nav-text">Candidate Leaderboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('tests')">
-                            <div class="nav-icon">📊</div>
-                            <span class="nav-text">Skill Tests</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('calendar')">
-                            <div class="nav-icon">📅</div>
-                            <span class="nav-text">Calendar</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('analytics')">
-                            <div class="nav-icon">📈</div>
-                            <span class="nav-text">Analytics</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" onclick="showSection('settings')">
-                            <div class="nav-icon">⚙️</div>
-                            <span class="nav-text">Settings</span>
-                        </a>
-                    </li>
-                </ul>
+            <nav class="nav-menu">
+                <div class="nav-item">
+                    <a href="#" class="nav-link active">
+                        <i class="nav-icon fas fa-home"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-user"></i>
+                        <span class="nav-text">Your Profile</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-bullseye"></i>
+                        <span class="nav-text">Skills Arsenal</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-project-diagram"></i>
+                        <span class="nav-text">Projects</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-file-alt"></i>
+                        <span class="nav-text">Resume</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-comments"></i>
+                        <span class="nav-text">Direct Chat</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-video"></i>
+                        <span class="nav-text">Interviews</span>
+                        <span class="nav-badge">1</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-clipboard-list"></i>
+                        <span class="nav-text">Applications</span>
+                        <span class="nav-badge">3</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-trophy"></i>
+                        <span class="nav-text">Leaderboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-chart-bar"></i>
+                        <span class="nav-text">Skill Tests</span>
+                    </a>
+                </div>
             </nav>
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content" id="mainContent">
+        <main class="main-content">
             <!-- Header -->
             <header class="header">
-                <div class="header-left">
-                    <h1 class="page-title" id="pageTitle">Candidate Portal</h1>
+                <div class="greeting">
+                    <span class="greeting-emoji">👋</span>
+                    <div>
+                        <h1 class="greeting-text">Hello, Alex!</h1>
+                        <p style="color: var(--text-muted); font-size: 0.875rem;">Welcome back to your dashboard</p>
+                    </div>
                 </div>
-                <div class="header-right">
-                    <div class="status-badge">
-                        <span>●</span>
+                <div class="header-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-sun" id="themeIcon"></i>
+                    </button>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
                         <span>Online</span>
                     </div>
-                    <button class="logout-btn" onclick="logout()">Logout</button>
+                    <button class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
                 </div>
             </header>
 
-            <!-- Content Area -->
-            <div class="content-area">
-                <!-- Dashboard Section -->
-                <section id="dashboard" class="section active fade-in">
-                    <div class="dashboard-grid">
-                        <!-- Profile Card -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-icon">👤</div>
-                                <h3 class="card-title">Your Profile</h3>
-                            </div>
-                            <div class="profile-avatar">PROFILE</div>
-                            <div class="form-group">
-                                <input type="text" class="form-input" placeholder="Your Name" value="Alex Johnson">
-                            </div>
-                            <div class="form-group">
-                                <input type="text" class="form-input" placeholder="Job Title" value="Senior Software Engineer">
-                            </div>
-                            <button class="btn btn-primary" onclick="showSection('profile')">
-                                <span>📝</span>
-                                Edit Profile
-                            </button>
-                        </div>
+            <!-- Stats Grid -->
+            <div class="stats-grid fade-in">
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Active Applications</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Interview Requests</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">89%</div>
+                    <div class="stat-label">Profile Completion</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8.5</div>
+                    <div class="stat-label">Skill Rating</div>
+                </div>
+            </div>
 
-                        <!-- Skills Arsenal -->
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="card-icon">🎯</div>
-                                <h3 class="card-title">Skills Arsenal</h3>
-                            </div>
-                            <div class="skills-container">
-                                <div class="skill-tag">JavaScript</div>
-                                <div class="skill-tag">React</div>
-                                <div class="skill-tag">Node.js</div>
-                            </div>
-                            <div class="skill-input-container">
-                                <input type="text" class="form-input" placeholder="Add a skill
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Profile Card -->
+                <div class="card slide-in">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3 class="card-title">Your Profile</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-name">Alex Johnson</div>
+                        <div class="profile-role">Senior Software Engineer</div>
+                        <button class="btn btn-primary">
+                            <i class="fas fa-edit"></i>
+                            Edit Profile
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Skills Arsenal -->
+                <div class="card slide-in">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-bullseye"></i>
+                        </div>
+                        <h3 class="card-title">Skills Arsenal</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="skills-container">
+                            <div class="skill-tag">JavaScript</div>
+                            <div class="skill-tag">React</div>
+                            <div class="skill-tag">Node.js</div>
+                            <div class="skill-tag">Python</div>
+                            <div class="skill-tag">AWS</div>
+                            <div class="skill-tag">HTML</div>
+                        </div>
+                <!-- Progress Bars for Skills -->
+                <div class="progress-item">
+                    <div class="progress-label">
+                        <span>JavaScript</span>
+                        <span>90%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 90%;"></div>
+                    </div>
+                </div>
+
+                <div class="progress-item">
+                    <div class="progress-label">
+                        <span>React</span>
+                        <span>85%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+
+                <div class="progress-item">
+                    <div class="progress-label">
+                        <span>Node.js</span>
+                        <span>75%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+                </div>
+                </div>
+
+                <!-- Project Showcase -->
+                <div class="card slide-in">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <h3 class="card-title">Project Showcase</h3>
+                    </div>
+                    <div class="card-content">
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                            Highlight your top 3 projects to impress recruiters.
+                        </p>
+                        <a href="#" class="btn btn-secondary">
+                            <i class="fas fa-plus-circle"></i>
+                            Add Project
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Resume Manager -->
+                <div class="card slide-in">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3 class="card-title">Resume Manager</h3>
+                    </div>
+                    <div class="card-content">
+                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                            Upload and manage multiple versions of your resume.
+                        </p>
+                        <a href="#" class="btn btn-primary">
+                            <i class="fas fa-upload"></i>
+                            Upload Resume
+                        </a>
+                    </div>
+                </div>
+                </div> <!-- End Dashboard Grid -->
+                </main>
+                </div>
+
+                <!-- JavaScript -->
+                <script>
+                function toggleSidebar() {
+                    const sidebar = document.getElementById('sidebar');
+                    const toggleIcon = document.getElementById('toggleIcon');
+                    sidebar.classList.toggle('collapsed');
+                    if (sidebar.classList.contains('collapsed')) {
+                        toggleIcon.classList.remove('fa-chevron-left');
+                        toggleIcon.classList.add('fa-chevron-right');
+                    } else {
+                        toggleIcon.classList.remove('fa-chevron-right');
+                        toggleIcon.classList.add('fa-chevron-left');
+                    }
+                }
+
+                function toggleTheme() {
+                    const body = document.body;
+                    const themeIcon = document.getElementById('themeIcon');
+                    const isLight = body.getAttribute('data-theme') === 'light';
+                    body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+                    themeIcon.classList.toggle('fa-moon', !isLight);
+                    themeIcon.classList.toggle('fa-sun', isLight);
+                }
+        </script>
+    </body>
+</html>
