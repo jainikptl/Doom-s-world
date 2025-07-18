@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doom's Chat Center - Digital World</title>
+    <link rel="stylesheet" href="chat.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Logo Section -->
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-skull"></i>
+                </div>
+                <div>
+                    <h1>Doom's Chat</h1>
+                    <p class="logo-subtitle">Digital World Admin</p>
+                </div>
+            </div>
+
+            <!-- Chat Search -->
+            <div class="chat-search">
+                <div class="search-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="searchInput" placeholder="Search candidates..." class="search-input">
+                </div>
+            </div>
+
+            <!-- Candidates List -->
+            <div class="candidates-section">
+                <div class="section-header">
+                    <h3>Active Conversations</h3>
+                    <span class="candidates-count" id="candidatesCount">0</span>
+                </div>
+                <div class="candidates-list" id="candidatesList">
+                    <!-- Candidates will be loaded here -->
+                    <div class="loading-candidates">
+                        <div class="skeleton-candidate">
+                            <div class="skeleton-avatar"></div>
+                            <div class="skeleton-info">
+                                <div class="skeleton-name"></div>
+                                <div class="skeleton-message"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-candidate">
+                            <div class="skeleton-avatar"></div>
+                            <div class="skeleton-info">
+                                <div class="skeleton-name"></div>
+                                <div class="skeleton-message"></div>
+                            </div>
+                        </div>
+                        <div class="skeleton-candidate">
+                            <div class="skeleton-avatar"></div>
+                            <div class="skeleton-info">
+                                <div class="skeleton-name"></div>
+                                <div class="skeleton-message"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Profile -->
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name">Dr. Doom</div>
+                        <div class="user-role">Supreme Admin</div>
+                    </div>
+                    <div class="status-indicator online"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Chat Area -->
+        <div class="main-content">
+            <!-- Chat Header -->
+            <div class="chat-header" id="chatHeader">
+                <div class="chat-header-content">
+                    <div class="selected-candidate" id="selectedCandidate">
+                        <div class="candidate-avatar-large">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="candidate-info-large">
+                            <h2>Select a Candidate</h2>
+                            <p>Choose a conversation from the sidebar to start chatting</p>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="action-btn-header" id="clearChatBtn" title="Clear Chat">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="action-btn-header" id="candidateInfoBtn" title="Candidate Info">
+                            <i class="fas fa-info-circle"></i>
+                        </button>
+                        <button class="action-btn-header" id="archiveChatBtn" title="Archive Chat">
+                            <i class="fas fa-archive"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Messages Area -->
+            <div class="chat-messages" id="chatMessages">
+                <div class="welcome-message">
+                    <div class="welcome-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Welcome to Doom's Chat Center</h3>
+                    <p>Select a candidate from the sidebar to view your conversation history and continue chatting.</p>
+                    <div class="welcome-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <span>Active Candidates</span>
+                            <strong id="activeCandidatesCount">0</strong>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>Unread Messages</span>
+                            <strong id="unreadMessagesCount">0</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="chat-input-area" id="chatInputArea">
+                <div class="chat-input-container">
+                    <button class="attachment-btn" id="attachmentBtn">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <div class="input-wrapper">
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Type your message to the selected candidate..."
+                            rows="1"
+                            disabled
+                        ></textarea>
+                        <button class="emoji-btn" id="emojiBtn">
+                            <i class="fas fa-smile"></i>
+                        </button>
+                    </div>
+                    <button class="send-btn" id="sendBtn" disabled>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="typing-indicator" id="typingIndicator">
+                    <span class="typing-text"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Candidate Info Modal -->
+    <div class="modal-overlay" id="candidateModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Candidate Information</h3>
+                <button class="modal-close" id="modalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Candidate details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    
+    <script type="module" src="chat.js"></script>
+</body>
+</html>

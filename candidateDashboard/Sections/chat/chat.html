@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat with Doom - Avenger Candidate Portal</title>
+    <link rel="stylesheet" href="chat.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-container">
+            <div class="login-header">
+                <div class="logo-large">
+                    <div class="logo-icon-large">
+                        <i class="fas fa-mask"></i>
+                    </div>
+                    <h1>Avenger Portal</h1>
+                    <p>Connect with Doom's Digital World</p>
+                </div>
+            </div>
+            
+            <div class="login-form">
+                <h2>Candidate Login</h2>
+                <p>Enter your credentials to access the chat</p>
+                
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="candidateEmail">Email Address</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" id="candidateEmail" required placeholder="your.email@example.com">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="candidateName">Full Name</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="candidateName" required placeholder="Your Full Name">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="candidatePosition">Position Applied For</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-briefcase input-icon"></i>
+                            <select id="candidatePosition" required>
+                                <option value="">Select Position</option>
+                                <option value="iron-man">Iron Man</option>
+                                <option value="captain-america">Captain America</option>
+                                <option value="thor">Thor</option>
+                                <option value="hulk">Hulk</option>
+                                <option value="black-widow">Black Widow</option>
+                                <option value="hawkeye">Hawkeye</option>
+                                <option value="spider-man">Spider-Man</option>
+                                <option value="doctor-strange">Doctor Strange</option>
+                                <option value="captain-marvel">Captain Marvel</option>
+                                <option value="ant-man">Ant-Man</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        <span>Enter Chat Portal</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </form>
+                
+                <div class="login-footer">
+                    <p>First time here? Your account will be created automatically.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Chat Interface -->
+    <div class="chat-interface" id="chatInterface" style="display: none;">
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <div class="header-left">
+                <div class="doom-profile">
+                    <div class="doom-avatar">
+                        <i class="fas fa-skull"></i>
+                        <div class="status-indicator online"></div>
+                    </div>
+                    <div class="doom-info">
+                        <h2>Dr. Doom</h2>
+                        <p class="doom-status">Supreme Leader • Online</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="header-center">
+                <div class="connection-status" id="connectionStatus">
+                    <i class="fas fa-circle"></i>
+                    <span>Connected</span>
+                </div>
+            </div>
+            
+            <div class="header-right">
+                <button class="header-btn" id="profileBtn" title="Your Profile">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+                <button class="header-btn" id="settingsBtn" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="header-btn" id="logoutBtn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Messages Area -->
+        <div class="chat-messages" id="chatMessages">
+            <div class="welcome-message" id="welcomeMessage">
+                <div class="welcome-content">
+                    <div class="doom-welcome-avatar">
+                        <i class="fas fa-skull"></i>
+                    </div>
+                    <div class="welcome-text">
+                        <h3>Welcome to Doom's Chamber</h3>
+                        <p>You are now connected to Dr. Doom's private communication channel. State your purpose, mortal.</p>
+                        <div class="welcome-tips">
+                            <div class="tip">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Be respectful and professional in your communication</span>
+                            </div>
+                            <div class="tip">
+                                <i class="fas fa-clock"></i>
+                                <span>Doom typically responds within 24 hours</span>
+                            </div>
+                            <div class="tip">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>This conversation is secure and private</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div class="typing-indicator" id="typingIndicator">
+            <div class="typing-content">
+                <div class="typing-avatar">
+                    <i class="fas fa-skull"></i>
+                </div>
+                <div class="typing-text">
+                    <span>Doom is typing</span>
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Input Area -->
+        <div class="chat-input-area">
+            <div class="input-container">
+                <button class="attachment-btn" id="attachmentBtn" title="Attach File">
+                    <i class="fas fa-paperclip"></i>
+                </button>
+                
+                <div class="message-input-wrapper">
+                    <textarea 
+                        id="messageInput" 
+                        placeholder="Type your message to Doom..."
+                        rows="1"
+                        maxlength="1000"
+                    ></textarea>
+                    <div class="input-actions">
+                        <button class="emoji-btn" id="emojiBtn" title="Add Emoji">
+                            <i class="fas fa-smile"></i>
+                        </button>
+                        <div class="character-count" id="characterCount">0/1000</div>
+                    </div>
+                </div>
+                
+                <button class="send-btn" id="sendBtn" title="Send Message">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            
+            <div class="input-footer">
+                <div class="quick-actions">
+                    <button class="quick-action" data-message="Hello Doom, I hope you're doing well.">
+                        <i class="fas fa-hand-wave"></i>
+                        <span>Greeting</span>
+                    </button>
+                    <button class="quick-action" data-message="I wanted to follow up on my application status.">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Follow Up</span>
+                    </button>
+                    <button class="quick-action" data-message="Thank you for your time and consideration.">
+                        <i class="fas fa-heart"></i>
+                        <span>Thank You</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Your Profile</h3>
+                <button class="modal-close" id="profileModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-section">
+                    <div class="profile-avatar-large">
+                        <span id="profileAvatarLarge"></span>
+                    </div>
+                    <div class="profile-info">
+                        <h4 id="profileName"></h4>
+                        <p id="profileEmail"></p>
+                        <span class="profile-badge" id="profilePosition"></span>
+                    </div>
+                </div>
+                
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-comments"></i>
+                        <div class="stat-info">
+                            <strong id="messageCount">0</strong>
+                            <span>Messages Sent</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-calendar"></i>
+                        <div class="stat-info">
+                            <strong id="joinDate">Today</strong>
+                            <span>Joined</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-clock"></i>
+                        <div class="stat-info">
+                            <strong id="lastActive">Now</strong>
+                            <span>Last Active</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-actions">
+                    <button class="profile-btn secondary" id="editProfileBtn">
+                        <i class="fas fa-edit"></i>
+                        <span>Edit Profile</span>
+                    </button>
+                    <button class="profile-btn danger" id="deleteAccountBtn">
+                        <i class="fas fa-trash"></i>
+                        <span>Delete Account</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Settings</h3>
+                <button class="modal-close" id="settingsModalClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-section">
+                    <h4>Notifications</h4>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong>Message Notifications</strong>
+                            <p>Get notified when Doom sends you a message</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="messageNotifications" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong>Sound Alerts</strong>
+                            <p>Play sound when receiving messages</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="soundAlerts" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h4>Privacy</h4>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong>Online Status</strong>
+                            <p>Show when you're online to Doom</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="onlineStatus" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <strong>Read Receipts</strong>
+                            <p>Let Doom know when you've read messages</p>
+                        </div>
+                        <label class="toggle">
+                            <input type="checkbox" id="readReceipts" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-section">
+                    <h4>Theme</h4>
+                    <div class="theme-options">
+                        <button class="theme-option active" data-theme="dark">
+                            <div class="theme-preview dark"></div>
+                            <span>Dark</span>
+                        </button>
+                        <button class="theme-option" data-theme="light">
+                            <div class="theme-preview light"></div>
+                            <span>Light</span>
+                        </button>
+                        <button class="theme-option" data-theme="auto">
+                            <div class="theme-preview auto"></div>
+                            <span>Auto</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    
+    <script type="module" src="chat.js"></script>
+</body>
+</html>
