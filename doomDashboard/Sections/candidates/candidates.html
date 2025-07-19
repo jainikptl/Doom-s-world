@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="candidates.css">
+</head>
+<body>
+    <!-- Floating Action Button -->
+    <button class="fab" onclick="openQuickActions()">⚡</button>
+
+    <div class="main-content">
+        <!-- Candidates Section -->
+        <div id="candidates-section" class="section active">
+            <div class="creative-header">
+                <h1 class="header-title">👥 Talent Universe</h1>
+                <p class="header-subtitle">Discover extraordinary minds for extraordinary missions</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="creative-grid">
+                <div class="stat-widget">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-number" id="totalCandidates">147</div>
+                    <div class="stat-label">Total Candidates</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-number" id="activeCandidates">42</div>
+                    <div class="stat-label">Active Pipeline</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-number" id="topTalent">18</div>
+                    <div class="stat-label">Top Tier</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-icon">🚀</div>
+                    <div class="stat-number" id="recruited">23</div>
+                    <div class="stat-label">Recruited</div>
+                </div>
+            </div>
+
+            <!-- Search Bar -->
+            <div style="text-align: center; margin-bottom: 30px;">
+                <input type="text" class="glass-search" placeholder="🔍 Search the talent multiverse..." onkeyup="searchCandidates(this.value)">
+            </div>
+
+            <!-- Candidate Stream -->
+            <div class="glass-card">
+                <h3 style="margin-bottom: 20px; color: #e0e6ed;">🌟 Live Candidate Stream</h3>
+                <div class="candidate-stream" id="candidateStream">
+                    <!-- Candidates will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Selection Section -->
+        <div id="selection-section" class="section">
+            <div class="creative-header">
+                <h1 class="header-title">⚡ Selection Nexus</h1>
+                <p class="header-subtitle">Where destiny meets opportunity in the recruitment dimension</p>
+            </div>
+
+            <div class="creative-grid">
+                <div class="stat-widget">
+                    <div class="stat-icon">🎪</div>
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Active Hunts</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-icon">⚔️</div>
+                    <div class="stat-number">24</div>
+                    <div class="stat-label">In Combat</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-icon">👑</div>
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Champions</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+
+            <div class="selection-board">
+                <div class="selection-card">
+                    <div class="progress-ring">
+                        <svg>
+                            <defs>
+                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#6366f1"/>
+                                    <stop offset="100%" style="stop-color:#8b5cf6"/>
+                                </linearGradient>
+                            </defs>
+                            <circle class="bg" cx="40" cy="40" r="32" stroke-dasharray="201" stroke-dashoffset="0"/>
+                            <circle class="progress" cx="40" cy="40" r="32" stroke-dasharray="201" stroke-dashoffset="60"/>
+                        </svg>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; color: #6366f1;">70%</div>
+                    </div>
+                    <h3>🚀 Senior Dev Hunt</h3>
+                    <p style="color: #9ca3af; margin: 10px 0;">Engineering Avengers Initiative</p>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <span class="candidate-status status-interview">12 Candidates</span>
+                        <span class="candidate-status status-selected">3 Finals</span>
+                    </div>
+                </div>
+
+                <div class="selection-card">
+                    <div class="progress-ring">
+                        <svg>
+                            <circle class="bg" cx="40" cy="40" r="32" stroke-dasharray="201" stroke-dashoffset="0"/>
+                            <circle class="progress" cx="40" cy="40" r="32" stroke-dasharray="201" stroke-dashoffset="100"/>
+                        </svg>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; color: #6366f1;">50%</div>
+                    </div>
+                    <h3>🎨 Design Wizard Quest</h3>
+                    <p style="color: #9ca3af; margin: 10px 0;">Creative Sorcery Division</p>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <span class="candidate-status status-review">8 Candidates</span>
+                        <span class="candidate-status status-new">2 New</span>
+                    </div>
+                </div>
+
+                <div class="selection-card">
+                    <div class="progress-ring">
+                        <svg>
+                            <circle class="bg" cx="40" cy="40" r="32" stroke-dasharray="201" stroke-dashoffset="0"/>
+                            <circle class="progress" cx="40" cy="40" r="32" stroke-dasharray="201" stroke-dashoffset="30"/>
+                        </svg>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; color: #6366f1;">85%</div>
+                    </div>
+                    <h3>🧙‍♂️ Data Sorcerer Hunt</h3>
+                    <p style="color: #9ca3af; margin: 10px 0;">Analytics Mystics Guild</p>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <span class="candidate-status status-selected">5 Candidates</span>
+                        <span class="candidate-status status-interview">Final Boss</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interviews Section -->
+        <div id="interviews-section" class="section">
+            <div class="creative-header">
+                <h1 class="header-title">🎯 Battle Arena</h1>
+                <p class="header-subtitle">Where heroes prove their worth in the trials of doom</p>
+            </div>
+
+            <div class="creative-grid">
+                <div class="stat-widget">
+                    <div class="stat-icon">⚡</div>
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Today's Battles</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-number">18</div>
+                    <div class="stat-label">This Week</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-number">94%</div>
+                    <div class="stat-label">Victory Rate</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-number">4.8</div>
+                    <div class="stat-label">Epic Score</div>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <h3 style="margin-bottom: 25px;">⚔️ Battle Timeline</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h4>🚀 Alex "CodeMaster" Rodriguez</h4>
+                        <p><strong>Mission:</strong> Senior React Destroyer</p>
+                        <p><strong>Battle Time:</strong> Today, 2:00 PM ⚡</p>
+                        <p><strong>Arena:</strong> Technical Colosseum</p>
+                        <div style="margin-top: 15px;">
+                            <span class="candidate-status status-interview">Battle Ready</span>
+                            <button class="neo-btn neo-btn-primary" style="margin-left: 10px;">Enter Arena</button>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <h4>🎨 Maria "PixelWizard" Chen</h4>
+                        <p><strong>Mission:</strong> UI/UX Sorceress</p>
+                        <p><strong>Battle Time:</strong> Tomorrow, 10:30 AM ⚡</p>
+                        <p><strong>Arena:</strong> Design Dimension</p>
+                        <div style="margin-top: 15px;">
+                            <span class="candidate-status status-new">Approaching</span>
+                            <button class="neo-btn neo-btn-primary" style="margin-left: 10px;">Prepare</button>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <h4>🧙‍♂️ David "DataLord" Kumar</h4>
+                        <p><strong>Mission:</strong> ML Archmage</p>
+                        <p><strong>Battle Time:</strong> Yesterday, 4:00 PM ✅</p>
+                        <p><strong>Arena:</strong> Algorithm Abyss</p>
+                        <div style="margin-top: 15px;">
+                            <span class="candidate-status status-selected">Champion</span>
+                            <button class="neo-btn neo-btn-primary" style="margin-left: 10px;">View Victory</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications Section -->
+        <div id="applications-section" class
