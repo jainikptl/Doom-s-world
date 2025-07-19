@@ -203,16 +203,24 @@ body {
   align-items: center;
   gap: 1rem;
 }
+.logo img {
+  max-height: 40px;
+  display: block;
+  background: linear-gradient(45deg, #0ea5e9, #075985);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(163, 63, 63, 0.5);
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
 
-.logo-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  background: var(--gradient-primary);
-  box-shadow: var(--shadow-glow);
+@keyframes glow {
+  from {
+    filter: drop-shadow(0 0 5px #667eea);
+  }
+
+  to {
+    filter: drop-shadow(0 0 20px #764ba2);
+  }
 }
 
 .logo h1 {
