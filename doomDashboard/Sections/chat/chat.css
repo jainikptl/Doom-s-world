@@ -1,19 +1,19 @@
 /* Professional Admin Dashboard Styles */
-/* CSS Variables for Professional Color Scheme */
+/* CSS Variables for Marvel Color Scheme */
 :root {
-  /* Primary Colors */
-  --primary-50: #f0f9ff;
-  --primary-100: #e0f2fe;
-  --primary-200: #bae6fd;
-  --primary-300: #7dd3fc;
-  --primary-400: #38bdf8;
-  --primary-500: #0ea5e9;
-  --primary-600: #0284c7;
-  --primary-700: #0369a1;
-  --primary-800: #075985;
-  --primary-900: #0c4a6e;
+  /* Primary Colors - Marvel Red Based */
+  --primary-50: #fef2f2;
+  --primary-100: #fee2e2;
+  --primary-200: #fecaca;
+  --primary-300: #fca5a5;
+  --primary-400: #f87171;
+  --primary-500: #f5434f;
+  --primary-600: #dc2626;
+  --primary-700: #b91c1c;
+  --primary-800: #991b1b;
+  --primary-900: #7f1d1d;
   
-  /* Secondary Colors */
+  /* Secondary Colors - Marvel Dark Tones */
   --secondary-50: #f8fafc;
   --secondary-100: #f1f5f9;
   --secondary-200: #e2e8f0;
@@ -22,29 +22,30 @@
   --secondary-500: #64748b;
   --secondary-600: #475569;
   --secondary-700: #334155;
-  --secondary-800: #1e293b;
-  --secondary-900: #0f172a;
+  --secondary-800: #161a25;
+  --secondary-900: #000000;
   
-  /* Accent Colors */
-  --accent-purple: #8b5cf6;
-  --accent-pink: #ec4899;
+  /* Accent Colors - Marvel Theme */
+  --accent-red: #f5434f;
+  --accent-darkred: #631e29;
+  --accent-black: #000000;
+  --accent-darkblue: #161a25;
   --accent-green: #10b981;
   --accent-orange: #f59e0b;
-  --accent-red: #ef4444;
   
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --gradient-warning: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  --gradient-danger: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  /* Marvel Gradients */
+  --gradient-primary: linear-gradient(135deg, #f5434f 10%, #631e29 45%, #000000 67%, #161a25 87%);
+  --gradient-secondary: linear-gradient(135deg, #631e29 0%, #f5434f 100%);
+  --gradient-success: linear-gradient(135deg, #f5434f 0%, #631e29 100%);
+  --gradient-warning: linear-gradient(135deg, #631e29 0%, #161a25 100%);
+  --gradient-danger: linear-gradient(135deg, #f5434f 0%, #000000 100%);
   
   /* Background Colors */
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-tertiary: #334155;
-  --bg-card: rgba(30, 41, 59, 0.8);
-  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-primary: #000000;
+  --bg-secondary: #161a25;
+  --bg-tertiary: #631e29;
+  --bg-card: rgba(22, 26, 37, 0.8);
+  --bg-glass: rgba(245, 67, 79, 0.05);
   
   /* Text Colors */
   --text-primary: #f8fafc;
@@ -52,8 +53,8 @@
   --text-muted: #94a3b8;
   
   /* Border Colors */
-  --border-primary: rgba(255, 255, 255, 0.1);
-  --border-secondary: rgba(255, 255, 255, 0.05);
+  --border-primary: rgba(245, 67, 79, 0.1);
+  --border-secondary: rgba(245, 67, 79, 0.05);
   
   /* Shadow Colors */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -61,7 +62,7 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.3);
+  --shadow-glow: 0 0 20px rgba(245, 67, 79, 0.3);
 }
 
 /* Reset and Base Styles */
@@ -88,9 +89,9 @@ body {
   width: 100%;
   height: 100%;
   z-index: -2;
-  background: radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%), var(--bg-primary);
+  background: radial-gradient(circle at 20% 30%, rgba(245, 67, 79, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(99, 30, 41, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(22, 26, 37, 0.1) 0%, transparent 50%), var(--bg-primary);
 }
 
 .floating-shapes {
@@ -264,7 +265,7 @@ body {
 .search-input:focus {
   outline: none;
   border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(245, 67, 79, 0.1);
   background: var(--bg-secondary);
 }
 
@@ -843,7 +844,7 @@ body {
 
 .input-wrapper:focus-within {
   border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(245, 67, 79, 0.1);
 }
 
 #messageInput {
@@ -1058,86 +1059,74 @@ body {
   .main-content {
     padding: 0;
   }
-  
-  .chat-header {
-    padding: 1rem;
+  /* Mobile Header for Sidebar Toggle */
+.mobile-header {
+  display: none;
+  background: var(--bg-card);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-primary);
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobile-toggle {
+  background: var(--gradient-primary);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.mobile-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Responsive Chat Input */
+@media (max-width: 768px) {
+  .chat-input-container {
+    flex-direction: column;
+    align-items: stretch;
   }
-  
+
+  .send-btn,
+  .emoji-btn,
+  .attachment-btn {
+    width: 100%;
+    height: 44px;
+    border-radius: 8px;
+  }
+
+  .chat-header-content {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
+  }
+}
+
+/* Small Devices */
+@media (max-width: 480px) {
   .chat-messages {
     padding: 1rem;
   }
-  
-  .chat-input-area {
-    padding: 1rem;
-  }
-  
-  .welcome-stats {
-    flex-direction: column;
-    gap: 1rem;
-  }
-}
 
-@media (max-width: 480px) {
-  .chat-input-container {
-    gap: 0.5rem;
-  }
-  
-  .attachment-btn,
-  .send-btn,
-  .emoji-btn {
+  .candidate-avatar,
+  .candidate-avatar-large {
     width: 40px;
     height: 40px;
+    font-size: 1rem;
   }
-  
-  .message-content {
-    max-width: 85%;
+
+  .candidate-info-large h2 {
+    font-size: 1rem;
   }
 }
-
-/* Animations */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-.candidate-item {
-  animation: slideInLeft 0.4s ease-out;
-}
-
-.message {
-  animation: slideInUp 0.3s ease-out;
-}
-
-/* Focus States */
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid var(--primary-500);
-  outline-offset: 2px;
 }
