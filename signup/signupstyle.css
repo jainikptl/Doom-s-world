@@ -1,4 +1,4 @@
-/* signup.css */
+/* signup.css - Marvel Theme */
 
 @import url('https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&display=swap');
 
@@ -10,7 +10,7 @@
 
 body {
   font-family: 'Bruno Ace SC', sans-serif;
-  background-color: #0a0a0a;
+  background: linear-gradient(135deg, #f5434f 10%, #631e29 45%, #000000 67%, #161a25 87%);
   color: #fff;
   overflow: hidden;
   display: flex;
@@ -20,7 +20,7 @@ body {
   position: relative;
 }
 
-/* Cyber Grid Background */
+/* Marvel Grid Background */
 .background-overlay {
   position: fixed;
   top: 0;
@@ -28,8 +28,8 @@ body {
   width: 100%;
   height: 100%;
   background-image:
-    linear-gradient(rgba(0, 255, 255, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 255, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(245, 67, 79, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245, 67, 79, 0.08) 1px, transparent 1px);
   background-size: 50px 50px;
   z-index: -2;
   animation: gridShift 20s linear infinite;
@@ -46,14 +46,14 @@ body {
 
 /* Glass Card */
 .glass-card {
-  background: rgba(0, 255, 255, 0.05);
-  border: 1px solid rgba(0, 255, 255, 0.3);
+  background: rgba(245, 67, 79, 0.05);
+  border: 1px solid rgba(245, 67, 79, 0.3);
   backdrop-filter: blur(12px);
   padding: 40px 50px;
   border-radius: 20px;
   max-width: 400px;
   width: 100%;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+  box-shadow: 0 0 20px rgba(245, 67, 79, 0.2);
   animation: fadeIn 1s ease;
 }
 
@@ -72,10 +72,10 @@ body {
   font-size: 2rem;
   text-align: center;
   margin-bottom: 30px;
-  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  background: linear-gradient(45deg, #f5434f, #631e29);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  text-shadow: 0 0 10px rgba(245, 67, 79, 0.5);
 }
 
 form {
@@ -94,23 +94,23 @@ input {
   margin-bottom: 20px;
   border-radius: 8px;
   border: none;
-  background-color: rgba(255, 255, 255, 0.05);
+  background-color: rgba(22, 26, 37, 0.3);
   color: white;
   outline: none;
   transition: all 0.3s ease;
-  border: 1px solid rgba(0, 255, 255, 0.2);
+  border: 1px solid rgba(245, 67, 79, 0.2);
 }
 
 input:focus {
-  border-color: #00ffff;
-  box-shadow: 0 0 10px #00ffff;
+  border-color: #f5434f;
+  box-shadow: 0 0 10px #f5434f;
 }
 
 button {
   padding: 12px;
-  background: linear-gradient(45deg, #00ffff, #ff00ff);
+  background: linear-gradient(45deg, #f5434f, #631e29);
   border: none;
-  color: #000;
+  color: #fff;
   font-weight: bold;
   border-radius: 10px;
   cursor: pointer;
@@ -120,7 +120,8 @@ button {
 
 button:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  box-shadow: 0 0 20px rgba(245, 67, 79, 0.5);
+  background: linear-gradient(45deg, #631e29, #f5434f);
 }
 
 .register {
@@ -130,12 +131,12 @@ button:hover {
 }
 
 .register a {
-  color: #00ffff;
+  color: #f5434f;
   text-decoration: none;
-  border-bottom: 1px dashed #00ffff;
+  border-bottom: 1px dashed #f5434f;
 }
 
 .register a:hover {
-  color: #ff00ff;
-  border-bottom-color: #ff00ff;
+  color: #631e29;
+  border-bottom-color: #631e29;
 }

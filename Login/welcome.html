@@ -14,8 +14,8 @@
 
     body {
       font-family: 'Orbitron', monospace;
-      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
-      color: #00ffff;
+      background: linear-gradient(135deg, #f5434f 10%, #631e29 45%, #000000 67%, #161a25 87%);
+      color: #f5434f;
       overflow: hidden;
       height: 100vh;
       display: flex;
@@ -30,8 +30,8 @@
       width: 100%;
       height: 100%;
       background-image: 
-        linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+        linear-gradient(rgba(245, 67, 79, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245, 67, 79, 0.1) 1px, transparent 1px);
       background-size: 50px 50px;
       animation: gridMove 20s linear infinite;
       z-index: 1;
@@ -55,9 +55,9 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
       text-shadow: 
-        0 0 20px rgba(0, 255, 255, 0.8),
-        0 0 40px rgba(0, 255, 255, 0.6),
-        0 0 60px rgba(0, 255, 255, 0.4);
+        0 0 20px rgba(245, 67, 79, 0.8),
+        0 0 40px rgba(245, 67, 79, 0.6),
+        0 0 60px rgba(245, 67, 79, 0.4);
       margin-bottom: 2rem;
       opacity: 0;
       transform: translateY(50px);
@@ -111,8 +111,8 @@
 
     .subtitle {
       font-size: 1.5rem;
-      color: #ff00ff;
-      text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+      color: #631e29;
+      text-shadow: 0 0 10px rgba(99, 30, 41, 0.5);
       opacity: 0;
       animation: fadeIn 1s ease-out 1s forwards;
     }
@@ -125,7 +125,7 @@
     .loading-bar {
       width: 300px;
       height: 4px;
-      background: rgba(0, 255, 255, 0.2);
+      background: rgba(245, 67, 79, 0.2);
       margin: 3rem auto;
       border-radius: 2px;
       overflow: hidden;
@@ -135,10 +135,10 @@
 
     .loading-progress {
       height: 100%;
-      background: linear-gradient(90deg, #00ffff, #ff00ff);
+      background: linear-gradient(90deg, #f5434f, #631e29);
       width: 0%;
       animation: loadProgress 3s ease-in-out 2s forwards;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+      box-shadow: 0 0 10px rgba(245, 67, 79, 0.8);
     }
 
     @keyframes loadProgress {
@@ -160,7 +160,7 @@
       position: absolute;
       width: 2px;
       height: 2px;
-      background: #00ffff;
+      background: #f5434f;
       border-radius: 50%;
       animation: float 6s infinite ease-in-out;
     }
@@ -177,14 +177,14 @@
     @keyframes glitch {
       0% {
         text-shadow: 
-          0 0 20px rgba(0, 255, 255, 0.8),
-          0 0 40px rgba(0, 255, 255, 0.6);
+          0 0 20px rgba(245, 67, 79, 0.8),
+          0 0 40px rgba(245, 67, 79, 0.6);
       }
       100% {
         text-shadow: 
-          2px 0 #ff00ff, 
-          -2px 0 #00ffff,
-          0 0 20px rgba(0, 255, 255, 0.8);
+          2px 0 #631e29, 
+          -2px 0 #f5434f,
+          0 0 20px rgba(245, 67, 79, 0.8);
       }
     }
   </style>
