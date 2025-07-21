@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar - Doom Dashboard</title>
+    <link rel="stylesheet" href="calendar.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Interview Calendar</h1>
+                        <p>Schedule Management</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a href="../interview/accepted-candidates.html" class="header-btn">
+                        <i class="fas fa-users"></i>
+                        Candidates
+                    </a>
+                    <a href="doom-dashboard.html" class="header-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                    <button class="header-btn primary" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Calendar Controls -->
+            <section class="calendar-controls">
+                <div class="section-header">
+                    <h2>Interview Schedule</h2>
+                    <div class="calendar-view-controls">
+                        <button class="btn secondary" id="monthView" onclick="setCalendarView('month')">Month</button>
+                        <button class="btn secondary" id="weekView" onclick="setCalendarView('week')">Week</button>
+                        <button class="btn secondary" id="dayView" onclick="setCalendarView('day')">Day</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calendar Section -->
+            <section class="calendar-main-section">
+                <div class="calendar-container-large">
+                    <div class="calendar-header-large">
+                        <button class="calendar-nav-large" onclick="previousPeriod()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <h2 id="currentPeriod"></h2>
+                        <button class="calendar-nav-large" onclick="nextPeriod()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="calendarView" class="calendar-view">
+                        <!-- Calendar content will be populated here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upcoming Interviews -->
+            <section class="upcoming-interviews">
+                <div class="section-header">
+                    <h2>Upcoming Interviews</h2>
+                    <div class="section-actions">
+                        <select id="filterDays" onchange="filterUpcomingInterviews()">
+                            <option value="7">Next 7 days</option>
+                            <option value="14">Next 14 days</option>
+                            <option value="30">Next 30 days</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="upcomingInterviewsList" class="interviews-list">
+                    <!-- Upcoming interviews will be populated here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Interview Details Modal -->
+    <div id="interviewDetailsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Interview Details</h3>
+                <button class="modal-close" onclick="closeInterviewDetailsModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="interviewDetailsContent">
+                    <!-- Interview details will be populated here -->
+                </div>
+                <div class="form-actions">
+                    <button class="btn danger" onclick="cancelInterview()">
+                        <i class="fas fa-times"></i>
+                        Cancel Interview
+                    </button>
+                    <button class="btn secondary" onclick="rescheduleInterview()">
+                        <i class="fas fa-calendar-alt"></i>
+                        Reschedule
+                    </button>
+                    <button class="btn secondary" onclick="closeInterviewDetailsModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="calendar.js"></script>
+</body>
+</html>

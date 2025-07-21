@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accepted Candidates - Doom Dashboard</title>
+    <link rel="stylesheet" href="accepted-candidates.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fas fa-skull"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Doom Dashboard</h1>
+                        <p>Interview Management</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a href="calendar.html" class="header-btn">
+                        <i class="fas fa-calendar-alt"></i>
+                        Calendar View
+                    </a>
+                    <a href="doom-dashboard.html" class="header-btn">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                    <button class="header-btn primary" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Stats Section -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="acceptedCount">0</h3>
+                            <p>Accepted Candidates</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="scheduledCount">0</h3>
+                            <p>Interviews Scheduled</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="assignedCount">0</h3>
+                            <p>Assigned Without Meeting</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Candidates Section -->
+            <section class="candidates-section">
+                <div class="section-header">
+                    <h2>Accepted Candidates</h2>
+                    <div class="section-actions">
+                        <div class="search-container">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Search candidates..." onkeyup="filterCandidates()">
+                        </div>
+                        <select id="filterStatus" onchange="filterCandidates()">
+                            <option value="all">All Status</option>
+                            <option value="accepted">Accepted</option>
+                            <option value="interview_scheduled">Interview Scheduled</option>
+                            <option value="assigned">Assigned</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-jobs">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <p>Loading accepted candidates...</p>
+                </div>
+
+                <!-- Candidates List -->
+                <div id="candidatesList" class="candidates-grid" style="display: none;">
+                    <!-- Candidates will be populated here -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="loading-jobs" style="display: none;">
+                    <div class="loading-spinner">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <p>No accepted candidates found.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Schedule Interview Modal -->
+    <div id="scheduleModal" class="modal-overlay">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Schedule Interview</h3>
+                <button class="modal-close" onclick="closeScheduleModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="candidate-info-section">
+                    <h4>Candidate Information</h4>
+                    <div id="selectedCandidateInfo" class="candidate-info-card">
+                        <!-- Candidate info will be populated here -->
+                    </div>
+                </div>
+
+                <div class="calendar-section">
+                    <h4>Select Interview Date & Time</h4>
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button class="calendar-nav" onclick="previousMonth()">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <h3 id="currentMonth"></h3>
+                            <button class="calendar-nav" onclick="nextMonth()">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div id="calendar" class="calendar-grid">
+                            <!-- Calendar will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="time-slots-section" id="timeSlotsSection" style="display: none;">
+                        <h4>Available Time Slots</h4>
+                        <div id="timeSlots" class="time-slots-grid">
+                            <!-- Time slots will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="interview-details-section" id="interviewDetailsSection" style="display: none;">
+                    <h4>Interview Details</h4>
+                    <div class="form-group">
+                        <label for="interviewType">Interview Type</label>
+                        <select id="interviewType">
+                            <option value="video">Video Call</option>
+                            <option value="phone">Phone Call</option>
+                            <option value="in-person">In-Person</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="interviewNotes">Additional Notes</label>
+                        <textarea id="interviewNotes" placeholder="Any special instructions or notes for the interview..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn secondary" onclick="closeScheduleModal()">Cancel</button>
+                    <button class="btn primary" id="scheduleBtn" onclick="scheduleInterview()" disabled>
+                        <i class="fas fa-calendar-plus"></i>
+                        Schedule Interview
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Without Meeting Modal -->
+    <div id="assignModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Assign Without Meeting</h3>
+                <button class="modal-close" onclick="closeAssignModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="candidate-info-section">
+                    <h4>Candidate Information</h4>
+                    <div id="assignCandidateInfo" class="candidate-info-card">
+                        <!-- Candidate info will be populated here -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="assignmentRole">Assigned Role</label>
+                    <input type="text" id="assignmentRole" placeholder="Enter the assigned role/position">
+                </div>
+
+                <div class="form-group">
+                    <label for="assignmentNotes">Assignment Notes</label>
+                    <textarea id="assignmentNotes" placeholder="Reason for direct assignment, role details, etc..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn secondary" onclick="closeAssignModal()">Cancel</button>
+                    <button class="btn success" onclick="assignCandidate()">
+                        <i class="fas fa-user-plus"></i>
+                        Assign Candidate
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Firebase SDK v9+ -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="accepted-candidates.js"></script>
+</body>
+</html>
