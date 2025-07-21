@@ -1,40 +1,40 @@
 :root {
-  /* Light Theme */
-  --bg-primary: #0F0F23;
-  --bg-secondary: #1A1B3E;
-  --bg-tertiary: #2D2F5E;
-  --bg-card: rgba(255, 255, 255, 0.08);
-  --bg-glass: rgba(255, 255, 255, 0.1);
+  /* Marvel Theme - Dark */
+  --bg-primary: #161a25;
+  --bg-secondary: #000000;
+  --bg-tertiary: #631e29;
+  --bg-card: rgba(245, 67, 79, 0.08);
+  --bg-glass: rgba(245, 67, 79, 0.1);
   --text-primary: #FFFFFF;
   --text-secondary: #B8BCC8;
   --text-muted: #6C7293;
-  --accent-primary: #6366F1;
-  --accent-secondary: #EC4899;
-  --accent-success: #10B981;
-  --accent-warning: #F59E0B;
-  --accent-danger: #EF4444;
-  --border-primary: rgba(255, 255, 255, 0.1);
-  --border-secondary: rgba(255, 255, 255, 0.05);
-  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.3);
+  --accent-primary: #f5434f;
+  --accent-secondary: #631e29;
+  --accent-success: #f5434f;
+  --accent-warning: #f5434f;
+  --accent-danger: #f5434f;
+  --border-primary: rgba(245, 67, 79, 0.1);
+  --border-secondary: rgba(245, 67, 79, 0.05);
+  --shadow-glow: 0 0 40px rgba(245, 67, 79, 0.3);
   --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.4);
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  --gradient-primary: linear-gradient(135deg, #f5434f 10%, #631e29 45%, #000000 67%, #161a25 87%);
+  --gradient-secondary: linear-gradient(135deg, #631e29 0%, #f5434f 100%);
+  --gradient-success: linear-gradient(135deg, #f5434f 0%, #631e29 100%);
+  --gradient-hero: linear-gradient(135deg, #f5434f 10%, #631e29 45%, #000000 67%, #161a25 87%);
 }
 
 [data-theme="light"] {
   --bg-primary: #F8FAFC;
   --bg-secondary: #FFFFFF;
-  --bg-tertiary: #F1F5F9;
-  --bg-card: rgba(255, 255, 255, 0.8);
-  --bg-glass: rgba(255, 255, 255, 0.6);
+  --bg-tertiary: #FFF5F5;
+  --bg-card: rgba(245, 67, 79, 0.05);
+  --bg-glass: rgba(245, 67, 79, 0.03);
   --text-primary: #1E293B;
   --text-secondary: #475569;
   --text-muted: #94A3B8;
-  --border-primary: rgba(0, 0, 0, 0.1);
-  --border-secondary: rgba(0, 0, 0, 0.05);
-  --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.2);
+  --border-primary: rgba(245, 67, 79, 0.1);
+  --border-secondary: rgba(245, 67, 79, 0.05);
+  --shadow-glow: 0 0 40px rgba(245, 67, 79, 0.2);
   --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
@@ -61,9 +61,9 @@ body::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 20% 30%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 40% 90%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+  background: radial-gradient(circle at 20% 30%, rgba(245, 67, 79, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 80% 70%, rgba(99, 30, 41, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 40% 90%, rgba(0, 0, 0, 0.2) 0%, transparent 50%);
   z-index: -1;
   animation: backgroundShift 20s ease-in-out infinite;
 }
@@ -373,12 +373,12 @@ body::before {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+  box-shadow: 0 4px 15px rgba(99, 30, 41, 0.3);
 }
 
 .logout-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.4);
+  box-shadow: 0 8px 25px rgba(99, 30, 41, 0.4);
 }
 
 /* Dashboard Grid */
@@ -596,12 +596,12 @@ body::before {
 .btn-primary {
   background: var(--gradient-primary);
   color: white;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 15px rgba(245, 67, 79, 0.3);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 8px 25px rgba(245, 67, 79, 0.4);
 }
 
 .btn-secondary {
