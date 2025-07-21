@@ -20,7 +20,6 @@ const firebaseConfig = {
   appId: "1:445783209326:web:700e95a429e7d06104fd7f",
   measurementId: "G-86151LPWTC"
 }
-
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
 const db = firebase.firestore()
@@ -32,11 +31,7 @@ let jobsListener = null
 let currentJobData = null
 
 // DOM Elements
-const loginScreen = document.getElementById("loginScreen")
 const jobBoard = document.getElementById("jobBoard")
-const loginForm = document.getElementById("loginForm")
-const loginBtn = document.getElementById("loginBtn")
-
 const jobsContainer = document.getElementById("jobsContainer")
 const jobSearchInput = document.getElementById("jobSearchInput")
 const categoryFilter = document.getElementById("categoryFilter")
@@ -70,15 +65,71 @@ const removeFile = document.getElementById("removeFile")
 
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
+  // Get user data from your existing authentication system
+  // You can modify this to match your current user data structure
+  getCurrentUserFromExistingAuth()
   setupEventListeners()
-  checkExistingSession()
 })
+
+// Function to get current user from your existing authentication
+function getCurrentUserFromExistingAuth() {
+  // Option 1: Get from localStorage if you store user data there
+  const existingUser = localStorage.getItem("candidateUser") // or whatever key you use
+
+  if (existingUser) {
+    const userData = JSON.parse(existingUser)
+    currentUser = {
+      email: userData.email,
+      name: userData.name,
+      combatPoints: userData.combatPoints || Math.floor(Math.random() * 50) + 10,
+      defensePoints: userData.defensePoints || Math.floor(Math.random() * 50) + 10,
+      techPoints: userData.techPoints || Math.floor(Math.random() * 50) + 10,
+      leadershipPoints: userData.leadershipPoints || Math.floor(Math.random() * 50) + 10,
+      stealthPoints: userData.stealthPoints || Math.floor(Math.random() * 50) + 10,
+      intelligencePoints: userData.intelligencePoints || Math.floor(Math.random() * 50) + 10,
+      avatar: getInitials(userData.name),
+    }
+
+    initializeJobBoard()
+  } else {
+    showError("User not authenticated. Please login first.")
+  }
+}
+
+function initializeJobBoard() {
+  updateProfileDisplay()
+  loadJobs()
+  ensureCandidateInDatabase()
+}
+
+// Ensure candidate exists in database
+async function ensureCandidateInDatabase() {
+  if (!currentUser) return
+
+  try {
+    const candidateDoc = await db.collection("candidates").doc(currentUser.email).get()
+
+    if (!candidateDoc.exists) {
+      await db.collection("candidates").doc(currentUser.email).set({
+        name: currentUser.name,
+        email: currentUser.email,
+        combatPoints: currentUser.combatPoints,
+        defensePoints: currentUser.defensePoints,
+        techPoints: currentUser.techPoints,
+        leadershipPoints: currentUser.leadershipPoints,
+        stealthPoints: currentUser.stealthPoints,
+        intelligencePoints: currentUser.intelligencePoints,
+        joinDate: firebase.firestore.FieldValue.serverTimestamp(),
+        lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+    }
+  } catch (error) {
+    console.error("Error ensuring candidate in database:", error)
+  }
+}
 
 // Event Listeners
 function setupEventListeners() {
-  // Login
-  loginForm.addEventListener("submit", handleLogin)
-
   // Logout
   logoutBtn.addEventListener("click", handleLogout)
 
@@ -108,94 +159,6 @@ function setupEventListeners() {
       }
     })
   })
-}
-
-// Check for existing session
-function checkExistingSession() {
-  const savedUser = localStorage.getItem("candidateJobUser")
-  if (savedUser) {
-    currentUser = JSON.parse(savedUser)
-    showJobBoard()
-  }
-}
-
-// Handle login
-async function handleLogin(e) {
-  e.preventDefault()
-
-  const email = document.getElementById("candidateEmail").value.trim()
-  const name = document.getElementById("candidateName").value.trim()
-
-  if (!email || !name) {
-    showError("Please fill in all fields")
-    return
-  }
-
-  loginBtn.disabled = true
-  loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Connecting...</span>'
-
-  try {
-    // Check if candidate exists, if not create with default stats
-    let candidateDoc = await db.collection("candidates").doc(email).get()
-
-    if (!candidateDoc.exists) {
-      // Create new candidate with default stats
-      const candidateData = {
-        name: name,
-        email: email,
-        combatPoints: Math.floor(Math.random() * 50) + 10, // Random 10-60
-        defensePoints: Math.floor(Math.random() * 50) + 10,
-        techPoints: Math.floor(Math.random() * 50) + 10,
-        leadershipPoints: Math.floor(Math.random() * 50) + 10,
-        stealthPoints: Math.floor(Math.random() * 50) + 10,
-        intelligencePoints: Math.floor(Math.random() * 50) + 10,
-        joinDate: firebase.firestore.FieldValue.serverTimestamp(),
-        lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-      }
-
-      await db.collection("candidates").doc(email).set(candidateData)
-      candidateDoc = await db.collection("candidates").doc(email).get()
-    } else {
-      // Update last active
-      await db.collection("candidates").doc(email).update({
-        lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-      })
-    }
-
-    const candidateData = candidateDoc.data()
-
-    currentUser = {
-      email: email,
-      name: name,
-      ...candidateData,
-      avatar: getInitials(name),
-    }
-
-    localStorage.setItem("candidateJobUser", JSON.stringify(currentUser))
-
-    showSuccess("Welcome to the Job Board!")
-    setTimeout(() => {
-      showJobBoard()
-    }, 1000)
-  } catch (error) {
-    console.error("Login error:", error)
-    showError("Failed to connect. Please try again.")
-  } finally {
-    loginBtn.disabled = false
-    loginBtn.innerHTML = '<span>Access Job Board</span> <i class="fas fa-arrow-right"></i>'
-  }
-}
-
-// Show job board
-function showJobBoard() {
-  loginScreen.style.display = "none"
-  jobBoard.style.display = "block"
-
-  // Update profile display
-  updateProfileDisplay()
-
-  // Load jobs
-  loadJobs()
 }
 
 // Update profile display
@@ -694,19 +657,8 @@ function handleLogout() {
       jobsListener()
     }
 
-    // Clear session
-    localStorage.removeItem("candidateJobUser")
-    currentUser = null
-    currentJobData = null
-
-    // Show login screen
-    jobBoard.style.display = "none"
-    loginScreen.style.display = "flex"
-
-    // Reset form
-    loginForm.reset()
-
-    showSuccess("Logged out successfully")
+    // Redirect to your main logout or dashboard
+    window.location.href = "index.html" // or your main page
   }
 }
 

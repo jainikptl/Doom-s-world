@@ -8,6 +8,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-
 // Storage
 import { getStorage } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-storage.js";
 
+
 // Firebase Configuration
 const firebaseConfig = {
   // Replace with your Firebase config
@@ -57,8 +58,48 @@ const totalApplications = document.getElementById("totalApplications")
 const pendingApplications = document.getElementById("pendingApplications")
 const acceptedApplications = document.getElementById("acceptedApplications")
 
+// Check if user is authenticated as admin
+function checkAdminAuth() {
+  // You can modify this to match your existing admin authentication
+  const adminUser = localStorage.getItem("adminUser") // or your admin auth key
+
+  if (!adminUser) {
+    showError("Admin authentication required")
+    // Redirect to your admin login page
+    window.location.href = "admin-login.html" // or your admin login page
+    return false
+  }
+
+  return true
+}
+
+// Add this function to get auth token if needed
+function getAuthHeaders() {
+  const adminUser = localStorage.getItem("adminUser")
+  if (adminUser) {
+    const userData = JSON.parse(adminUser)
+    return {
+      Authorization: `Bearer ${userData.token}`, // if you use tokens
+    }
+  }
+  return {}
+}
+
+// Add helper function to get current admin email:
+function getCurrentAdminEmail() {
+  const adminUser = localStorage.getItem("adminUser")
+  if (adminUser) {
+    return JSON.parse(adminUser).email || "doom@digitalworld.com"
+  }
+  return "doom@digitalworld.com"
+}
+
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
+  if (!checkAdminAuth()) {
+    return
+  }
+
   setupEventListeners()
   loadJobs()
   loadStats()
@@ -292,7 +333,8 @@ async function handleCreateJob(e) {
       stealth: Number.parseInt(document.getElementById("penaltyStealth").value) || 0,
       intelligence: Number.parseInt(document.getElementById("penaltyIntelligence").value) || 0,
     },
-    createdBy: "doom",
+    createdBy: "doom", // or get from your admin user data
+    createdByEmail: getCurrentAdminEmail(), // add this function
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     status: "active",
     applicationsCount: 0,
@@ -734,16 +776,13 @@ function hideModal(modal) {
   modal.classList.remove("active")
 }
 
-function hideLoadingJobs() {
-  const loader = document.querySelector(".loading-jobs");
-  if (loader) loader.style.display = "none";
-}
-
 function showLoadingJobs() {
-  const loader = document.querySelector(".loading-jobs");
-  if (loader) loader.style.display = "flex";
+  document.querySelector(".loading-jobs").style.display = "flex"
 }
 
+function hideLoadingJobs() {
+  document.querySelector(".loading-jobs").style.display = "none"
+}
 
 function getInitials(name) {
   return name
