@@ -1,50 +1,50 @@
-/* Professional Job Portal Styles */
-/* CSS Variables for Professional Color Scheme */
+/* Professional Job Portal Styles - Marvel Theme */
+/* CSS Variables for Marvel Color Scheme */
 :root {
-  /* Primary Colors */
-  --primary-50: #f0f9ff;
-  --primary-100: #e0f2fe;
-  --primary-200: #bae6fd;
-  --primary-300: #7dd3fc;
-  --primary-400: #38bdf8;
-  --primary-500: #0ea5e9;
-  --primary-600: #0284c7;
-  --primary-700: #0369a1;
-  --primary-800: #075985;
-  --primary-900: #0c4a6e;
+  /* Primary Colors - Marvel Red to Black */
+  --primary-50: #fef2f3;
+  --primary-100: #fce7e8;
+  --primary-200: #f9d2d5;
+  --primary-300: #f5434f;
+  --primary-400: #f5434f;
+  --primary-500: #f5434f;
+  --primary-600: #dc2626;
+  --primary-700: #b91c1c;
+  --primary-800: #991b1b;
+  --primary-900: #631e29;
 
-  /* Secondary Colors */
-  --secondary-50: #f8fafc;
-  --secondary-100: #f1f5f9;
-  --secondary-200: #e2e8f0;
-  --secondary-300: #cbd5e1;
-  --secondary-400: #94a3b8;
-  --secondary-500: #64748b;
-  --secondary-600: #475569;
-  --secondary-700: #334155;
-  --secondary-800: #1e293b;
-  --secondary-900: #0f172a;
+  /* Secondary Colors - Dark Grays to Black */
+  --secondary-50: #1a1a1a;
+  --secondary-100: #2a2a2a;
+  --secondary-200: #3a3a3a;
+  --secondary-300: #4a4a4a;
+  --secondary-400: #631e29;
+  --secondary-500: #000000;
+  --secondary-600: #161a25;
+  --secondary-700: #0f0f0f;
+  --secondary-800: #0a0a0a;
+  --secondary-900: #000000;
 
   /* Accent Colors */
-  --accent-purple: #8b5cf6;
-  --accent-pink: #ec4899;
-  --accent-green: #10b981;
-  --accent-orange: #f59e0b;
-  --accent-red: #ef4444;
+  --accent-purple: #f5434f;
+  --accent-pink: #f5434f;
+  --accent-green: #f5434f;
+  --accent-orange: #f5434f;
+  --accent-red: #f5434f;
 
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --gradient-warning: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-  --gradient-danger: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  /* Gradients - Marvel Theme */
+  --gradient-primary: linear-gradient(135deg, #f5434f 10%, #631e29 45%, #000000 67%, #161a25 87%);
+  --gradient-secondary: linear-gradient(135deg, #f5434f 0%, #631e29 50%, #000000 100%);
+  --gradient-success: linear-gradient(135deg, #f5434f 0%, #631e29 100%);
+  --gradient-warning: linear-gradient(135deg, #f5434f 0%, #631e29 100%);
+  --gradient-danger: linear-gradient(135deg, #f5434f 0%, #dc2626 100%);
 
   /* Background Colors */
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-tertiary: #334155;
-  --bg-card: rgba(30, 41, 59, 0.8);
-  --bg-glass: rgba(255, 255, 255, 0.05);
+  --bg-primary: #000000;
+  --bg-secondary: #161a25;
+  --bg-tertiary: #631e29;
+  --bg-card: rgba(22, 26, 37, 0.9);
+  --bg-glass: rgba(245, 67, 79, 0.05);
 
   /* Text Colors */
   --text-primary: #f8fafc;
@@ -52,16 +52,16 @@
   --text-muted: #94a3b8;
 
   /* Border Colors */
-  --border-primary: rgba(255, 255, 255, 0.1);
-  --border-secondary: rgba(255, 255, 255, 0.05);
+  --border-primary: rgba(245, 67, 79, 0.2);
+  --border-secondary: rgba(245, 67, 79, 0.1);
 
   /* Shadow Colors */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 20px rgba(102, 126, 234, 0.3);
+  --shadow-sm: 0 1px 2px 0 rgba(245, 67, 79, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(245, 67, 79, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(245, 67, 79, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(245, 67, 79, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.6);
+  --shadow-2xl: 0 25px 50px -12px rgba(245, 67, 79, 0.5);
+  --shadow-glow: 0 0 20px rgba(245, 67, 79, 0.6);
 }
 
 /* Reset and Base Styles */
@@ -88,9 +88,9 @@ body {
   width: 100%;
   height: 100%;
   z-index: -2;
-  background: radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%), var(--bg-primary);
+  background: radial-gradient(circle at 20% 30%, rgba(245, 67, 79, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(99, 30, 41, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 40% 80%, rgba(22, 26, 37, 0.15) 0%, transparent 50%), var(--bg-primary);
 }
 
 .floating-shapes {
@@ -296,7 +296,7 @@ body {
 .form-group textarea:focus {
   outline: none;
   border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(245, 67, 79, 0.2);
   background: var(--bg-secondary);
 }
 
@@ -569,7 +569,7 @@ body {
 .search-container input:focus {
   outline: none;
   border-color: var(--primary-500);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(245, 67, 79, 0.2);
 }
 
 .section-actions select {
@@ -718,7 +718,7 @@ body {
 .job-rewards h4 {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--accent-green);
+  color: var(--accent-red);
   margin-bottom: 0.75rem;
 }
 
@@ -733,7 +733,7 @@ body {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.8125rem;
-  color: var(--accent-green);
+  color: var(--accent-red);
 }
 
 .reward-item i {
