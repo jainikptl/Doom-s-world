@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Management - Doom's Digital World</title>
+    <link rel="stylesheet" href="admin-jobs.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fas fa-skull"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Doom's Job Portal</h1>
+                        <p>Supreme Command Center</p>
+                    </div>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="header-btn" id="dashboardBtn">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="header-btn" id="applicationsBtn">
+                        <i class="fas fa-users"></i>
+                        <span>Applications</span>
+                    </button>
+                    <button class="header-btn primary" id="createJobBtn">
+                        <i class="fas fa-plus"></i>
+                        <span>Create Job</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Stats Overview -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-briefcase"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalJobs">0</h3>
+                            <p>Active Jobs</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="totalApplications">0</h3>
+                            <p>Total Applications</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="pendingApplications">0</h3>
+                            <p>Pending Review</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="acceptedApplications">0</h3>
+                            <p>Accepted</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Jobs List -->
+            <section class="jobs-section">
+                <div class="section-header">
+                    <h2>Job Postings</h2>
+                    <div class="section-actions">
+                        <div class="search-container">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="jobSearch" placeholder="Search jobs...">
+                        </div>
+                        <select id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="closed">Closed</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="jobs-grid" id="jobsGrid">
+                    <!-- Jobs will be loaded here -->
+                    <div class="loading-jobs">
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                        </div>
+                        <p>Loading job postings...</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Create Job Modal -->
+    <div class="modal-overlay" id="createJobModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Create New Job Posting</h3>
+                <button class="modal-close" id="createJobClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="createJobForm" class="modal-body">
+                <div class="form-section">
+                    <h4>Job Details</h4>
+                    
+                    <div class="form-group">
+                        <label for="jobTitle">Job Title *</label>
+                        <input type="text" id="jobTitle" required placeholder="e.g., BattleWorld Tactician">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="jobDescription">Job Description *</label>
+                        <textarea id="jobDescription" required rows="6" placeholder="Describe the role, responsibilities, and requirements..."></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="jobCategory">Category</label>
+                            <select id="jobCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="combat">Combat Operations</option>
+                                <option value="technical">Technical Support</option>
+                                <option value="intelligence">Intelligence</option>
+                                <option value="leadership">Leadership</option>
+                                <option value="stealth">Stealth Operations</option>
+                                <option value="defense">Defense Systems</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="jobPriority">Priority Level</label>
+                            <select id="jobPriority" required>
+                                <option value="">Select Priority</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4>Point Requirements</h4>
+                    <p class="section-description">Set minimum points required for each skill category</p>
+                    
+                    <div class="points-grid">
+                        <div class="point-input">
+                            <label for="reqCombat">Combat Points</label>
+                            <input type="number" id="reqCombat" min="0" max="100" value="0">
+                        </div>
+                        
+                        <div class="point-input">
+                            <label for="reqDefense">Defense Points</label>
+                            <input type="number" id="reqDefense" min="0" max="100" value="0">
+                        </div>
+                        
+                        <div class="point-input">
+                            <label for="reqTech">Technical Points</label>
+                            <input type="number" id="reqTech" min="0" max="100" value="0">
+                        </div>
+                        
+                        <div class="point-input">
+                            <label for="reqLeadership">Leadership Points</label>
+                            <input type="number" id="reqLeadership" min="0" max="100" value="0">
+                        </div>
+                        
+                        <div class="point-input">
+                            <label for="reqStealth">Stealth Points</label>
+                            <input type="number" id="reqStealth" min="0" max="100" value="0">
+                        </div>
+                        
+                        <div class="point-input">
+                            <label for="reqIntelligence">Intelligence Points</label>
+                            <input type="number" id="reqIntelligence" min="0" max="100" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4>Reward System</h4>
+                    <p class="section-description">Points awarded for successful completion</p>
+                    
+                    <div class="points-grid">
+                        <div class="point-input success">
+                            <label for="rewardCombat">Combat Reward</label>
+                            <input type="number" id="rewardCombat" min="0" max="50" value="0">
+                        </div>
+                        
+                        <div class="point-input success">
+                            <label for="rewardDefense">Defense Reward</label>
+                            <input type="number" id="rewardDefense" min="0" max="50" value="0">
+                        </div>
+                        
+                        <div class="point-input success">
+                            <label for="rewardTech">Technical Reward</label>
+                            <input type="number" id="rewardTech" min="0" max="50" value="0">
+                        </div>
+                        
+                        <div class="point-input success">
+                            <label for="rewardLeadership">Leadership Reward</label>
+                            <input type="number" id="rewardLeadership" min="0" max="50" value="0">
+                        </div>
+                        
+                        <div class="point-input success">
+                            <label for="rewardStealth">Stealth Reward</label>
+                            <input type="number" id="rewardStealth" min="0" max="50" value="0">
+                        </div>
+                        
+                        <div class="point-input success">
+                            <label for="rewardIntelligence">Intelligence Reward</label>
+                            <input type="number" id="rewardIntelligence" min="0" max="50" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4>Penalty System</h4>
+                    <p class="section-description">Points deducted for failure or poor performance</p>
+                    
+                    <div class="points-grid">
+                        <div class="point-input danger">
+                            <label for="penaltyCombat">Combat Penalty</label>
+                            <input type="number" id="penaltyCombat" min="0" max="30" value="0">
+                        </div>
+                        
+                        <div class="point-input danger">
+                            <label for="penaltyDefense">Defense Penalty</label>
+                            <input type="number" id="penaltyDefense" min="0" max="30" value="0">
+                        </div>
+                        
+                        <div class="point-input danger">
+                            <label for="penaltyTech">Technical Penalty</label>
+                            <input type="number" id="penaltyTech" min="0" max="30" value="0">
+                        </div>
+                        
+                        <div class="point-input danger">
+                            <label for="penaltyLeadership">Leadership Penalty</label>
+                            <input type="number" id="penaltyLeadership" min="0" max="30" value="0">
+                        </div>
+                        
+                        <div class="point-input danger">
+                            <label for="penaltyStealth">Stealth Penalty</label>
+                            <input type="number" id="penaltyStealth" min="0" max="30" value="0">
+                        </div>
+                        
+                        <div class="point-input danger">
+                            <label for="penaltyIntelligence">Intelligence Penalty</label>
+                            <input type="number" id="penaltyIntelligence" min="0" max="30" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn secondary" id="cancelJobBtn">Cancel</button>
+                    <button type="submit" class="btn primary" id="submitJobBtn">
+                        <i class="fas fa-plus"></i>
+                        <span>Create Job Posting</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Job Details Modal -->
+    <div class="modal-overlay" id="jobDetailsModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3 id="jobDetailsTitle">Job Details</h3>
+                <button class="modal-close" id="jobDetailsClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body" id="jobDetailsBody">
+                <!-- Job details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications Modal -->
+    <div class="modal-overlay" id="applicationsModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>Job Applications</h3>
+                <button class="modal-close" id="applicationsClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="applications-list" id="applicationsList">
+                    <!-- Applications will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    
+    <script type="module" src="admin-jobs.js"></script>
+</body>
+</html>
