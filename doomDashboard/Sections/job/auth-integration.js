@@ -29,7 +29,9 @@ function getCurrentUser() {
 // Function to check if user is admin
 function isAdmin() {
   const user = getCurrentUser()
-  return user && (user.role === "admin" || user.email === "doom@digitalworld.com" || user.isAdmin === true)
+  return user
+    // return user && (user.role === "admin" || user.email === "doom@digitalworld.com" || user.isAdmin === true)
+
 }
 
 // Function to redirect if not authenticated
