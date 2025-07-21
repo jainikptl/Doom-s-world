@@ -60,6 +60,8 @@
           }
 
           const uid = user.uid;
+          localStorage.setItem("userID",uid);
+          localStorage.setItem("user",user)
 
           return db.collection("users").doc(uid).get();
         })

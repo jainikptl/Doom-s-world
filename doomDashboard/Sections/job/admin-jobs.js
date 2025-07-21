@@ -1,13 +1,8 @@
 // Import Firebase
-// Firebase Core
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
-
-// Firestore
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js";
-
-// Storage
+import { collection,getFirestore,orderBy,query,onSnapshot,addDoc,where,getDocs,getDoc,updateDoc,doc, Timestamp,serverTimestamp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-storage.js";
-
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-auth.js";
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -22,14 +17,16 @@ const firebaseConfig = {
 }
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig)
-const db = firebase.firestore()
-const storage = firebase.storage()
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+const auth = getAuth(app);
 
 // Global Variables
 let jobsListener = null
 const applicationsListener = null
 let currentJobId = null
+let currentAdmin = null
 
 // DOM Elements
 const createJobBtn = document.getElementById("createJobBtn")
@@ -58,52 +55,55 @@ const totalApplications = document.getElementById("totalApplications")
 const pendingApplications = document.getElementById("pendingApplications")
 const acceptedApplications = document.getElementById("acceptedApplications")
 
-// Check if user is authenticated as admin
-function checkAdminAuth() {
-  // You can modify this to match your existing admin authentication
-  const adminUser = localStorage.getItem("adminUser") // or your admin auth key
-
-  if (!adminUser) {
-    showError("Admin authentication required")
-    // Redirect to your admin login page
-    window.location.href = "admin-jobs.html" // or your admin login page
-    return false
-  }
-
-  return true
-}
-
-// Add this function to get auth token if needed
-function getAuthHeaders() {
-  const adminUser = localStorage.getItem("adminUser")
-  if (adminUser) {
-    const userData = JSON.parse(adminUser)
-    return {
-      Authorization: `Bearer ${userData.token}`, // if you use tokens
-    }
-  }
-  return {}
-}
-
-// Add helper function to get current admin email:
-function getCurrentAdminEmail() {
-  const adminUser = localStorage.getItem("adminUser")
-  if (adminUser) {
-    return JSON.parse(adminUser).email || "doom@digitalworld.com"
-  }
-  return "doom@digitalworld.com"
-}
-
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
-  if (!checkAdminAuth()) {
-    return
-  }
-
-  setupEventListeners()
-  loadJobs()
-  loadStats()
+  // Check authentication state
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      // User is signed in
+      console.log("Firebase recognizes user:", user.uid);
+      initializeWithAdmin(user)
+    } else {
+      // No user is signed in, sign in as admin
+      signInAsAdmin()
+    }
+  })
 })
+
+// Sign in as admin (for demo purposes)
+async function signInAsAdmin() {
+  try {
+    // For demo, we'll use anonymous auth and treat as admin
+    const result = await auth.signInAnonymously()
+    console.log("Signed in as admin:", result.user.uid)
+  } catch (error) {
+    console.error("Error signing in as admin:", error)
+    showError("Admin authentication failed")
+  }
+}
+
+// Initialize with admin user
+async function initializeWithAdmin(user) {
+  try {
+    // Set current admin
+    currentAdmin = {
+      uid: user.uid,
+      email: user.email || "doom@digitalworld.com",
+      name: user.displayName || "Dr. Doom",
+      role: "admin",
+    }
+
+    // Setup event listeners
+    setupEventListeners()
+
+    // Load data
+    loadJobs()
+    loadStats()
+  } catch (error) {
+    console.error("Error initializing admin:", error)
+    showError("Failed to initialize admin panel")
+  }
+}
 
 // Event Listeners
 function setupEventListeners() {
@@ -133,7 +133,6 @@ function setupEventListeners() {
 
   // Header navigation
   document.getElementById("dashboardBtn").addEventListener("click", () => {
-    // Navigate to dashboard
     console.log("Navigate to dashboard")
   })
 
@@ -147,22 +146,21 @@ function setupEventListeners() {
 function loadJobs() {
   showLoadingJobs()
 
-  jobsListener = db
-    .collection("jobs")
-    .orderBy("createdAt", "desc")
-    .onSnapshot(
-      (snapshot) => {
-        const jobs = []
-        snapshot.forEach((doc) => {
-          jobs.push({
-            id: doc.id,
-            ...doc.data(),
-          })
-        })
+  const jobsRef = collection(db, "jobs");
+const jobsQuery = query(jobsRef, orderBy("createdAt", "desc"));
 
-        renderJobs(jobs)
-        hideLoadingJobs()
-      },
+const jobsListener = onSnapshot(jobsQuery, (snapshot) => {
+  const jobs = [];
+  snapshot.forEach((doc) => {
+    jobs.push({
+      id: doc.id,
+      ...doc.data(),
+    });
+  });
+
+  renderJobs(jobs);
+  hideLoadingJobs();
+},
       (error) => {
         console.error("Error loading jobs:", error)
         showError("Failed to load jobs")
@@ -303,7 +301,11 @@ function generateRewardsHTML(rewards) {
 async function handleCreateJob(e) {
   e.preventDefault()
 
-  const formData = new FormData(e.target)
+  if (!currentAdmin) {
+    showError("Admin authentication required")
+    return
+  }
+
   const jobData = {
     title: document.getElementById("jobTitle").value.trim(),
     description: document.getElementById("jobDescription").value.trim(),
@@ -333,9 +335,10 @@ async function handleCreateJob(e) {
       stealth: Number.parseInt(document.getElementById("penaltyStealth").value) || 0,
       intelligence: Number.parseInt(document.getElementById("penaltyIntelligence").value) || 0,
     },
-    createdBy: "doom", // or get from your admin user data
-    createdByEmail: getCurrentAdminEmail(), // add this function
-    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    createdBy: currentAdmin.name,
+    createdByUid: currentAdmin.uid,
+    createdByEmail: currentAdmin.email,
+    createdAt: serverTimestamp(),
     status: "active",
     applicationsCount: 0,
   }
@@ -349,13 +352,14 @@ async function handleCreateJob(e) {
   submitJobBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Creating...</span>'
 
   try {
-    await db.collection("jobs").add(jobData)
+    const jobsRef = collection(db, "jobs");
+    await addDoc(jobsRef, jobData);
     showSuccess("Job posting created successfully!")
     hideModal(createJobModal)
     createJobForm.reset()
   } catch (error) {
     console.error("Error creating job:", error)
-    showError("Failed to create job posting")
+    showError("Failed to create job posting. Please check your permissions.")
   } finally {
     submitJobBtn.disabled = false
     submitJobBtn.innerHTML = '<i class="fas fa-plus"></i> <span>Create Job Posting</span>'
@@ -365,13 +369,14 @@ async function handleCreateJob(e) {
 // View job details
 async function viewJobDetails(jobId) {
   try {
-    const doc = await db.collection("jobs").doc(jobId).get()
-    if (!doc.exists) {
+    const jobDocRef = doc(db, "jobs", jobId)
+    const jdoc = await getDoc(jobDocRef)
+    if (!jdoc.exists) {
       showError("Job not found")
       return
     }
 
-    const job = { id: doc.id, ...doc.data() }
+    const job = { id: jdoc.id, ...jdoc.data() }
 
     jobDetailsTitle.textContent = job.title
     jobDetailsBody.innerHTML = `
@@ -535,7 +540,8 @@ async function viewJobApplications(jobId) {
   currentJobId = jobId
 
   try {
-    const jobDoc = await db.collection("jobs").doc(jobId).get()
+    const jobDocRef2 = doc(db, "jobs", jobId)
+    const jobDoc = await getDoc(jobDocRef2)
     if (!jobDoc.exists) {
       showError("Job not found")
       return
@@ -544,11 +550,13 @@ async function viewJobApplications(jobId) {
     const job = jobDoc.data()
 
     // Load applications for this job
-    const applicationsSnapshot = await db
-      .collection("applications")
-      .where("jobId", "==", jobId)
-      .orderBy("appliedAt", "desc")
-      .get()
+    const applicationsQuery = query(
+  collection(db, "applications"),
+  where("jobId", "==", jobId),
+  orderBy("appliedAt", "desc")
+)
+
+const applicationsSnapshot = await getDocs(applicationsQuery)
 
     const applications = []
     applicationsSnapshot.forEach((doc) => {
@@ -569,8 +577,8 @@ async function viewJobApplications(jobId) {
 // Load all applications
 async function loadAllApplications() {
   try {
-    const applicationsSnapshot = await db.collection("applications").orderBy("appliedAt", "desc").get()
-
+    const applicationsQuery = query(collection(db, "applications"), orderBy("appliedAt", "desc"))
+    const applicationsSnapshot = await getDocs(applicationsQuery)
     const applications = []
     applicationsSnapshot.forEach((doc) => {
       applications.push({
@@ -630,7 +638,7 @@ function renderApplications(applications, title) {
         <div class="application-resume">
           <h5>Resume:</h5>
           <p>${application.resumeText ? application.resumeText.substring(0, 200) + "..." : "No resume text provided"}</p>
-          ${application.resumeFile ? `<p><i class="fas fa-file-pdf"></i> PDF Resume attached</p>` : ""}
+          ${application.resumeFileUrl ? `<p><i class="fas fa-file-pdf"></i> <a href="${application.resumeFileUrl}" target="_blank">PDF Resume</a></p>` : ""}
         </div>
         
         <div class="application-actions">
@@ -684,11 +692,18 @@ function generateApplicationStatsHTML(stats) {
 
 // Update application status
 async function updateApplicationStatus(applicationId, status) {
+  if (!currentAdmin) {
+    showError("Admin authentication required")
+    return
+  }
+
   try {
-    await db.collection("applications").doc(applicationId).update({
+    const applicationRef = doc(db, "applications", applicationId)
+    await updateDoc(applicationRef, {
       status: status,
-      reviewedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      reviewedBy: "doom",
+      reviewedAt: serverTimestamp(),
+      reviewedBy: currentAdmin.name,
+      reviewedByUid: currentAdmin.uid,
     })
 
     showSuccess(`Application ${status} successfully!`)
@@ -707,12 +722,20 @@ async function updateApplicationStatus(applicationId, status) {
 
 // Toggle job status
 async function toggleJobStatus(jobId, currentStatus) {
+  if (!currentAdmin) {
+    showError("Admin authentication required")
+    return
+  }
+
   const newStatus = currentStatus === "active" ? "closed" : "active"
 
   try {
-    await db.collection("jobs").doc(jobId).update({
+    const jobRef = doc(db, "jobs", jobId)
+    await updateDoc(jobRef, {
       status: newStatus,
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      updatedBy: currentAdmin.name,
+      updatedByUid: currentAdmin.uid,
     })
 
     showSuccess(`Job ${newStatus === "active" ? "activated" : "closed"} successfully!`)
@@ -749,12 +772,14 @@ function filterJobs() {
 async function loadStats() {
   try {
     // Load jobs stats
-    const jobsSnapshot = await db.collection("jobs").get()
+    const jobsRef = collection(db, "jobs");
+    const jobsSnapshot = await getDocs(jobsRef);
     const activeJobs = jobsSnapshot.docs.filter((doc) => doc.data().status === "active")
     totalJobs.textContent = activeJobs.length
 
     // Load applications stats
-    const applicationsSnapshot = await db.collection("applications").get()
+    const applicationsRef = collection(db, "applications");
+    const applicationsSnapshot = await getDocs(applicationsRef);
     totalApplications.textContent = applicationsSnapshot.size
 
     const pendingApps = applicationsSnapshot.docs.filter((doc) => !doc.data().status || doc.data().status === "pending")
@@ -777,11 +802,17 @@ function hideModal(modal) {
 }
 
 function showLoadingJobs() {
-  document.querySelector(".loading-jobs").style.display = "flex"
+  const loadingElement = document.querySelector(".loading-jobs")
+  if (loadingElement) {
+    loadingElement.style.display = "flex"
+  }
 }
 
 function hideLoadingJobs() {
-  document.querySelector(".loading-jobs").style.display = "none"
+  const loadingElement = document.querySelector(".loading-jobs")
+  if (loadingElement) {
+    loadingElement.style.display = "none"
+  }
 }
 
 function getInitials(name) {
@@ -792,16 +823,32 @@ function getInitials(name) {
     .toUpperCase()
 }
 
-function formatDate(timestamp) {
-  if (!timestamp) return "Unknown"
 
-  const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
+function formatDate(timestamp) {
+  if (!timestamp) return "Unknown";
+
+  let date;
+
+  // Handle Firebase Timestamp
+  if (timestamp instanceof Timestamp) {
+    date = timestamp.toDate();
+  }
+  // Handle object with toDate() method (fallback)
+  else if (timestamp.toDate && typeof timestamp.toDate === "function") {
+    date = timestamp.toDate();
+  }
+  // Handle plain Date or number
+  else {
+    date = new Date(timestamp);
+  }
+
   return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
-  })
+  });
 }
+
 
 function showError(message) {
   createToast(message, "error")

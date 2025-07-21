@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Board - Avenger Recruitment</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="candidate-jobs.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -20,8 +20,18 @@
         </div>
     </div>
 
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-container">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <p>Loading Mission Board...</p>
+        </div>
+    </div>
+
     <!-- Main Job Board -->
-    <div class="job-board" id="jobBoard">
+    <div class="job-board" id="jobBoard" style="display: none;">
         <!-- Header -->
         <header class="candidate-header">
             <div class="header-content">
@@ -35,7 +45,7 @@
                     </div>
                 </div>
                 
-                <div class="candidate-profile" id="candidateProfile" data-candidate-id="123" data-candidate-name="John Doe" data-candidate-email="john.doe@example.com">
+                <div class="candidate-profile" id="candidateProfile">
                     <div class="profile-stats">
                         <div class="stat-item">
                             <i class="fas fa-fist-raised"></i>
@@ -202,6 +212,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     
     <script type="module" src="candidate-jobs.js"></script>
 </body>

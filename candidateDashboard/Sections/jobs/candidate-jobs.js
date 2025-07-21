@@ -1,12 +1,38 @@
 // Import Firebase
-// Firebase Core
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  doc,
+  setDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  query,
+  where,
+  orderBy,
+  limit,
+  Timestamp,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js";
 
-// Firestore
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL
+} from "https://www.gstatic.com/firebasejs/9.1.1/firebase-storage.js";
 
-// Storage
-import { getStorage } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-storage.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/9.1.1/firebase-auth.js";
 
 
 // Firebase Configuration
@@ -20,10 +46,12 @@ const firebaseConfig = {
   appId: "1:445783209326:web:700e95a429e7d06104fd7f",
   measurementId: "G-86151LPWTC"
 }
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
 const db = firebase.firestore()
 const storage = firebase.storage()
+const auth = firebase.auth()
 
 // Global Variables
 let currentUser = null
@@ -31,6 +59,7 @@ let jobsListener = null
 let currentJobData = null
 
 // DOM Elements
+const loadingScreen = document.getElementById("loadingScreen")
 const jobBoard = document.getElementById("jobBoard")
 const jobsContainer = document.getElementById("jobsContainer")
 const jobSearchInput = document.getElementById("jobSearchInput")
@@ -65,67 +94,100 @@ const removeFile = document.getElementById("removeFile")
 
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
-  // Get user data from your existing authentication system
-  // You can modify this to match your current user data structure
-  getCurrentUserFromExistingAuth()
-  setupEventListeners()
+  // Check authentication state
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      // User is signed in
+      console.log("Firebase recognizes user:", user.uid);
+      initializeWithUser(user)
+    } else {
+      // No user is signed in, try anonymous auth for demo
+      signInAnonymously()
+    }
+  })
 })
 
-// Function to get current user from your existing authentication
-function getCurrentUserFromExistingAuth() {
-  // Option 1: Get from localStorage if you store user data there
-  const existingUser = localStorage.getItem("candidateUser") // or whatever key you use
-
-  if (existingUser) {
-    const userData = JSON.parse(existingUser)
-    currentUser = {
-      email: userData.email,
-      name: userData.name,
-      combatPoints: userData.combatPoints || Math.floor(Math.random() * 50) + 10,
-      defensePoints: userData.defensePoints || Math.floor(Math.random() * 50) + 10,
-      techPoints: userData.techPoints || Math.floor(Math.random() * 50) + 10,
-      leadershipPoints: userData.leadershipPoints || Math.floor(Math.random() * 50) + 10,
-      stealthPoints: userData.stealthPoints || Math.floor(Math.random() * 50) + 10,
-      intelligencePoints: userData.intelligencePoints || Math.floor(Math.random() * 50) + 10,
-      avatar: getInitials(userData.name),
-    }
-
-    initializeJobBoard()
-  } else {
-    showError("User not authenticated. Please login first.")
+// Sign in anonymously for demo purposes
+async function signInAnonymously() {
+  try {
+    const result = await auth.signInAnonymously()
+    console.log("Signed in anonymously:", result.user.uid)
+  } catch (error) {
+    console.error("Error signing in anonymously:", error)
+    showError("Authentication failed")
   }
 }
 
-function initializeJobBoard() {
-  updateProfileDisplay()
-  loadJobs()
-  ensureCandidateInDatabase()
+// Initialize with authenticated user
+async function initializeWithUser(user) {
+  try {
+    // Get or create candidate profile
+    await ensureCandidateProfile(user)
+
+    // Setup event listeners
+    setupEventListeners()
+
+    // Show job board
+    showJobBoard()
+  } catch (error) {
+    console.error("Error initializing:", error)
+    showError("Failed to initialize application")
+  }
 }
 
-// Ensure candidate exists in database
-async function ensureCandidateInDatabase() {
-  if (!currentUser) return
-
+// Ensure candidate profile exists
+async function ensureCandidateProfile(user) {
   try {
-    const candidateDoc = await db.collection("candidates").doc(currentUser.email).get()
+    const candidateRef = db.collection("candidates").doc(user.uid)
+    const candidateDoc = await candidateRef.get()
 
     if (!candidateDoc.exists) {
-      await db.collection("candidates").doc(currentUser.email).set({
-        name: currentUser.name,
-        email: currentUser.email,
-        combatPoints: currentUser.combatPoints,
-        defensePoints: currentUser.defensePoints,
-        techPoints: currentUser.techPoints,
-        leadershipPoints: currentUser.leadershipPoints,
-        stealthPoints: currentUser.stealthPoints,
-        intelligencePoints: currentUser.intelligencePoints,
+      // Create new candidate with random stats
+      const candidateData = {
+        uid: user.uid,
+        email: user.email || `candidate_${user.uid}@example.com`,
+        name: user.displayName || `Candidate ${user.uid.substring(0, 6)}`,
+        combatPoints: Math.floor(Math.random() * 50) + 10,
+        defensePoints: Math.floor(Math.random() * 50) + 10,
+        techPoints: Math.floor(Math.random() * 50) + 10,
+        leadershipPoints: Math.floor(Math.random() * 50) + 10,
+        stealthPoints: Math.floor(Math.random() * 50) + 10,
+        intelligencePoints: Math.floor(Math.random() * 50) + 10,
         joinDate: firebase.firestore.FieldValue.serverTimestamp(),
         lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+        isOnline: true,
+      }
+
+      await candidateRef.set(candidateData)
+      currentUser = candidateData
+    } else {
+      // Update existing candidate
+      const candidateData = candidateDoc.data()
+      await candidateRef.update({
+        lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+        isOnline: true,
       })
+
+      currentUser = {
+        uid: user.uid,
+        ...candidateData,
+      }
     }
+
+    currentUser.avatar = getInitials(currentUser.name)
   } catch (error) {
-    console.error("Error ensuring candidate in database:", error)
+    console.error("Error ensuring candidate profile:", error)
+    throw error
   }
+}
+
+// Show job board
+function showJobBoard() {
+  loadingScreen.style.display = "none"
+  jobBoard.style.display = "block"
+
+  updateProfileDisplay()
+  loadJobs()
 }
 
 // Event Listeners
@@ -404,7 +466,7 @@ function generatePenaltiesHTML(penalties) {
 // Apply for job
 async function applyForJob(jobId) {
   if (!currentUser) {
-    showError("Please login first")
+    showError("Please wait for authentication")
     return
   }
 
@@ -413,7 +475,7 @@ async function applyForJob(jobId) {
     const existingApplication = await db
       .collection("applications")
       .where("jobId", "==", jobId)
-      .where("candidateEmail", "==", currentUser.email)
+      .where("candidateId", "==", currentUser.uid)
       .get()
 
     if (!existingApplication.empty) {
@@ -573,7 +635,7 @@ async function handleApplicationSubmit(e) {
       }
 
       // Upload file to Firebase Storage
-      const storageRef = storage.ref(`resumes/${currentUser.email}/${Date.now()}_${file.name}`)
+      const storageRef = storage.ref(`resumes/${currentUser.uid}/${Date.now()}_${file.name}`)
       const uploadTask = await storageRef.put(file)
       resumeFileUrl = await uploadTask.ref.getDownloadURL()
     }
@@ -582,7 +644,7 @@ async function handleApplicationSubmit(e) {
     const applicationData = {
       jobId: currentJobData.id,
       jobTitle: currentJobData.title,
-      candidateId: currentUser.email,
+      candidateId: currentUser.uid,
       candidateName: currentUser.name,
       candidateEmail: currentUser.email,
       candidateStats: {
@@ -650,15 +712,31 @@ function filterJobs() {
 }
 
 // Handle logout
-function handleLogout() {
+async function handleLogout() {
   if (confirm("Are you sure you want to logout?")) {
-    // Clear listeners
-    if (jobsListener) {
-      jobsListener()
-    }
+    try {
+      // Update user status
+      if (currentUser) {
+        await db.collection("candidates").doc(currentUser.uid).update({
+          isOnline: false,
+          lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+        })
+      }
 
-    // Redirect to your main logout or dashboard
-    window.location.href = "index.html" // or your main page
+      // Clear listeners
+      if (jobsListener) {
+        jobsListener()
+      }
+
+      // Sign out
+      await auth.signOut()
+
+      // Redirect
+      window.location.href = "index.html"
+    } catch (error) {
+      console.error("Error logging out:", error)
+      showError("Failed to logout")
+    }
   }
 }
 
@@ -754,8 +832,19 @@ function createToast(message, type) {
 }
 
 // Cleanup on page unload
-window.addEventListener("beforeunload", () => {
+window.addEventListener("beforeunload", async () => {
   if (jobsListener) jobsListener()
+
+  if (currentUser) {
+    try {
+      await db.collection("candidates").doc(currentUser.uid).update({
+        isOnline: false,
+        lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+      })
+    } catch (error) {
+      console.error("Error updating status on unload:", error)
+    }
+  }
 })
 
 // Make functions globally available

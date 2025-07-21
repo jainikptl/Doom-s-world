@@ -1,271 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Candidate Portal - Modern Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="candidate_dashboard.css">
-</head>
-<body>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="candidate_dashboard.css" />
+  </head>
+  <body>
     <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <button class="toggle-btn" onclick="toggleSidebar()">
-                <i class="fas fa-chevron-left" id="toggleIcon"></i>
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <button class="toggle-btn" onclick="toggleSidebar()">
+          <i class="fas fa-chevron-left" id="toggleIcon"></i>
+        </button>
+
+        <div class="sidebar-header">
+          <div class="logo">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <div class="logo-text">Candidate Portal</div>
+        </div>
+
+        <nav class="nav-menu">
+          <div class="nav-item">
+            <a href="#" class="nav-link active">
+              <i class="nav-icon fas fa-home"></i>
+              <span class="nav-text">Dashboard</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a
+              href="../candidateDashboard/Sections/yourprofile.html"
+              class="nav-link"
+            >
+              <i class="nav-icon fas fa-user"></i>
+              <span class="nav-text">Your Profile</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a
+              href="../candidateDashboard/Sections/skills.html"
+              class="nav-link"
+            >
+              <i class="nav-icon fas fa-bullseye"></i>
+              <span class="nav-text">Skills Arsenal</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a
+              href="../candidateDashboard/Sections/projects.html"
+              class="nav-link"
+            >
+              <i class="nav-icon fas fa-project-diagram"></i>
+              <span class="nav-text">Projects</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a
+              href="../candidateDashboard/Sections/resume.html"
+              class="nav-link"
+            >
+              <i class="nav-icon fas fa-file-alt"></i>
+              <span class="nav-text">Resume</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a
+              href="../candidateDashboard/Sections/chat/chat.html"
+              class="nav-link"
+            >
+              <i class="nav-icon fas fa-comments"></i>
+              <span class="nav-text">Direct Chat</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a
+              href="../candidateDashboard/Sections/video_call.html"
+              class="nav-link"
+            >
+              <i class="nav-icon fas fa-video"></i>
+              <span class="nav-text">Interviews</span>
+              <span class="nav-badge">1</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a
+              href="../candidateDashboard/Sections/jobs/candidate-jobs.html"
+              class="nav-link"
+            >
+              <i class="nav-icon fas fa-clipboard-list"></i>
+              <span class="nav-text">Job Portal</span>
+              <span class="nav-badge">3</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a
+              href="../candidateDashboard/Sections/leaderboard.html"
+              class="nav-link"
+            >
+              <i class="nav-icon fas fa-trophy"></i>
+              <span class="nav-text">Leaderboard</span>
+            </a>
+          </div>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+          <div class="greeting">
+            <span class="greeting-emoji">👋</span>
+            <div>
+              <h1 class="greeting-text">Hello, Alex!</h1>
+              <p style="color: var(--text-muted); font-size: 0.875rem">
+                Welcome back to your dashboard
+              </p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="theme-toggle" onclick="toggleTheme()">
+              <i class="fas fa-sun" id="themeIcon"></i>
             </button>
-            
-            <div class="sidebar-header">
-                <div class="logo">
-                    <i class="fas fa-rocket"></i>
-                </div>
-                <div class="logo-text">Candidate Portal</div>
+            <div class="status-indicator">
+              <div class="status-dot"></div>
+              <span>Online</span>
             </div>
-            
-            <nav class="nav-menu">
-                <div class="nav-item">
-                    <a href="#" class="nav-link active">
-                        <i class="nav-icon fas fa-home"></i>
-                        <span class="nav-text">Dashboard</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="../candidateDashboard/Sections/yourprofile.html" class="nav-link">
-                        <i class="nav-icon fas fa-user"></i>
-                        <span class="nav-text">Your Profile</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="../candidateDashboard/Sections/skills.html" class="nav-link">
-                        <i class="nav-icon fas fa-bullseye"></i>
-                        <span class="nav-text">Skills Arsenal</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="../candidateDashboard/Sections/projects.html" class="nav-link">
-                        <i class="nav-icon fas fa-project-diagram"></i>
-                        <span class="nav-text">Projects</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="../candidateDashboard/Sections/resume.html" class="nav-link">
-                        <i class="nav-icon fas fa-file-alt"></i>
-                        <span class="nav-text">Resume</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="../candidateDashboard/Sections/chat/chat.html" class="nav-link">
-                        <i class="nav-icon fas fa-comments"></i>
-                        <span class="nav-text">Direct Chat</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="../candidateDashboard/Sections/video_call.html" class="nav-link">
-                        <i class="nav-icon fas fa-video"></i>
-                        <span class="nav-text">Interviews</span>
-                        <span class="nav-badge">1</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="../candidateDashboard/Sections/jobs/candidate-jobs.html" class="nav-link">
-                        <i class="nav-icon fas fa-clipboard-list"></i>
-                        <span class="nav-text">Job Portal</span>
-                        <span class="nav-badge">3</span>
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="../candidateDashboard/Sections/leaderboard.html" class="nav-link">
-                        <i class="nav-icon fas fa-trophy"></i>
-                        <span class="nav-text">Leaderboard</span>
-                    </a>
-                </div>
-            </nav>
-        </aside>
+            <button class="logout-btn">
+              <i class="fas fa-sign-out-alt"></i>
+              Logout
+            </button>
+          </div>
+        </header>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Header -->
-            <header class="header">
-                <div class="greeting">
-                    <span class="greeting-emoji">👋</span>
-                    <div>
-                        <h1 class="greeting-text">Hello, Alex!</h1>
-                        <p style="color: var(--text-muted); font-size: 0.875rem;">Welcome back to your dashboard</p>
-                    </div>
-                </div>
-                <div class="header-actions">
-                    <button class="theme-toggle" onclick="toggleTheme()">
-                        <i class="fas fa-sun" id="themeIcon"></i>
-                    </button>
-                    <div class="status-indicator">
-                        <div class="status-dot"></div>
-                        <span>Online</span>
-                    </div>
-                    <button class="logout-btn">
-                        <i class="fas fa-sign-out-alt"></i>
-                        Logout
-                    </button>
-                </div>
-            </header>
+        <!-- Stats Grid -->
+        <div class="stats-grid fade-in">
+          <div class="stat-card">
+            <div class="stat-number">12</div>
+            <div class="stat-label">Active Applications</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">5</div>
+            <div class="stat-label">Interview Requests</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">89%</div>
+            <div class="stat-label">Profile Completion</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">8.5</div>
+            <div class="stat-label">Skill Rating</div>
+          </div>
+        </div>
 
-            <!-- Stats Grid -->
-            <div class="stats-grid fade-in">
-                <div class="stat-card">
-                    <div class="stat-number">12</div>
-                    <div class="stat-label">Active Applications</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">5</div>
-                    <div class="stat-label">Interview Requests</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">89%</div>
-                    <div class="stat-label">Profile Completion</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">8.5</div>
-                    <div class="stat-label">Skill Rating</div>
-                </div>
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+          <!-- Profile Card -->
+          <div class="card slide-in">
+            <div class="card-header">
+              <div class="card-icon">
+                <i class="fas fa-user"></i>
+              </div>
+              <h3 class="card-title">Your Profile</h3>
             </div>
+            <div class="card-content">
+              <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="profile-name">Alex Johnson</div>
+              <div class="profile-role">Senior Software Engineer</div>
+              <button class="btn btn-primary">
+                <i class="fas fa-edit"></i>
+                Edit Profile
+              </button>
+            </div>
+          </div>
 
-            <!-- Dashboard Grid -->
-            <div class="dashboard-grid">
-                <!-- Profile Card -->
-                <div class="card slide-in">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <h3 class="card-title">Your Profile</h3>
-                    </div>
-                    <div class="card-content">
-                        <div class="profile-avatar">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <div class="profile-name">Alex Johnson</div>
-                        <div class="profile-role">Senior Software Engineer</div>
-                        <button class="btn btn-primary">
-                            <i class="fas fa-edit"></i>
-                            Edit Profile
-                        </button>
-                    </div>
+          <!-- Skills Arsenal -->
+          <div class="card slide-in">
+            <div class="card-header">
+              <div class="card-icon">
+                <i class="fas fa-bullseye"></i>
+              </div>
+              <h3 class="card-title">Skills Arsenal</h3>
+            </div>
+            <div class="card-content">
+              <div class="skills-container">
+                <div class="skill-tag">JavaScript</div>
+                <div class="skill-tag">React</div>
+                <div class="skill-tag">Node.js</div>
+                <div class="skill-tag">Python</div>
+                <div class="skill-tag">AWS</div>
+                <div class="skill-tag">HTML</div>
+              </div>
+              <!-- Progress Bars for Skills -->
+              <div class="progress-item">
+                <div class="progress-label">
+                  <span>JavaScript</span>
+                  <span>90%</span>
                 </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 90%"></div>
+                </div>
+              </div>
 
-                <!-- Skills Arsenal -->
-                <div class="card slide-in">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-bullseye"></i>
-                        </div>
-                        <h3 class="card-title">Skills Arsenal</h3>
-                    </div>
-                    <div class="card-content">
-                        <div class="skills-container">
-                            <div class="skill-tag">JavaScript</div>
-                            <div class="skill-tag">React</div>
-                            <div class="skill-tag">Node.js</div>
-                            <div class="skill-tag">Python</div>
-                            <div class="skill-tag">AWS</div>
-                            <div class="skill-tag">HTML</div>
-                        </div>
-                <!-- Progress Bars for Skills -->
-                <div class="progress-item">
-                    <div class="progress-label">
-                        <span>JavaScript</span>
-                        <span>90%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 90%;"></div>
-                    </div>
+              <div class="progress-item">
+                <div class="progress-label">
+                  <span>React</span>
+                  <span>85%</span>
                 </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 85%"></div>
+                </div>
+              </div>
 
-                <div class="progress-item">
-                    <div class="progress-label">
-                        <span>React</span>
-                        <span>85%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 85%;"></div>
-                    </div>
+              <div class="progress-item">
+                <div class="progress-label">
+                  <span>Node.js</span>
+                  <span>75%</span>
                 </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: 75%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-                <div class="progress-item">
-                    <div class="progress-label">
-                        <span>Node.js</span>
-                        <span>75%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 75%;"></div>
-                    </div>
-                </div>
-                </div>
-                </div>
+          <!-- Project Showcase -->
+          <div class="card slide-in">
+            <div class="card-header">
+              <div class="card-icon">
+                <i class="fas fa-project-diagram"></i>
+              </div>
+              <h3 class="card-title">Project Showcase</h3>
+            </div>
+            <div class="card-content">
+              <p style="color: var(--text-secondary); margin-bottom: 1rem">
+                Highlight your top 3 projects to impress recruiters.
+              </p>
+              <a href="#" class="btn btn-secondary">
+                <i class="fas fa-plus-circle"></i>
+                Add Project
+              </a>
+            </div>
+          </div>
 
-                <!-- Project Showcase -->
-                <div class="card slide-in">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-project-diagram"></i>
-                        </div>
-                        <h3 class="card-title">Project Showcase</h3>
-                    </div>
-                    <div class="card-content">
-                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                            Highlight your top 3 projects to impress recruiters.
-                        </p>
-                        <a href="#" class="btn btn-secondary">
-                            <i class="fas fa-plus-circle"></i>
-                            Add Project
-                        </a>
-                    </div>
-                </div>
+          <!-- Resume Manager -->
+          <div class="card slide-in">
+            <div class="card-header">
+              <div class="card-icon">
+                <i class="fas fa-file-alt"></i>
+              </div>
+              <h3 class="card-title">Resume Manager</h3>
+            </div>
+            <div class="card-content">
+              <p style="color: var(--text-secondary); margin-bottom: 1rem">
+                Upload and manage multiple versions of your resume.
+              </p>
+              <a href="#" class="btn btn-primary">
+                <i class="fas fa-upload"></i>
+                Upload Resume
+              </a>
+            </div>
+          </div>
+        </div>
+        <!-- End Dashboard Grid -->
+      </main>
+    </div>
 
-                <!-- Resume Manager -->
-                <div class="card slide-in">
-                    <div class="card-header">
-                        <div class="card-icon">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <h3 class="card-title">Resume Manager</h3>
-                    </div>
-                    <div class="card-content">
-                        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                            Upload and manage multiple versions of your resume.
-                        </p>
-                        <a href="#" class="btn btn-primary">
-                            <i class="fas fa-upload"></i>
-                            Upload Resume
-                        </a>
-                    </div>
-                </div>
-                </div> <!-- End Dashboard Grid -->
-                </main>
-                </div>
+    <!-- JavaScript -->
+    <script type="module">
 
-                <!-- JavaScript -->
-                <script>
-                function toggleSidebar() {
-                    const sidebar = document.getElementById('sidebar');
-                    const toggleIcon = document.getElementById('toggleIcon');
-                    sidebar.classList.toggle('collapsed');
-                    if (sidebar.classList.contains('collapsed')) {
-                        toggleIcon.classList.remove('fa-chevron-left');
-                        toggleIcon.classList.add('fa-chevron-right');
-                    } else {
-                        toggleIcon.classList.remove('fa-chevron-right');
-                        toggleIcon.classList.add('fa-chevron-left');
-                    }
-                }
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
 
-                function toggleTheme() {
-                    const body = document.body;
-                    const themeIcon = document.getElementById('themeIcon');
-                    const isLight = body.getAttribute('data-theme') === 'light';
-                    body.setAttribute('data-theme', isLight ? 'dark' : 'light');
-                    themeIcon.classList.toggle('fa-moon', !isLight);
-                    themeIcon.classList.toggle('fa-sun', isLight);
-                }
-        </script>
-    </body>
+      import {
+        getAuth,
+        onAuthStateChanged,
+      } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-auth.js";
+
+      const firebaseConfig = {
+        // Replace with your Firebase config
+        apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
+        authDomain: "doom-s-world.firebaseapp.com",
+        projectId: "doom-s-world",
+        storageBucket: "doom-s-world.firebasestorage.app",
+        messagingSenderId: "445783209326",
+        appId: "1:445783209326:web:700e95a429e7d06104fd7f",
+        measurementId: "G-86151LPWTC",
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log("Firebase recognizes user:", user.uid);
+        } else {
+          console.log("User not signed in.");
+        }
+      });
+
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const toggleIcon = document.getElementById("toggleIcon");
+        sidebar.classList.toggle("collapsed");
+        if (sidebar.classList.contains("collapsed")) {
+          toggleIcon.classList.remove("fa-chevron-left");
+          toggleIcon.classList.add("fa-chevron-right");
+        } else {
+          toggleIcon.classList.remove("fa-chevron-right");
+          toggleIcon.classList.add("fa-chevron-left");
+        }
+      }
+
+      function toggleTheme() {
+        const body = document.body;
+        const themeIcon = document.getElementById("themeIcon");
+        const isLight = body.getAttribute("data-theme") === "light";
+        body.setAttribute("data-theme", isLight ? "dark" : "light");
+        themeIcon.classList.toggle("fa-moon", !isLight);
+        themeIcon.classList.toggle("fa-sun", isLight);
+      }
+    </script>
+  </body>
 </html>
