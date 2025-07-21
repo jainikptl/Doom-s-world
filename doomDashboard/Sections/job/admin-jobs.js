@@ -66,7 +66,7 @@ function checkAdminAuth() {
   if (!adminUser) {
     showError("Admin authentication required")
     // Redirect to your admin login page
-    window.location.href = "admin-login.html" // or your admin login page
+    window.location.href = "admin-jobs.html" // or your admin login page
     return false
   }
 
