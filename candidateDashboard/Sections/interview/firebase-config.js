@@ -10,6 +10,7 @@ import {
   query,
   where,
   orderBy,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"
 
@@ -42,16 +43,18 @@ window.firestoreUtils = {
   query,
   where,
   orderBy,
+  onSnapshot
 }
 
 // Auth state observer
-onAuthStateChanged(auth, (user) => {
-  if (!user && !window.location.href.includes("login.html")) {
-    // Redirect to login if not authenticated
-    window.location.href = "login.html"
-  }
-})
-
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          console.log("Firebase recognizes user:", user.uid);
+          console.log("Firebase recognizes user:", user.email);
+        } else {
+          console.log("User not signed in.");
+        }
+      });
 // Logout function
 async function logout() {
   try {

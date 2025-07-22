@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Interviews - Candidate Portal</title>
+    <link rel="stylesheet" href="candidate-interview.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>My Interviews</h1>
+                        <p>Candidate Portal</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="candidate-info">
+                        <div class="candidate-avatar-small" id="candidateAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="candidate-details">
+                            <span id="candidateName">Loading...</span>
+                            <small id="candidateEmail">Loading...</small>
+                        </div>
+                    </div>
+                    <button class="header-btn primary" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Current Interview Status -->
+            <section class="current-interview-section" id="currentInterviewSection" style="display: none;">
+                <div class="current-interview-card">
+                    <div class="interview-status-header">
+                        <div class="status-icon">
+                            <i class="fas fa-video"></i>
+                        </div>
+                        <div class="status-info">
+                            <h3>Interview in Progress</h3>
+                            <p>Your interview is currently active</p>
+                        </div>
+                        <button class="btn success" id="joinCurrentInterviewBtn">
+                            <i class="fas fa-video"></i>
+                            Join Interview
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upcoming Interview -->
+            <section class="upcoming-interview-section" id="upcomingInterviewSection" style="display: none;">
+                <div class="section-header">
+                    <h2>Upcoming Interview</h2>
+                    <div class="countdown-timer" id="countdownTimer">
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="hoursLeft">00</span>
+                            <span class="countdown-label">Hours</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="minutesLeft">00</span>
+                            <span class="countdown-label">Minutes</span>
+                        </div>
+                        <div class="countdown-item">
+                            <span class="countdown-number" id="secondsLeft">00</span>
+                            <span class="countdown-label">Seconds</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="upcoming-interview-card" id="upcomingInterviewCard">
+                    <!-- Upcoming interview details will be populated here -->
+                </div>
+            </section>
+
+            <!-- All Interviews -->
+            <section class="all-interviews-section">
+                <div class="section-header">
+                    <h2>All My Interviews</h2>
+                    <div class="section-actions">
+                        <select id="statusFilter" onchange="filterInterviews()">
+                            <option value="all">All Status</option>
+                            <option value="scheduled">Scheduled</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="loading-jobs">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                    </div>
+                    <p>Loading your interviews...</p>
+                </div>
+
+                <!-- Interviews List -->
+                <div id="interviewsList" class="interviews-list" style="display: none;">
+                    <!-- Interviews will be populated here -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="loading-jobs" style="display: none;">
+                    <div class="loading-spinner">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                    <p>No interviews found.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Video Call Modal -->
+    <div id="videoCallModal" class="modal-overlay video-call-modal">
+        <div class="modal-content video-call-content">
+            <div class="video-call-header">
+                <div class="call-info">
+                    <h3 id="callTitle">Interview Call</h3>
+                    <p id="callSubtitle">Connecting...</p>
+                </div>
+                <div class="call-controls">
+                    <button class="control-btn" id="muteBtn" onclick="toggleMute()">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="control-btn" id="videoBtn" onclick="toggleVideo()">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="control-btn danger" onclick="endCall()">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="video-call-body">
+                <div class="video-container">
+                    <video id="localVideo" autoplay muted playsinline></video>
+                    <video id="remoteVideo" autoplay playsinline></video>
+                    <div class="video-overlay">
+                        <div class="participant-info">
+                            <div class="participant local">
+                                <span>You</span>
+                            </div>
+                            <div class="participant remote" id="remoteParticipant">
+                                <span>Waiting for interviewer...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interview Feedback Modal -->
+    <div id="feedbackModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Interview Feedback</h3>
+                <button class="modal-close" onclick="closeFeedbackModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="interviewRating">How was your interview experience?</label>
+                    <div class="rating-stars" id="ratingStars">
+                        <i class="fas fa-star" data-rating="1"></i>
+                        <i class="fas fa-star" data-rating="2"></i>
+                        <i class="fas fa-star" data-rating="3"></i>
+                        <i class="fas fa-star" data-rating="4"></i>
+                        <i class="fas fa-star" data-rating="5"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="feedbackComments">Additional Comments</label>
+                    <textarea id="feedbackComments" placeholder="Share your thoughts about the interview process..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn secondary" onclick="closeFeedbackModal()">Skip</button>
+                    <button class="btn primary" onclick="submitFeedback()">
+                        <i class="fas fa-paper-plane"></i>
+                        Submit Feedback
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- Firebase SDK v9+ -->
+    <script type="module" src="firebase-config.js"></script>
+    <script type="module" src="candidate-interview.js"></script>
+</body>
+</html>

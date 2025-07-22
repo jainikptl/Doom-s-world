@@ -6,7 +6,9 @@ const currentDate = new Date()
 let selectedDate = null
 let selectedTimeSlot = null
 let bookedSlots = []
-// const showToast = null // Declare showToast variable
+const showToast = null // Declare showToast variable
+const openVideoCallModal = null // Declare openVideoCallModal variable
+const viewCandidateDetails = null // Declare viewCandidateDetails variable
 
 // Wait for Firebase to be ready
 function waitForFirebase() {
@@ -21,22 +23,6 @@ function waitForFirebase() {
     checkFirebase()
   })
 }
-
-// Define globally at the top of your script
-function showToast(message, type = "success") {
-  const toast = document.getElementById("toast")
-  const toastMessage = document.getElementById("toastMessage")
-
-  toast.classList.remove("toast-success", "toast-error", "toast-warning")
-  toast.classList.add(`toast-${type}`)
-  toastMessage.textContent = message
-  toast.classList.add("show")
-
-  setTimeout(() => {
-    toast.classList.remove("show")
-  }, 3000)
-}
-
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", async () => {
@@ -95,6 +81,17 @@ async function loadBookedSlots() {
     bookedSlots = []
     querySnapshot.forEach((doc) => {
       const data = doc.data()
+
+      // Exclude current reschedule slot
+      if (
+        window.currentReschedule &&
+        data.date === window.currentReschedule.currentDate &&
+        data.time === window.currentReschedule.currentTime &&
+        data.candidateId === window.currentReschedule.candidateId
+      ) {
+        return // Skip this slot as it's being rescheduled
+      }
+
       bookedSlots.push({
         date: data.date,
         time: data.time,
@@ -121,9 +118,13 @@ function displayCandidates() {
 function createCandidateCard(candidate) {
   const card = document.createElement("div")
   card.className = "candidate-card"
+  card.setAttribute("data-candidate-id", candidate.id)
 
   const statusClass = candidate.interviewStatus || "accepted"
   const statusText = getStatusText(statusClass)
+
+  // Check if interview is starting soon
+  const showJoinButton = shouldShowJoinButton(candidate)
 
   card.innerHTML = `
     <div class="candidate-header">
@@ -142,6 +143,15 @@ function createCandidateCard(candidate) {
     <div class="candidate-details">
       <h4>Applied Position</h4>
       <p>${candidate.jobTitle || "Not specified"}</p>
+      
+      ${
+        candidate.interviewDate && candidate.interviewTime
+          ? `
+        <h4>Interview Scheduled</h4>
+        <p><i class="fas fa-calendar"></i> ${formatDate(candidate.interviewDate)} at ${candidate.interviewTime}</p>
+      `
+          : ""
+      }
       
       ${
         candidate.skills
@@ -164,6 +174,17 @@ function createCandidateCard(candidate) {
     </div>
     
     <div class="candidate-actions">
+      ${
+        showJoinButton
+          ? `
+        <button class="btn success join-interview-btn" onclick="startVideoCall(${JSON.stringify(candidate).replace(/"/g, "&quot;")})">
+          <i class="fas fa-video"></i>
+          Join Interview
+        </button>
+      `
+          : ""
+      }
+      
       ${
         statusClass === "accepted"
           ? `
@@ -198,6 +219,19 @@ function createCandidateCard(candidate) {
   `
 
   return card
+}
+
+// Check if join button should be shown
+function shouldShowJoinButton(candidate) {
+  if (candidate.interviewStatus !== "interview_scheduled" || !candidate.interviewDate || !candidate.interviewTime) {
+    return false
+  }
+
+  const now = new Date()
+  const interviewDateTime = new Date(`${candidate.interviewDate}T${candidate.interviewTime}:00`)
+  const fifteenMinutesBefore = new Date(interviewDateTime.getTime() - 15 * 60000)
+
+  return now >= fifteenMinutesBefore && now <= interviewDateTime
 }
 
 // Get status text
@@ -269,17 +303,8 @@ function filterCandidates() {
 
 // Open schedule modal
 function openScheduleModal(candidateId) {
-
   selectedCandidate = acceptedCandidates.find((c) => c.id === candidateId)
-
-  if (!selectedCandidate || !selectedCandidate.candidateName || !selectedCandidate.candidateEmail || !selectedCandidate.jobTitle) {
-    showToast("Candidate info incomplete or not found", "error")
-    console.log("Firebase selected user:", selectedCandidate);
-    console.log("Firebase name user:", selectedCandidate.candidateName);
-    console.log("Firebase email user:", selectedCandidate.candidateEmail);
-    console.log("Firebase title user:", selectedCandidate.jobTitle);
-    return
-  }
+  if (!selectedCandidate) return
 
   // Populate candidate info
   document.getElementById("selectedCandidateInfo").innerHTML = `
@@ -309,7 +334,6 @@ function openScheduleModal(candidateId) {
   // Show modal
   document.getElementById("scheduleModal").classList.add("active")
 }
-
 
 // Close schedule modal
 function closeScheduleModal() {
@@ -507,11 +531,27 @@ async function scheduleInterview() {
   const notes = document.getElementById("interviewNotes").value
 
   try {
-    const { collection, addDoc, doc, updateDoc } = window.firestoreUtils
+    const { collection, addDoc, doc, updateDoc, query, where, getDocs, deleteDoc } = window.firestoreUtils
 
-    // Add to interviews collection
+    // If this is a reschedule, delete the old interview
+    if (window.currentReschedule) {
+      const interviewsRef = collection(window.db, "interviews")
+      const q = query(
+        interviewsRef,
+        where("candidateId", "==", window.currentReschedule.candidateId),
+        where("date", "==", window.currentReschedule.currentDate),
+        where("time", "==", window.currentReschedule.currentTime),
+      )
+      const querySnapshot = await getDocs(q)
+
+      querySnapshot.forEach(async (docSnapshot) => {
+        await deleteDoc(doc(window.db, "interviews", docSnapshot.id))
+      })
+    }
+
+    // Add new interview
     const interviewsRef = collection(window.db, "interviews")
-    await addDoc(interviewsRef, {
+    const newInterviewRef = await addDoc(interviewsRef, {
       candidateId: selectedCandidate.candidateId,
       candidateName: selectedCandidate.candidateName,
       candidateEmail: selectedCandidate.candidateEmail,
@@ -523,6 +563,8 @@ async function scheduleInterview() {
       status: "scheduled",
       createdAt: new Date().toISOString(),
       createdBy: window.auth.currentUser.uid,
+      adminJoined: false,
+      candidateJoined: false,
     })
 
     // Update candidate status
@@ -533,10 +575,16 @@ async function scheduleInterview() {
       interviewTime: selectedTimeSlot,
       interviewType: interviewType,
       interviewNotes: notes,
+      interviewId: newInterviewRef.id,
       updatedAt: new Date().toISOString(),
     })
 
-    window.showToast("Interview scheduled successfully!", "success")
+    const action = window.currentReschedule ? "rescheduled" : "scheduled"
+    window.showToast(`Interview ${action} successfully!`, "success")
+
+    // Clear reschedule data
+    window.currentReschedule = null
+
     closeScheduleModal()
     await loadAcceptedCandidates()
     await loadBookedSlots()
@@ -555,11 +603,11 @@ function openAssignModal(candidateId) {
   document.getElementById("assignCandidateInfo").innerHTML = `
     <div class="candidate-info-header">
       <div class="candidate-info-avatar">
-        ${selectedCandidate.name.charAt(0).toUpperCase()}
+        ${selectedCandidate.candidateName.charAt(0).toUpperCase()}
       </div>
       <div class="candidate-info-details">
-        <h4>${selectedCandidate.name}</h4>
-        <p>${selectedCandidate.email} • ${selectedCandidate.jobTitle}</p>
+        <h4>${selectedCandidate.candidateName}</h4>
+        <p>${selectedCandidate.candidateEmail} • ${selectedCandidate.jobTitle}</p>
       </div>
     </div>
   `
@@ -637,13 +685,83 @@ function viewInterviewDetails(candidateId) {
 }
 
 // Reschedule interview
-function rescheduleInterview(candidateId) {
+async function rescheduleInterview(candidateId) {
+  const candidate = acceptedCandidates.find((c) => c.id === candidateId)
+  if (!candidate) return
+
+  // Store the current interview details for unblocking
+  window.currentReschedule = {
+    candidateId: candidateId,
+    currentDate: candidate.interviewDate,
+    currentTime: candidate.interviewTime,
+  }
+
   openScheduleModal(candidateId)
 }
 
-// View candidate details
-function viewCandidateDetails(candidateId) {
-  window.showToast("Feature coming soon", "warning")
+// Check if interview is starting soon (15 minutes before)
+function checkUpcomingInterviews() {
+  const now = new Date()
+  const in15Minutes = new Date(now.getTime() + 15 * 60000)
+
+  acceptedCandidates.forEach((candidate) => {
+    if (candidate.interviewStatus === "interview_scheduled" && candidate.interviewDate && candidate.interviewTime) {
+      const interviewDateTime = new Date(`${candidate.interviewDate}T${candidate.interviewTime}:00`)
+
+      // Show join button if within 15 minutes of interview
+      if (now >= new Date(interviewDateTime.getTime() - 15 * 60000) && now <= interviewDateTime) {
+        showJoinInterviewButton(candidate)
+      }
+    }
+  })
+}
+
+// Show join interview button
+function showJoinInterviewButton(candidate) {
+  const candidateCard = document.querySelector(`[data-candidate-id="${candidate.id}"]`)
+  if (candidateCard) {
+    const actionsDiv = candidateCard.querySelector(".candidate-actions")
+
+    // Check if join button already exists
+    if (!actionsDiv.querySelector(".join-interview-btn")) {
+      const joinBtn = document.createElement("button")
+      joinBtn.className = "btn success join-interview-btn"
+      joinBtn.innerHTML = `
+        <i class="fas fa-video"></i>
+        Join Interview
+      `
+      joinBtn.onclick = () => startVideoCall(candidate)
+      actionsDiv.insertBefore(joinBtn, actionsDiv.firstChild)
+    }
+  }
+}
+
+// Start video call
+async function startVideoCall(candidate) {
+  try {
+    // Create or join meeting room
+    const meetingId = `interview_${candidate.id}_${Date.now()}`
+
+    // Update interview status to indicate admin joined
+    const { doc, updateDoc } = window.firestoreUtils
+    const interviewRef = doc(window.db, "interviews", candidate.interviewId)
+    await updateDoc(interviewRef, {
+      meetingId: meetingId,
+      adminJoined: true,
+      adminJoinedAt: new Date().toISOString(),
+      status: "in_progress",
+    })
+
+    // Open video call modal
+    if (openVideoCallModal) {
+      openVideoCallModal(meetingId, candidate, "admin")
+    }
+
+    window.showToast("Video call started. Candidate will be notified.", "success")
+  } catch (error) {
+    console.error("Error starting video call:", error)
+    window.showToast("Error starting video call", "error")
+  }
 }
 
 // Make functions globally accessible
@@ -659,6 +777,7 @@ window.nextMonth = nextMonth
 window.viewInterviewDetails = viewInterviewDetails
 window.rescheduleInterview = rescheduleInterview
 window.viewCandidateDetails = viewCandidateDetails
+window.startVideoCall = startVideoCall
 
 // Function to show toast messages
 window.showToast = (message, type) => {
@@ -671,3 +790,6 @@ window.showToast = (message, type) => {
     document.body.removeChild(toast)
   }, 3000)
 }
+
+// Start checking for upcoming interviews every minute
+setInterval(checkUpcomingInterviews, 60000)
