@@ -6,9 +6,6 @@ const currentDate = new Date()
 let selectedDate = null
 let selectedTimeSlot = null
 let bookedSlots = []
-const showToast = null // Declare showToast variable
-// const openVideoCallModal = null // Declare openVideoCallModal variable
-const viewCandidateDetails = null // Declare viewCandidateDetails variable
 
 // Wait for Firebase to be ready
 function waitForFirebase() {
@@ -1110,7 +1107,57 @@ async function endCall() {
   }
 }
 
-// Make functions globally accessible
+// View candidate details
+function viewCandidateDetails(candidateId) {
+  const candidate = acceptedCandidates.find((c) => c.id === candidateId)
+  if (!candidate) return
+
+  // Create a simple details modal or redirect
+  window.showToast(`Viewing details for ${candidate.name}`, "info")
+
+  // You can implement a detailed view modal here
+  console.log("Candidate details:", candidate)
+}
+
+// Function to show toast messages
+window.showToast = (message, type = "success") => {
+  const toast = document.getElementById("toast")
+  const toastMessage = document.getElementById("toastMessage")
+
+  if (!toast || !toastMessage) return
+
+  // Remove existing classes
+  toast.classList.remove("toast-success", "toast-error", "toast-warning")
+
+  // Add appropriate class
+  toast.classList.add(`toast-${type}`)
+
+  // Set message
+  toastMessage.textContent = message
+
+  // Show toast
+  toast.classList.add("show")
+
+  // Hide after 3 seconds
+  setTimeout(() => {
+    toast.classList.remove("show")
+  }, 3000)
+}
+
+// Make functions globally accessible - moved to end of file
+window.openScheduleModal = openScheduleModal
+window.openAssignModal = openAssignModal
+window.closeScheduleModal = closeScheduleModal
+window.closeAssignModal = closeAssignModal
+window.scheduleInterview = scheduleInterview
+window.assignCandidate = assignCandidate
+window.filterCandidates = filterCandidates
+window.previousMonth = previousMonth
+window.nextMonth = nextMonth
+window.viewInterviewDetails = viewInterviewDetails
+window.rescheduleInterview = rescheduleInterview
+window.viewCandidateDetails = viewCandidateDetails
+window.startVideoCall = startVideoCall
 window.toggleMute = toggleMute
 window.toggleVideo = toggleVideo
 window.endCall = endCall
