@@ -167,8 +167,8 @@ async function loadCandidateData() {
         email: user.email,
       }
 
-      document.getElementById("candidateName").textContent = candidateData.name
-      document.getElementById("candidateEmail").textContent = candidateData.email
+      document.getElementById("candidateName").textContent = candidateData.candidateName
+      document.getElementById("candidateEmail").textContent = candidateData.candidateEmail
 
       const avatar = document.getElementById("candidateAvatar")
       avatar.innerHTML = candidateData.name.charAt(0).toUpperCase()
@@ -191,10 +191,10 @@ async function loadInterviews() {
     const interviews = []
 
     // First try: by candidateId
-    if (candidateData.id) {
+    if (candidateData.candidateId) {
       const q = query(
         interviewsRef,
-        where("candidateId", "==", candidateData.id),
+        where("candidateId", "==", candidateData.candidateId),
         orderBy("date", "desc"),
         orderBy("time", "desc"),
       )
@@ -213,10 +213,10 @@ async function loadInterviews() {
     }
 
     // Second try: by candidate email if no results from first try
-    if (interviews.length === 0 && candidateData.email) {
+    if (interviews.length === 0 && candidateData.candidateEmail) {
       const q = query(
         interviewsRef,
-        where("candidateEmail", "==", candidateData.email),
+        where("candidateEmail", "==", candidateData.candidateEmail),
         orderBy("date", "desc"),
         orderBy("time", "desc"),
       )
@@ -261,7 +261,7 @@ async function loadInterviews() {
 
     console.log(`Found ${interviews.length} interviews for candidate`)
 
-    this.interviews = interviews
+    // this.interviews = interviews
     filteredInterviews = [...interviews]
     displayInterviews()
     checkUpcomingInterview()

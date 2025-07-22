@@ -7,6 +7,50 @@ let selectedDate = null
 let selectedTimeSlot = null
 let bookedSlots = []
 
+// Immediately expose functions to global scope
+window.openScheduleModal = openScheduleModal
+window.openAssignModal = openAssignModal
+window.closeScheduleModal = closeScheduleModal
+window.closeAssignModal = closeAssignModal
+window.scheduleInterview = scheduleInterview
+window.assignCandidate = assignCandidate
+window.filterCandidates = filterCandidates
+window.previousMonth = previousMonth
+window.nextMonth = nextMonth
+window.viewInterviewDetails = viewInterviewDetails
+window.rescheduleInterview = rescheduleInterview
+window.viewCandidateDetails = viewCandidateDetails
+window.startVideoCall = startVideoCall
+window.toggleMute = toggleMute
+window.toggleVideo = toggleVideo
+window.endCall = endCall
+window.openVideoCallModal = openVideoCallModal
+
+// Function to show toast messages
+window.showToast = (message, type = "success") => {
+  const toast = document.getElementById("toast")
+  const toastMessage = document.getElementById("toastMessage")
+
+  if (!toast || !toastMessage) return
+
+  // Remove existing classes
+  toast.classList.remove("toast-success", "toast-error", "toast-warning")
+
+  // Add appropriate class
+  toast.classList.add(`toast-${type}`)
+
+  // Set message
+  toastMessage.textContent = message
+
+  // Show toast
+  toast.classList.add("show")
+
+  // Hide after 3 seconds
+  setTimeout(() => {
+    toast.classList.remove("show")
+  }, 3000)
+}
+
 // Wait for Firebase to be ready
 function waitForFirebase() {
   return new Promise((resolve) => {
@@ -27,6 +71,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     await waitForFirebase()
     await loadAcceptedCandidates()
     await loadBookedSlots()
+
+    // Start checking for upcoming interviews every minute
+    setInterval(checkUpcomingInterviews, 60000)
+    checkUpcomingInterviews() // Initial check
   } catch (error) {
     console.error("Error initializing page:", error)
     window.showToast("Error initializing application", "error")
@@ -174,7 +222,7 @@ function createCandidateCard(candidate) {
       ${
         showJoinButton
           ? `
-        <button class="btn success join-interview-btn" onclick="startVideoCall(${JSON.stringify(candidate).replace(/"/g, "&quot;")})">
+        <button class="btn success join-interview-btn" data-action="startVideoCall" data-candidate-id="${candidate.id}">
           <i class="fas fa-video"></i>
           Join Interview
         </button>
@@ -185,28 +233,28 @@ function createCandidateCard(candidate) {
       ${
         statusClass === "accepted"
           ? `
-        <button class="btn primary" onclick="window.openScheduleModal('${candidate.id}')">
+        <button class="btn primary" data-action="openScheduleModal" data-candidate-id="${candidate.id}">
           <i class="fas fa-calendar-plus"></i>
           Schedule Interview
         </button>
-        <button class="btn success" onclick="window.openAssignModal('${candidate.id}')">
+        <button class="btn success" data-action="openAssignModal" data-candidate-id="${candidate.id}">
           <i class="fas fa-user-plus"></i>
           Assign Without Meeting
         </button>
       `
           : statusClass === "interview_scheduled"
             ? `
-        <button class="btn secondary" onclick="viewInterviewDetails('${candidate.id}')">
+        <button class="btn secondary" data-action="viewInterviewDetails" data-candidate-id="${candidate.id}">
           <i class="fas fa-eye"></i>
           View Interview
         </button>
-        <button class="btn primary" onclick="rescheduleInterview('${candidate.id}')">
+        <button class="btn primary" data-action="rescheduleInterview" data-candidate-id="${candidate.id}">
           <i class="fas fa-calendar-alt"></i>
           Reschedule
         </button>
       `
             : `
-        <button class="btn secondary" onclick="viewCandidateDetails('${candidate.id}')">
+        <button class="btn secondary" data-action="viewCandidateDetails" data-candidate-id="${candidate.id}">
           <i class="fas fa-eye"></i>
           View Details
         </button>
@@ -214,6 +262,37 @@ function createCandidateCard(candidate) {
       }
     </div>
   `
+
+  // Add event listeners to buttons
+  const buttons = card.querySelectorAll("button[data-action]")
+  buttons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const action = e.target.closest("button").getAttribute("data-action")
+      const candidateId = e.target.closest("button").getAttribute("data-candidate-id")
+
+      switch (action) {
+        case "startVideoCall":
+          const candidate = acceptedCandidates.find((c) => c.id === candidateId)
+          if (candidate) startVideoCall(candidate)
+          break
+        case "openScheduleModal":
+          openScheduleModal(candidateId)
+          break
+        case "openAssignModal":
+          openAssignModal(candidateId)
+          break
+        case "viewInterviewDetails":
+          viewInterviewDetails(candidateId)
+          break
+        case "rescheduleInterview":
+          rescheduleInterview(candidateId)
+          break
+        case "viewCandidateDetails":
+          viewCandidateDetails(candidateId)
+          break
+      }
+    })
+  })
 
   return card
 }
@@ -699,7 +778,6 @@ async function rescheduleInterview(candidateId) {
 // Check if interview is starting soon (15 minutes before)
 function checkUpcomingInterviews() {
   const now = new Date()
-  const in15Minutes = new Date(now.getTime() + 15 * 60000)
 
   acceptedCandidates.forEach((candidate) => {
     if (candidate.interviewStatus === "interview_scheduled" && candidate.interviewDate && candidate.interviewTime) {
@@ -727,7 +805,7 @@ function showJoinInterviewButton(candidate) {
         <i class="fas fa-video"></i>
         Join Interview
       `
-      joinBtn.onclick = () => startVideoCall(candidate)
+      joinBtn.addEventListener("click", () => startVideoCall(candidate))
       actionsDiv.insertBefore(joinBtn, actionsDiv.firstChild)
     }
   }
@@ -1118,47 +1196,3 @@ function viewCandidateDetails(candidateId) {
   // You can implement a detailed view modal here
   console.log("Candidate details:", candidate)
 }
-
-// Function to show toast messages
-window.showToast = (message, type = "success") => {
-  const toast = document.getElementById("toast")
-  const toastMessage = document.getElementById("toastMessage")
-
-  if (!toast || !toastMessage) return
-
-  // Remove existing classes
-  toast.classList.remove("toast-success", "toast-error", "toast-warning")
-
-  // Add appropriate class
-  toast.classList.add(`toast-${type}`)
-
-  // Set message
-  toastMessage.textContent = message
-
-  // Show toast
-  toast.classList.add("show")
-
-  // Hide after 3 seconds
-  setTimeout(() => {
-    toast.classList.remove("show")
-  }, 3000)
-}
-
-// Make functions globally accessible - moved to end of file
-window.openScheduleModal = openScheduleModal
-window.openAssignModal = openAssignModal
-window.closeScheduleModal = closeScheduleModal
-window.closeAssignModal = closeAssignModal
-window.scheduleInterview = scheduleInterview
-window.assignCandidate = assignCandidate
-window.filterCandidates = filterCandidates
-window.previousMonth = previousMonth
-window.nextMonth = nextMonth
-window.viewInterviewDetails = viewInterviewDetails
-window.rescheduleInterview = rescheduleInterview
-window.viewCandidateDetails = viewCandidateDetails
-window.startVideoCall = startVideoCall
-window.toggleMute = toggleMute
-window.toggleVideo = toggleVideo
-window.endCall = endCall
-window.openVideoCallModal = openVideoCallModal
