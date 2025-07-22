@@ -32,7 +32,7 @@
                     </div>
                 </div>
                 <div class="header-actions">
-                    <a href="../calendar/calendar.html" class="header-btn">
+                    <a href="calendar.html" class="header-btn">
                         <i class="fas fa-calendar-alt"></i>
                         Calendar View
                     </a>
@@ -227,6 +227,45 @@
                         <i class="fas fa-user-plus"></i>
                         Assign Candidate
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Video Call Modal -->
+    <div id="videoCallModal" class="modal-overlay video-call-modal">
+        <div class="modal-content video-call-content">
+            <div class="video-call-header">
+                <div class="call-info">
+                    <h3 id="callTitle">Interview Call</h3>
+                    <p id="callSubtitle">Connecting...</p>
+                </div>
+                <div class="call-controls">
+                    <button class="control-btn" id="muteBtn" onclick="toggleMute()">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="control-btn" id="videoBtn" onclick="toggleVideo()">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="control-btn danger" onclick="endCall()">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="video-call-body">
+                <div class="video-container">
+                    <video id="localVideo" autoplay muted playsinline></video>
+                    <video id="remoteVideo" autoplay playsinline></video>
+                    <div class="video-overlay">
+                        <div class="participant-info">
+                            <div class="participant local">
+                                <span>You (Admin)</span>
+                            </div>
+                            <div class="participant remote" id="remoteParticipant">
+                                <span>Waiting for candidate...</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

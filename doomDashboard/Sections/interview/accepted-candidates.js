@@ -7,7 +7,7 @@ let selectedDate = null
 let selectedTimeSlot = null
 let bookedSlots = []
 const showToast = null // Declare showToast variable
-const openVideoCallModal = null // Declare openVideoCallModal variable
+// const openVideoCallModal = null // Declare openVideoCallModal variable
 const viewCandidateDetails = null // Declare viewCandidateDetails variable
 
 // Wait for Firebase to be ready
@@ -310,11 +310,11 @@ function openScheduleModal(candidateId) {
   document.getElementById("selectedCandidateInfo").innerHTML = `
     <div class="candidate-info-header">
       <div class="candidate-info-avatar">
-        ${selectedCandidate.candidateName.charAt(0).toUpperCase()}
+        ${selectedCandidate.name.charAt(0).toUpperCase()}
       </div>
       <div class="candidate-info-details">
-        <h4>${selectedCandidate.candidateName}</h4>
-        <p>${selectedCandidate.candidateEmail} • ${selectedCandidate.jobTitle}</p>
+        <h4>${selectedCandidate.name}</h4>
+        <p>${selectedCandidate.email} • ${selectedCandidate.jobTitle}</p>
       </div>
     </div>
   `
@@ -552,9 +552,9 @@ async function scheduleInterview() {
     // Add new interview
     const interviewsRef = collection(window.db, "interviews")
     const newInterviewRef = await addDoc(interviewsRef, {
-      candidateId: selectedCandidate.candidateId,
-      candidateName: selectedCandidate.candidateName,
-      candidateEmail: selectedCandidate.candidateEmail,
+      candidateId: selectedCandidate.id,
+      candidateName: selectedCandidate.name,
+      candidateEmail: selectedCandidate.email,
       jobTitle: selectedCandidate.jobTitle,
       date: formatDateForStorage(selectedDate),
       time: selectedTimeSlot,
@@ -603,11 +603,11 @@ function openAssignModal(candidateId) {
   document.getElementById("assignCandidateInfo").innerHTML = `
     <div class="candidate-info-header">
       <div class="candidate-info-avatar">
-        ${selectedCandidate.candidateName.charAt(0).toUpperCase()}
+        ${selectedCandidate.name.charAt(0).toUpperCase()}
       </div>
       <div class="candidate-info-details">
-        <h4>${selectedCandidate.candidateName}</h4>
-        <p>${selectedCandidate.candidateEmail} • ${selectedCandidate.jobTitle}</p>
+        <h4>${selectedCandidate.name}</h4>
+        <p>${selectedCandidate.email} • ${selectedCandidate.jobTitle}</p>
       </div>
     </div>
   `
@@ -752,10 +752,8 @@ async function startVideoCall(candidate) {
       status: "in_progress",
     })
 
-    // Open video call modal
-    if (openVideoCallModal) {
-      openVideoCallModal(meetingId, candidate, "admin")
-    }
+    // Open video call modal for admin
+    window.openVideoCallModal(meetingId, candidate, "admin")
 
     window.showToast("Video call started. Candidate will be notified.", "success")
   } catch (error) {
@@ -764,32 +762,356 @@ async function startVideoCall(candidate) {
   }
 }
 
-// Make functions globally accessible
-window.openScheduleModal = openScheduleModal
-window.openAssignModal = openAssignModal
-window.closeScheduleModal = closeScheduleModal
-window.closeAssignModal = closeAssignModal
-window.scheduleInterview = scheduleInterview
-window.assignCandidate = assignCandidate
-window.filterCandidates = filterCandidates
-window.previousMonth = previousMonth
-window.nextMonth = nextMonth
-window.viewInterviewDetails = viewInterviewDetails
-window.rescheduleInterview = rescheduleInterview
-window.viewCandidateDetails = viewCandidateDetails
-window.startVideoCall = startVideoCall
+// Add the openVideoCallModal function for admin side
+function openVideoCallModal(meetingId, candidate, userType) {
+  // Create video call modal if it doesn't exist
+  if (!document.getElementById("videoCallModal")) {
+    createVideoCallModal()
+  }
 
-// Function to show toast messages
-window.showToast = (message, type) => {
-  const toast = document.createElement("div")
-  toast.className = `toast ${type}`
-  toast.textContent = message
-  document.body.appendChild(toast)
+  const modal = document.getElementById("videoCallModal")
+  const title = document.getElementById("callTitle")
+  const subtitle = document.getElementById("callSubtitle")
 
-  setTimeout(() => {
-    document.body.removeChild(toast)
-  }, 3000)
+  title.textContent = `Interview: ${candidate.jobTitle || "Position Interview"}`
+  subtitle.textContent = userType === "admin" ? "Waiting for candidate to join..." : "Connecting to interviewer..."
+
+  modal.classList.add("active")
+
+  try {
+    initializeWebRTC(meetingId, candidate, userType)
+  } catch (error) {
+    console.error("Error initializing WebRTC:", error)
+    window.showToast("Error starting video call", "error")
+  }
 }
 
-// Start checking for upcoming interviews every minute
-setInterval(checkUpcomingInterviews, 60000)
+// Create video call modal dynamically
+function createVideoCallModal() {
+  const modalHTML = `
+    <!-- Video Call Modal -->
+    <div id="videoCallModal" class="modal-overlay video-call-modal">
+        <div class="modal-content video-call-content">
+            <div class="video-call-header">
+                <div class="call-info">
+                    <h3 id="callTitle">Interview Call</h3>
+                    <p id="callSubtitle">Connecting...</p>
+                </div>
+                <div class="call-controls">
+                    <button class="control-btn" id="muteBtn" onclick="toggleMute()">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="control-btn" id="videoBtn" onclick="toggleVideo()">
+                        <i class="fas fa-video"></i>
+                    </button>
+                    <button class="control-btn danger" onclick="endCall()">
+                        <i class="fas fa-phone-slash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="video-call-body">
+                <div class="video-container">
+                    <video id="localVideo" autoplay muted playsinline></video>
+                    <video id="remoteVideo" autoplay playsinline></video>
+                    <div class="video-overlay">
+                        <div class="participant-info">
+                            <div class="participant local">
+                                <span>You (Admin)</span>
+                            </div>
+                            <div class="participant remote" id="remoteParticipant">
+                                <span>Waiting for candidate...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  `
+
+  document.body.insertAdjacentHTML("beforeend", modalHTML)
+}
+
+// Add WebRTC functionality for admin side
+let currentCall = null
+let localStream = null
+let peerConnection = null
+
+// WebRTC configuration
+const rtcConfiguration = {
+  iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }],
+}
+
+// Initialize WebRTC
+async function initializeWebRTC(meetingId, candidate, userType) {
+  try {
+    // Get user media
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    })
+
+    const localVideo = document.getElementById("localVideo")
+    localVideo.srcObject = localStream
+
+    // Create peer connection
+    peerConnection = new RTCPeerConnection(rtcConfiguration)
+
+    // Add local stream to peer connection
+    localStream.getTracks().forEach((track) => {
+      peerConnection.addTrack(track, localStream)
+    })
+
+    // Handle remote stream
+    peerConnection.ontrack = (event) => {
+      const remoteVideo = document.getElementById("remoteVideo")
+      remoteVideo.srcObject = event.streams[0]
+
+      const remoteParticipant = document.getElementById("remoteParticipant")
+      remoteParticipant.innerHTML = `<span>${userType === "admin" ? "Candidate" : "Interviewer"}</span>`
+
+      // Update subtitle
+      const subtitle = document.getElementById("callSubtitle")
+      subtitle.textContent = "Connected"
+    }
+
+    // Handle ICE candidates
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        // Send ICE candidate to remote peer via Firebase
+        sendSignalingMessage(meetingId, {
+          type: "ice-candidate",
+          candidate: event.candidate,
+          from: userType,
+        })
+      }
+    }
+
+    // Handle connection state changes
+    peerConnection.onconnectionstatechange = () => {
+      console.log("Connection state:", peerConnection.connectionState)
+      const subtitle = document.getElementById("callSubtitle")
+
+      switch (peerConnection.connectionState) {
+        case "connecting":
+          subtitle.textContent = "Connecting..."
+          break
+        case "connected":
+          subtitle.textContent = "Connected"
+          break
+        case "disconnected":
+          subtitle.textContent = "Disconnected"
+          break
+        case "failed":
+          subtitle.textContent = "Connection failed"
+          break
+      }
+    }
+
+    // Listen for signaling messages
+    listenForSignalingMessages(meetingId, userType)
+
+    // If admin, create offer
+    if (userType === "admin") {
+      setTimeout(async () => {
+        try {
+          const offer = await peerConnection.createOffer()
+          await peerConnection.setLocalDescription(offer)
+
+          sendSignalingMessage(meetingId, {
+            type: "offer",
+            offer: offer,
+            from: userType,
+          })
+        } catch (error) {
+          console.error("Error creating offer:", error)
+        }
+      }, 1000)
+    }
+
+    currentCall = {
+      meetingId,
+      candidate,
+      userType,
+      startTime: new Date(),
+    }
+
+    console.log("WebRTC initialized for", userType)
+  } catch (error) {
+    console.error("Error accessing media devices:", error)
+    window.showToast("Error accessing camera/microphone", "error")
+  }
+}
+
+// Send signaling message
+async function sendSignalingMessage(meetingId, message) {
+  try {
+    const { collection, addDoc } = window.firestoreUtils
+    const signalingRef = collection(window.db, "signaling", meetingId, "messages")
+    await addDoc(signalingRef, {
+      ...message,
+      timestamp: new Date().toISOString(),
+    })
+    console.log("Sent signaling message:", message.type)
+  } catch (error) {
+    console.error("Error sending signaling message:", error)
+  }
+}
+
+// Listen for signaling messages
+function listenForSignalingMessages(meetingId, userType) {
+  const { collection, onSnapshot, orderBy, query } = window.firestoreUtils
+  const signalingRef = collection(window.db, "signaling", meetingId, "messages")
+  const q = query(signalingRef, orderBy("timestamp"))
+
+  onSnapshot(q, (snapshot) => {
+    snapshot.docChanges().forEach(async (change) => {
+      if (change.type === "added") {
+        const message = change.doc.data()
+
+        // Ignore messages from self
+        if (message.from === userType) return
+
+        console.log("Received signaling message:", message.type, "from", message.from)
+
+        switch (message.type) {
+          case "offer":
+            await handleOffer(message.offer)
+            break
+          case "answer":
+            await handleAnswer(message.answer)
+            break
+          case "ice-candidate":
+            await handleIceCandidate(message.candidate)
+            break
+        }
+      }
+    })
+  })
+}
+
+// Handle WebRTC offer
+async function handleOffer(offer) {
+  try {
+    console.log("Handling offer")
+    await peerConnection.setRemoteDescription(offer)
+    const answer = await peerConnection.createAnswer()
+    await peerConnection.setLocalDescription(answer)
+
+    sendSignalingMessage(currentCall.meetingId, {
+      type: "answer",
+      answer: answer,
+      from: currentCall.userType,
+    })
+  } catch (error) {
+    console.error("Error handling offer:", error)
+  }
+}
+
+// Handle WebRTC answer
+async function handleAnswer(answer) {
+  try {
+    console.log("Handling answer")
+    await peerConnection.setRemoteDescription(answer)
+  } catch (error) {
+    console.error("Error handling answer:", error)
+  }
+}
+
+// Handle ICE candidate
+async function handleIceCandidate(candidate) {
+  try {
+    console.log("Handling ICE candidate")
+    await peerConnection.addIceCandidate(candidate)
+  } catch (error) {
+    console.error("Error handling ICE candidate:", error)
+  }
+}
+
+// Toggle mute
+function toggleMute() {
+  if (!localStream) return
+
+  const audioTrack = localStream.getAudioTracks()[0]
+  if (audioTrack) {
+    audioTrack.enabled = !audioTrack.enabled
+    const muteBtn = document.getElementById("muteBtn")
+    muteBtn.innerHTML = audioTrack.enabled
+      ? '<i class="fas fa-microphone"></i>'
+      : '<i class="fas fa-microphone-slash"></i>'
+    muteBtn.classList.toggle("muted", !audioTrack.enabled)
+  }
+}
+
+// Toggle video
+function toggleVideo() {
+  if (!localStream) return
+
+  const videoTrack = localStream.getVideoTracks()[0]
+  if (videoTrack) {
+    videoTrack.enabled = !videoTrack.enabled
+    const videoBtn = document.getElementById("videoBtn")
+    videoBtn.innerHTML = videoTrack.enabled ? '<i class="fas fa-video"></i>' : '<i class="fas fa-video-slash"></i>'
+    videoBtn.classList.toggle("muted", !videoTrack.enabled)
+  }
+}
+
+// End call
+async function endCall() {
+  try {
+    if (currentCall) {
+      // Update interview status
+      const { doc, updateDoc } = window.firestoreUtils
+
+      // Find the interview by candidate ID and current date/time
+      const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
+      await updateDoc(candidateRef, {
+        interviewStatus: "completed",
+        interviewEndedAt: new Date().toISOString(),
+        interviewDuration: Math.floor((new Date() - currentCall.startTime) / 1000),
+      })
+
+      // Also update the interview record if we have the interview ID
+      if (currentCall.candidate.interviewId) {
+        const interviewRef = doc(window.db, "interviews", currentCall.candidate.interviewId)
+        await updateDoc(interviewRef, {
+          status: "completed",
+          endedAt: new Date().toISOString(),
+          duration: Math.floor((new Date() - currentCall.startTime) / 1000),
+        })
+      }
+    }
+
+    // Clean up WebRTC
+    if (localStream) {
+      localStream.getTracks().forEach((track) => track.stop())
+    }
+    if (peerConnection) {
+      peerConnection.close()
+    }
+
+    // Close modal
+    const modal = document.getElementById("videoCallModal")
+    if (modal) {
+      modal.classList.remove("active")
+    }
+
+    currentCall = null
+    localStream = null
+    peerConnection = null
+
+    window.showToast("Call ended successfully", "success")
+
+    // Reload candidates to update status
+    await loadAcceptedCandidates()
+  } catch (error) {
+    console.error("Error ending call:", error)
+    window.showToast("Error ending call", "error")
+  }
+}
+
+// Make functions globally accessible
+window.toggleMute = toggleMute
+window.toggleVideo = toggleVideo
+window.endCall = endCall
+window.openVideoCallModal = openVideoCallModal

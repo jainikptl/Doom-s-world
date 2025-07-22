@@ -1,6 +1,6 @@
 // Global variables
 let candidateData = null
-let interviews = []
+const interviews = []
 let filteredInterviews = []
 let upcomingInterview = null
 let countdownInterval = null
@@ -188,9 +188,7 @@ async function loadInterviews() {
     const interviewsRef = collection(window.db, "interviews")
 
     // Try multiple query approaches to find interviews
-    // NO assignment to this.interviews needed---just use the global 'interviews'
-    filteredInterviews = [...interviews]   // Ok!
-
+    const interviews = []
 
     // First try: by candidateId
     if (candidateData.id) {
@@ -215,10 +213,10 @@ async function loadInterviews() {
     }
 
     // Second try: by candidate email if no results from first try
-    if (interviews.length === 0 && candidateData.candidateEmail) {
+    if (interviews.length === 0 && candidateData.email) {
       const q = query(
         interviewsRef,
-        where("candidateEmail", "==", candidateData.candidateEmail),
+        where("candidateEmail", "==", candidateData.email),
         orderBy("date", "desc"),
         orderBy("time", "desc"),
       )
@@ -263,6 +261,7 @@ async function loadInterviews() {
 
     console.log(`Found ${interviews.length} interviews for candidate`)
 
+    this.interviews = interviews
     filteredInterviews = [...interviews]
     displayInterviews()
     checkUpcomingInterview()
@@ -634,11 +633,22 @@ async function initializeWebRTC(meetingId, interview, userType) {
 
     // Handle remote stream
     peerConnection.ontrack = (event) => {
+      console.log("Received remote stream")
       const remoteVideo = document.getElementById("remoteVideo")
-      remoteVideo.srcObject = event.streams[0]
+      if (remoteVideo) {
+        remoteVideo.srcObject = event.streams[0]
+      }
 
       const remoteParticipant = document.getElementById("remoteParticipant")
-      remoteParticipant.innerHTML = `<span>${userType === "candidate" ? "Interviewer" : "Candidate"}</span>`
+      if (remoteParticipant) {
+        remoteParticipant.innerHTML = `<span>${userType === "candidate" ? "Interviewer" : "Candidate"}</span>`
+      }
+
+      // Update subtitle
+      const subtitle = document.getElementById("callSubtitle")
+      if (subtitle) {
+        subtitle.textContent = "Connected"
+      }
     }
 
     // Handle ICE candidates
@@ -696,6 +706,8 @@ function listenForSignalingMessages(meetingId, userType) {
         // Ignore messages from self
         if (message.from === userType) return
 
+        console.log("Received signaling message:", message.type, "from", message.from)
+
         switch (message.type) {
           case "offer":
             await handleOffer(message.offer)
@@ -715,6 +727,7 @@ function listenForSignalingMessages(meetingId, userType) {
 // Handle WebRTC offer
 async function handleOffer(offer) {
   try {
+    console.log("Candidate handling offer from admin")
     await peerConnection.setRemoteDescription(offer)
     const answer = await peerConnection.createAnswer()
     await peerConnection.setLocalDescription(answer)
@@ -724,6 +737,12 @@ async function handleOffer(offer) {
       answer: answer,
       from: currentCall.userType,
     })
+
+    // Update UI to show connection
+    const subtitle = document.getElementById("callSubtitle")
+    if (subtitle) {
+      subtitle.textContent = "Connected to interviewer"
+    }
   } catch (error) {
     console.error("Error handling offer:", error)
   }
