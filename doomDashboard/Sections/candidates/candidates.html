@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Swipe Section</title>
+  <link rel="stylesheet" href="candidates.css">
+</head>
+<body>
+           <!-- Enhanced Data Table -->
+           <div class="data-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <h3>Recent Applications</h3>
+                    <p>Track and manage candidate applications</p>
+                </div>
+                <div class="section-actions">
+                    <select class="filter-select">
+                        <option>This Month</option>
+                        <option>Last Month</option>
+                        <option>Last Quarter</option>
+                    </select>
+                    <button class="export-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7,10 12,15 17,10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Export
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" class="table-checkbox">
+                            </th>
+                            <th>Candidate</th>
+                            <th>Position</th>
+                            <th>Applied</th>
+                            <th>Experience</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" class="table-checkbox"></td>
+                            <td>
+                                <div class="candidate-cell">
+                                    <div class="candidate-avatar">RR</div>
+                                    <div class="candidate-info">
+                                        <div class="candidate-name">Reed Richards</div>
+                                        <div class="candidate-email">reed@fantastic4.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Senior Scientist</td>
+                            <td>
+                                <div class="date-cell">
+                                    <div class="date">Nov 15, 2024</div>
+                                    <div class="time">09:30 AM</div>
+                                </div>
+                            </td>
+                            <td>12 years</td>
+                            <td>
+                                <div class="score-cell">
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width: 95%"></div>
+                                    </div>
+                                    <span class="score-text">95/100</span>
+                                </div>
+                            </td>
+                            <td><span class="status-badge status-accepted">Accepted</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn-small view-btn" title="View">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn-small edit-btn" title="Edit">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn-small delete-btn" title="Delete">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3,6 5,6 21,6"></polyline>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="table-checkbox"></td>
+                            <td>
+                                <div class="candidate-cell">
+                                    <div class="candidate-avatar">TS</div>
+                                    <div class="candidate-info">
+                                        <div class="candidate-name">Tony Stark</div>
+                                        <div class="candidate-email">tony@starkindustries.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Lead Engineer</td>
+                            <td>
+                                <div class="date-cell">
+                                    <div class="date">Nov 14, 2024</div>
+                                    <div class="time">02:15 PM</div>
+                                </div>
+                            </td>
+                            <td>15 years</td>
+                            <td>
+                                <div class="score-cell">
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width: 92%"></div>
+                                    </div>
+                                    <span class="score-text">92/100</span>
+                                </div>
+                            </td>
+                            <td><span class="status-badge status-interview">Interview</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn-small view-btn" title="View">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn-small edit-btn" title="Edit">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn-small delete-btn" title="Delete">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3,6 5,6 21,6"></polyline>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="table-checkbox"></td>
+                            <td>
+                                <div class="candidate-cell">
+                                    <div class="candidate-avatar">BB</div>
+                                    <div class="candidate-info">
+                                        <div class="candidate-name">Bruce Banner</div>
+                                        <div class="candidate-email">bruce@gamma-research.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Research Director</td>
+                            <td>
+                                <div class="date-cell">
+                                    <div class="date">Nov 13, 2024</div>
+                                    <div class="time">11:45 AM</div>
+                                </div>
+                            </td>
+                            <td>18 years</td>
+                            <td>
+                                <div class="score-cell">
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width: 88%"></div>
+                                    </div>
+                                    <span class="score-text">88/100</span>
+                                </div>
+                            </td>
+                            <td><span class="status-badge status-accepted">Accepted</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn-small view-btn" title="View">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn-small edit-btn" title="Edit">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn-small delete-btn" title="Delete">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3,6 5,6 21,6"></polyline>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" class="table-checkbox"></td>
+                            <td>
+                                <div class="candidate-cell">
+                                    <div class="candidate-avatar">PP</div>
+                                    <div class="candidate-info">
+                                        <div class="candidate-name">Peter Parker</div>
+                                        <div class="candidate-email">peter@dailybugle.com</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Junior Developer</td>
+                            <td>
+                                <div class="date-cell">
+                                    <div class="date">Nov 12, 2024</div>
+                                    <div class="time">04:20 PM</div>
+                                </div>
+                            </td>
+                            <td>3 years</td>
+                            <td>
+                                <div class="score-cell">
+                                    <div class="score-bar">
+                                        <div class="score-fill" style="width: 76%"></div>
+                                    </div>
+                                    <span class="score-text">76/100</span>
+                                </div>
+                            </td>
+                            <td><span class="status-badge status-rejected">Rejected</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="action-btn-small view-btn" title="View">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn-small edit-btn" title="Edit">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </button>
+                                    <button class="action-btn-small delete-btn" title="Delete">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="3,6 5,6 21,6"></polyline>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2 2h4a2 2 0 0 1 2 2v2"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module" src="selection.js"></script>
+</body>
+</html>
