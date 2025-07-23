@@ -32,11 +32,11 @@
                     </div>
                 </div>
                 <div class="header-actions">
-                    <a href="calendar.html" class="header-btn">
+                    <a href="../calendar/calendar.html" class="header-btn">
                         <i class="fas fa-calendar-alt"></i>
                         Calendar View
                     </a>
-                    <a href="doom-dashboard.html" class="header-btn">
+                    <a href="../../doom_dashboard.html" class="header-btn">
                         <i class="fas fa-arrow-left"></i>
                         Back to Dashboard
                     </a>
@@ -269,24 +269,87 @@
                     </div>
                 </div>
             </div>
-            <!-- Post-Interview Actions -->
-            <div id="postInterviewActions" class="post-interview-actions" style="display: none;">
-                <div class="post-interview-header">
-                    <h4>Interview Completed</h4>
-                    <p>Please make a decision about this candidate</p>
+        </div>
+    </div>
+
+    <!-- Post-Interview Decision Modal -->
+    <div id="postInterviewModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Interview Decision</h3>
+                <button class="modal-close" onclick="closePostInterviewModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="candidate-info-section">
+                    <h4>Candidate Information</h4>
+                    <div id="postInterviewCandidateInfo" class="candidate-info-card">
+                        <!-- Candidate info will be populated here -->
+                    </div>
                 </div>
-                <div class="post-interview-buttons">
-                    <button class="btn success" onclick="assignCandidateAfterInterview()">
-                        <i class="fas fa-user-check"></i>
-                        Assign Candidate
+
+                <div class="interview-summary-section">
+                    <h4>Interview Summary</h4>
+                    <div class="interview-summary-card">
+                        <div class="summary-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Duration: <span id="interviewDuration">--</span></span>
+                        </div>
+                        <div class="summary-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Completed: <span id="interviewCompletedTime">--</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="decision-section">
+                    <h4>Make Your Decision</h4>
+                    <p class="decision-description">Based on the interview, please choose one of the following options:</p>
+                    
+                    <div class="decision-options">
+                        <div class="decision-option assign-option" onclick="selectDecisionOption('assign')">
+                            <div class="option-icon success">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="option-content">
+                                <h5>Assign Candidate</h5>
+                                <p>The candidate performed well and should be hired</p>
+                            </div>
+                        </div>
+                        
+                        <div class="decision-option reject-option" onclick="selectDecisionOption('reject')">
+                            <div class="option-icon danger">
+                                <i class="fas fa-user-times"></i>
+                            </div>
+                            <div class="option-content">
+                                <h5>Reject Candidate</h5>
+                                <p>The candidate did not meet the requirements</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="decision-details" id="decisionDetails" style="display: none;">
+                        <div class="form-group" id="assignmentRoleGroup" style="display: none;">
+                            <label for="postInterviewRole">Assigned Role</label>
+                            <input type="text" id="postInterviewRole" placeholder="Enter the assigned role/position">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="decisionNotes" id="decisionNotesLabel">Notes</label>
+                            <textarea id="decisionNotes" placeholder="Add your comments about the interview and decision..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn secondary" onclick="closePostInterviewModal()">
+                        <i class="fas fa-times"></i>
+                        Cancel
                     </button>
-                    <button class="btn danger" onclick="rejectCandidateAfterInterview()">
-                        <i class="fas fa-user-times"></i>
-                        Reject Candidate
-                    </button>
-                    <button class="btn secondary" onclick="skipDecisionAndEndCall()">
-                      <i class="fas fa-times"></i>
-                      Skip Decision
+                    <button class="btn primary" id="confirmDecisionBtn" onclick="confirmInterviewDecision()" disabled>
+                        <i class="fas fa-check"></i>
+                        Confirm Decision
                     </button>
                 </div>
             </div>

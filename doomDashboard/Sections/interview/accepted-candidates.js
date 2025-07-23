@@ -11,6 +11,9 @@ let localStream = null
 let peerConnection = null
 let signalingUnsubscribe = null
 
+// Global variable for selected decision
+let selectedDecision = null
+
 // WebRTC configuration
 const rtcConfiguration = {
   iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }],
@@ -72,9 +75,10 @@ window.startVideoCall = startVideoCall
 window.toggleMute = toggleMute
 window.toggleVideo = toggleVideo
 window.endCall = endCall
-window.assignCandidateAfterInterview = assignCandidateAfterInterview
-window.rejectCandidateAfterInterview = rejectCandidateAfterInterview
-window.skipDecisionAndEndCall = skipDecisionAndEndCall
+// Remove these old function references
+// window.assignCandidateAfterInterview = assignCandidateAfterInterview
+// window.rejectCandidateAfterInterview = rejectCandidateAfterInterview
+// window.skipDecisionAndEndCall = skipDecisionAndEndCall
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", async () => {
@@ -1036,7 +1040,7 @@ function toggleVideo() {
   }
 }
 
-// End call - FIXED: Allow admin to disconnect immediately
+// End call - FIXED: Show proper modal for decision
 async function endCall() {
   try {
     // Show confirmation dialog for admin
@@ -1046,9 +1050,9 @@ async function endCall() {
       )
 
       if (shouldShowActions) {
-        // Show post-interview actions
-        document.getElementById("postInterviewActions").style.display = "block"
-        return // Don't close modal yet, wait for admin decision
+        // Show post-interview decision modal
+        await showPostInterviewModal()
+        return // Don't close video modal yet, wait for admin decision
       }
     }
 
@@ -1060,16 +1064,146 @@ async function endCall() {
   }
 }
 
-// NEW: Skip decision and end call directly
-async function skipDecisionAndEndCall() {
+// Show post-interview decision modal
+async function showPostInterviewModal() {
+  if (!currentCall) return
+
+  const modal = document.getElementById("postInterviewModal")
+  const candidateInfo = document.getElementById("postInterviewCandidateInfo")
+  const durationSpan = document.getElementById("interviewDuration")
+  const completedTimeSpan = document.getElementById("interviewCompletedTime")
+
+  // Populate candidate info
+  candidateInfo.innerHTML = `
+    <div class="candidate-info-header">
+      <div class="candidate-info-avatar">
+        ${currentCall.candidate.candidateName.charAt(0).toUpperCase()}
+      </div>
+      <div class="candidate-info-details">
+        <h4>${currentCall.candidate.candidateName}</h4>
+        <p>${currentCall.candidate.candidateEmail} • ${currentCall.candidate.jobTitle}</p>
+      </div>
+    </div>
+  `
+
+  // Calculate and show interview duration
+  const duration = Math.floor((new Date() - currentCall.startTime) / 1000)
+  const minutes = Math.floor(duration / 60)
+  const seconds = duration % 60
+  durationSpan.textContent = `${minutes}m ${seconds}s`
+
+  // Show completion time
+  completedTimeSpan.textContent = new Date().toLocaleTimeString()
+
+  // Reset form
+  selectedDecision = null
+  document.getElementById("postInterviewRole").value = currentCall.candidate.jobTitle || ""
+  document.getElementById("decisionNotes").value = ""
+  document.getElementById("decisionDetails").style.display = "none"
+  document.getElementById("confirmDecisionBtn").disabled = true
+
+  // Clear previous selections
+  document.querySelectorAll(".decision-option").forEach((option) => {
+    option.classList.remove("selected")
+  })
+
+  // Show modal
+  modal.style.display = "flex"
+}
+
+// Select decision option
+function selectDecisionOption(decision) {
+  selectedDecision = decision
+
+  // Update UI
+  document.querySelectorAll(".decision-option").forEach((option) => {
+    option.classList.remove("selected")
+  })
+
+  const selectedOption = document.querySelector(`.${decision}-option`)
+  selectedOption.classList.add("selected")
+
+  // Show decision details
+  const detailsDiv = document.getElementById("decisionDetails")
+  const roleGroup = document.getElementById("assignmentRoleGroup")
+  const notesLabel = document.getElementById("decisionNotesLabel")
+  const notesTextarea = document.getElementById("decisionNotes")
+
+  detailsDiv.style.display = "block"
+
+  if (decision === "assign") {
+    roleGroup.style.display = "block"
+    notesLabel.textContent = "Assignment Notes"
+    notesTextarea.placeholder = "Add notes about the assignment and role details..."
+  } else {
+    roleGroup.style.display = "none"
+    notesLabel.textContent = "Rejection Notes"
+    notesTextarea.placeholder = "Add notes about why the candidate was rejected..."
+  }
+
+  // Enable confirm button
+  document.getElementById("confirmDecisionBtn").disabled = false
+}
+
+// Confirm interview decision
+async function confirmInterviewDecision() {
+  if (!selectedDecision || !currentCall) return
+
   try {
-    document.getElementById("postInterviewActions").style.display = "none"
+    const notes = document.getElementById("decisionNotes").value
+    const { doc, updateDoc } = window.firestoreUtils
+    const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
+
+    if (selectedDecision === "assign") {
+      const role = document.getElementById("postInterviewRole").value
+
+      if (!role.trim()) {
+        window.showToast("Please enter the assigned role", "error")
+        return
+      }
+
+      await updateDoc(candidateRef, {
+        interviewStatus: "assigned",
+        assignedRole: role,
+        assignmentNotes: notes || "Assigned after successful interview",
+        assignedAt: new Date().toISOString(),
+        assignedBy: window.auth.currentUser?.uid || "admin",
+        updatedAt: new Date().toISOString(),
+      })
+
+      window.showToast("Candidate assigned successfully!", "success")
+    } else {
+      await updateDoc(candidateRef, {
+        interviewStatus: "rejected",
+        rejectionReason: notes || "Not selected after interview",
+        rejectedAt: new Date().toISOString(),
+        rejectedBy: window.auth.currentUser?.uid || "admin",
+        updatedAt: new Date().toISOString(),
+      })
+
+      window.showToast("Candidate rejected", "info")
+    }
+
+    // Close modal and end call
+    closePostInterviewModal()
     await finalizeCallEnd()
   } catch (error) {
-    console.error("Error ending call:", error)
-    window.showToast("Error ending call", "error")
+    console.error("Error confirming decision:", error)
+    window.showToast("Error saving decision", "error")
   }
 }
+
+// Close post-interview modal
+function closePostInterviewModal() {
+  document.getElementById("postInterviewModal").style.display = "none"
+  selectedDecision = null
+}
+
+// Remove the old functions and update global scope
+window.selectDecisionOption = selectDecisionOption
+window.confirmInterviewDecision = confirmInterviewDecision
+window.closePostInterviewModal = closePostInterviewModal
+window.showPostInterviewModal = showPostInterviewModal
 
 // Finalize call end
 async function finalizeCallEnd() {
@@ -1126,57 +1260,6 @@ async function finalizeCallEnd() {
   } catch (error) {
     console.error("Error finalizing call end:", error)
     window.showToast("Error ending call", "error")
-  }
-}
-
-// NEW FEATURE: Assign candidate after interview
-async function assignCandidateAfterInterview() {
-  if (!currentCall) return
-
-  try {
-    const { doc, updateDoc } = window.firestoreUtils
-
-    // Update candidate status to assigned
-    const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
-    await updateDoc(candidateRef, {
-      interviewStatus: "assigned",
-      assignedRole: currentCall.candidate.jobTitle,
-      assignmentNotes: "Assigned after successful interview",
-      assignedAt: new Date().toISOString(),
-      assignedBy: window.auth.currentUser?.uid || "admin",
-      updatedAt: new Date().toISOString(),
-    })
-
-    window.showToast("Candidate assigned successfully!", "success")
-    await finalizeCallEnd()
-  } catch (error) {
-    console.error("Error assigning candidate:", error)
-    window.showToast("Error assigning candidate", "error")
-  }
-}
-
-// NEW FEATURE: Reject candidate after interview
-async function rejectCandidateAfterInterview() {
-  if (!currentCall) return
-
-  try {
-    const { doc, updateDoc } = window.firestoreUtils
-
-    // Update candidate status to rejected
-    const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
-    await updateDoc(candidateRef, {
-      interviewStatus: "rejected",
-      rejectionReason: "Not selected after interview",
-      rejectedAt: new Date().toISOString(),
-      rejectedBy: window.auth.currentUser?.uid || "admin",
-      updatedAt: new Date().toISOString(),
-    })
-
-    window.showToast("Candidate rejected", "info")
-    await finalizeCallEnd()
-  } catch (error) {
-    console.error("Error rejecting candidate:", error)
-    window.showToast("Error rejecting candidate", "error")
   }
 }
 
