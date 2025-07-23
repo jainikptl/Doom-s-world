@@ -74,6 +74,7 @@ window.toggleVideo = toggleVideo
 window.endCall = endCall
 window.assignCandidateAfterInterview = assignCandidateAfterInterview
 window.rejectCandidateAfterInterview = rejectCandidateAfterInterview
+window.skipDecisionAndEndCall = skipDecisionAndEndCall
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", async () => {
@@ -1035,15 +1036,34 @@ function toggleVideo() {
   }
 }
 
-// End call - FIXED: Show post-interview actions for admin
+// End call - FIXED: Allow admin to disconnect immediately
 async function endCall() {
   try {
+    // Show confirmation dialog for admin
     if (currentCall && currentCall.userType === "admin") {
-      // Show post-interview actions for admin
-      document.getElementById("postInterviewActions").style.display = "block"
-      return // Don't close modal yet, wait for admin decision
+      const shouldShowActions = confirm(
+        "Do you want to make a decision about this candidate now?\n\nClick 'OK' to assign/reject, or 'Cancel' to end the call without deciding.",
+      )
+
+      if (shouldShowActions) {
+        // Show post-interview actions
+        document.getElementById("postInterviewActions").style.display = "block"
+        return // Don't close modal yet, wait for admin decision
+      }
     }
 
+    // End call immediately
+    await finalizeCallEnd()
+  } catch (error) {
+    console.error("Error ending call:", error)
+    window.showToast("Error ending call", "error")
+  }
+}
+
+// NEW: Skip decision and end call directly
+async function skipDecisionAndEndCall() {
+  try {
+    document.getElementById("postInterviewActions").style.display = "none"
     await finalizeCallEnd()
   } catch (error) {
     console.error("Error ending call:", error)
