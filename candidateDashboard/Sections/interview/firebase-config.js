@@ -10,20 +10,20 @@ import {
   query,
   where,
   orderBy,
-  onSnapshot
+  onSnapshot,
+  deleteDoc,
 } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js"
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js"
 
 // Firebase configuration
 const firebaseConfig = {
-  // Replace with your Firebase config
   apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
   authDomain: "doom-s-world.firebaseapp.com",
   projectId: "doom-s-world",
   storageBucket: "doom-s-world.firebasestorage.app",
   messagingSenderId: "445783209326",
   appId: "1:445783209326:web:700e95a429e7d06104fd7f",
-  measurementId: "G-86151LPWTC"
+  measurementId: "G-86151LPWTC",
 }
 
 // Initialize Firebase
@@ -43,18 +43,20 @@ window.firestoreUtils = {
   query,
   where,
   orderBy,
-  onSnapshot
+  onSnapshot,
+  deleteDoc,
 }
 
 // Auth state observer
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          console.log("Firebase recognizes user:", user.uid);
-          console.log("Firebase recognizes user:", user.email);
-        } else {
-          console.log("User not signed in.");
-        }
-      });
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    console.log("Firebase recognizes user:", user.uid)
+    console.log("Firebase recognizes user:", user.email)
+  } else {
+    console.log("User not signed in.")
+  }
+})
+
 // Logout function
 async function logout() {
   try {
@@ -74,7 +76,7 @@ function showToast(message, type = "success") {
   if (!toast || !toastMessage) return
 
   // Remove existing classes
-  toast.classList.remove("toast-success", "toast-error", "toast-warning")
+  toast.classList.remove("toast-success", "toast-error", "toast-warning", "toast-info")
 
   // Add appropriate class
   toast.classList.add(`toast-${type}`)

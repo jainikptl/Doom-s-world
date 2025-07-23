@@ -97,6 +97,7 @@
                             <option value="accepted">Accepted</option>
                             <option value="interview_scheduled">Interview Scheduled</option>
                             <option value="assigned">Assigned</option>
+                            <option value="completed">Completed</option>
                         </select>
                     </div>
                 </div>
@@ -266,6 +267,23 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <!-- Post-Interview Actions -->
+            <div id="postInterviewActions" class="post-interview-actions" style="display: none;">
+                <div class="post-interview-header">
+                    <h4>Interview Completed</h4>
+                    <p>Please make a decision about this candidate</p>
+                </div>
+                <div class="post-interview-buttons">
+                    <button class="btn success" onclick="assignCandidateAfterInterview()">
+                        <i class="fas fa-user-check"></i>
+                        Assign Candidate
+                    </button>
+                    <button class="btn danger" onclick="rejectCandidateAfterInterview()">
+                        <i class="fas fa-user-times"></i>
+                        Reject Candidate
+                    </button>
                 </div>
             </div>
         </div>

@@ -6,28 +6,18 @@ const currentDate = new Date()
 let selectedDate = null
 let selectedTimeSlot = null
 let bookedSlots = []
+let currentCall = null
+let localStream = null
+let peerConnection = null
+let signalingUnsubscribe = null
 
-// Immediately expose functions to global scope
-window.openScheduleModal = openScheduleModal
-window.openAssignModal = openAssignModal
-window.closeScheduleModal = closeScheduleModal
-window.closeAssignModal = closeAssignModal
-window.scheduleInterview = scheduleInterview
-window.assignCandidate = assignCandidate
-window.filterCandidates = filterCandidates
-window.previousMonth = previousMonth
-window.nextMonth = nextMonth
-window.viewInterviewDetails = viewInterviewDetails
-window.rescheduleInterview = rescheduleInterview
-window.viewCandidateDetails = viewCandidateDetails
-window.startVideoCall = startVideoCall
-window.toggleMute = toggleMute
-window.toggleVideo = toggleVideo
-window.endCall = endCall
-window.openVideoCallModal = openVideoCallModal
+// WebRTC configuration
+const rtcConfiguration = {
+  iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }],
+}
 
 // Function to show toast messages
-window.showToast = (message, type = "success") => {
+function showToast(message, type = "success") {
   const toast = document.getElementById("toast")
   const toastMessage = document.getElementById("toastMessage")
 
@@ -64,6 +54,26 @@ function waitForFirebase() {
     checkFirebase()
   })
 }
+
+// Immediately expose functions to global scope
+window.openScheduleModal = openScheduleModal
+window.openAssignModal = openAssignModal
+window.closeScheduleModal = closeScheduleModal
+window.closeAssignModal = closeAssignModal
+window.scheduleInterview = scheduleInterview
+window.assignCandidate = assignCandidate
+window.filterCandidates = filterCandidates
+window.previousMonth = previousMonth
+window.nextMonth = nextMonth
+window.viewInterviewDetails = viewInterviewDetails
+window.rescheduleInterview = rescheduleInterview
+window.viewCandidateDetails = viewCandidateDetails
+window.startVideoCall = startVideoCall
+window.toggleMute = toggleMute
+window.toggleVideo = toggleVideo
+window.endCall = endCall
+window.assignCandidateAfterInterview = assignCandidateAfterInterview
+window.rejectCandidateAfterInterview = rejectCandidateAfterInterview
 
 // Initialize the page
 document.addEventListener("DOMContentLoaded", async () => {
@@ -174,11 +184,11 @@ function createCandidateCard(candidate) {
   card.innerHTML = `
     <div class="candidate-header">
       <div class="candidate-avatar">
-        ${candidate.name ? candidate.name.charAt(0).toUpperCase() : "C"}
+        ${candidate.candidateName ? candidate.candidateName.charAt(0).toUpperCase() : "C"}
       </div>
       <div class="candidate-info">
-        <h3>${candidate.name || "Unknown Candidate"}</h3>
-        <p>${candidate.email || "No email provided"}</p>
+        <h3>${candidate.candidateName || "Unknown Candidate"}</h3>
+        <p>${candidate.candidateEmail || "No email provided"}</p>
       </div>
       <div class="candidate-status ${statusClass}">
         ${statusText}
@@ -214,7 +224,7 @@ function createCandidateCard(candidate) {
       
       <div class="candidate-meta">
         <p><i class="fas fa-calendar"></i> Applied: ${formatDate(candidate.appliedDate)}</p>
-        <p><i class="fas fa-phone"></i> ${candidate.phone || "No phone provided"}</p>
+        <p><i class="fas fa-phone"></i> ${candidate.candidatePhone || "No phone provided"}</p>
       </div>
     </div>
     
@@ -222,7 +232,7 @@ function createCandidateCard(candidate) {
       ${
         showJoinButton
           ? `
-        <button class="btn success join-interview-btn" data-action="startVideoCall" data-candidate-id="${candidate.id}">
+        <button class="btn success join-interview-btn" onclick="startVideoCall('${candidate.id}')">
           <i class="fas fa-video"></i>
           Join Interview
         </button>
@@ -233,28 +243,35 @@ function createCandidateCard(candidate) {
       ${
         statusClass === "accepted"
           ? `
-        <button class="btn primary" data-action="openScheduleModal" data-candidate-id="${candidate.id}">
+        <button class="btn primary" onclick="openScheduleModal('${candidate.id}')">
           <i class="fas fa-calendar-plus"></i>
           Schedule Interview
         </button>
-        <button class="btn success" data-action="openAssignModal" data-candidate-id="${candidate.id}">
+        <button class="btn success" onclick="openAssignModal('${candidate.id}')">
           <i class="fas fa-user-plus"></i>
           Assign Without Meeting
         </button>
       `
           : statusClass === "interview_scheduled"
             ? `
-        <button class="btn secondary" data-action="viewInterviewDetails" data-candidate-id="${candidate.id}">
+        <button class="btn secondary" onclick="viewInterviewDetails('${candidate.id}')">
           <i class="fas fa-eye"></i>
           View Interview
         </button>
-        <button class="btn primary" data-action="rescheduleInterview" data-candidate-id="${candidate.id}">
+        <button class="btn primary" onclick="rescheduleInterview('${candidate.id}')">
           <i class="fas fa-calendar-alt"></i>
           Reschedule
         </button>
       `
-            : `
-        <button class="btn secondary" data-action="viewCandidateDetails" data-candidate-id="${candidate.id}">
+            : statusClass === "completed"
+              ? `
+        <button class="btn secondary" onclick="viewCandidateDetails('${candidate.id}')">
+          <i class="fas fa-eye"></i>
+          View Details
+        </button>
+      `
+              : `
+        <button class="btn secondary" onclick="viewCandidateDetails('${candidate.id}')">
           <i class="fas fa-eye"></i>
           View Details
         </button>
@@ -262,37 +279,6 @@ function createCandidateCard(candidate) {
       }
     </div>
   `
-
-  // Add event listeners to buttons
-  const buttons = card.querySelectorAll("button[data-action]")
-  buttons.forEach((button) => {
-    button.addEventListener("click", (e) => {
-      const action = e.target.closest("button").getAttribute("data-action")
-      const candidateId = e.target.closest("button").getAttribute("data-candidate-id")
-
-      switch (action) {
-        case "startVideoCall":
-          const candidate = acceptedCandidates.find((c) => c.id === candidateId)
-          if (candidate) startVideoCall(candidate)
-          break
-        case "openScheduleModal":
-          openScheduleModal(candidateId)
-          break
-        case "openAssignModal":
-          openAssignModal(candidateId)
-          break
-        case "viewInterviewDetails":
-          viewInterviewDetails(candidateId)
-          break
-        case "rescheduleInterview":
-          rescheduleInterview(candidateId)
-          break
-        case "viewCandidateDetails":
-          viewCandidateDetails(candidateId)
-          break
-      }
-    })
-  })
 
   return card
 }
@@ -319,15 +305,29 @@ function getStatusText(status) {
       return "Interview Scheduled"
     case "assigned":
       return "Assigned"
+    case "completed":
+      return "Interview Completed"
+    case "rejected":
+      return "Rejected"
     default:
       return "Accepted"
   }
 }
 
-// Format date
+// Format date - FIXED: Proper date formatting to avoid timezone issues
 function formatDate(dateString) {
   if (!dateString) return "Unknown"
-  const date = new Date(dateString)
+
+  // Handle both ISO string and date-only formats
+  let date
+  if (dateString.includes("T")) {
+    date = new Date(dateString)
+  } else {
+    // For date-only strings, create date in local timezone
+    const parts = dateString.split("-")
+    date = new Date(parts[0], parts[1] - 1, parts[2])
+  }
+
   return date.toLocaleDateString("en-US", {
     year: "numeric",
     month: "short",
@@ -354,8 +354,8 @@ function filterCandidates() {
   filteredCandidates = acceptedCandidates.filter((candidate) => {
     const matchesSearch =
       !searchTerm ||
-      candidate.name?.toLowerCase().includes(searchTerm) ||
-      candidate.email?.toLowerCase().includes(searchTerm) ||
+      candidate.candidateName?.toLowerCase().includes(searchTerm) ||
+      candidate.candidateEmail?.toLowerCase().includes(searchTerm) ||
       candidate.jobTitle?.toLowerCase().includes(searchTerm)
 
     const matchesStatus = statusFilter === "all" || (candidate.interviewStatus || "accepted") === statusFilter
@@ -386,11 +386,11 @@ function openScheduleModal(candidateId) {
   document.getElementById("selectedCandidateInfo").innerHTML = `
     <div class="candidate-info-header">
       <div class="candidate-info-avatar">
-        ${selectedCandidate.name.charAt(0).toUpperCase()}
+        ${selectedCandidate.candidateName.charAt(0).toUpperCase()}
       </div>
       <div class="candidate-info-details">
-        <h4>${selectedCandidate.name}</h4>
-        <p>${selectedCandidate.email} • ${selectedCandidate.jobTitle}</p>
+        <h4>${selectedCandidate.candidateName}</h4>
+        <p>${selectedCandidate.candidateEmail} • ${selectedCandidate.jobTitle}</p>
       </div>
     </div>
   `
@@ -408,12 +408,12 @@ function openScheduleModal(candidateId) {
   initializeCalendar()
 
   // Show modal
-  document.getElementById("scheduleModal").classList.add("active")
+  document.getElementById("scheduleModal").style.display = "flex"
 }
 
 // Close schedule modal
 function closeScheduleModal() {
-  document.getElementById("scheduleModal").classList.remove("active")
+  document.getElementById("scheduleModal").style.display = "none"
   selectedCandidate = null
   selectedDate = null
   selectedTimeSlot = null
@@ -495,7 +495,7 @@ function renderCalendar() {
     }
 
     // Add click handler (only for current month and future dates)
-    if (date.getMonth() === currentDate.getMonth() && date >= new Date()) {
+    if (date.getMonth() === currentDate.getMonth() && date >= new Date().setHours(0, 0, 0, 0)) {
       dayElement.addEventListener("click", () => selectDate(date))
     } else {
       dayElement.style.cursor = "not-allowed"
@@ -596,7 +596,7 @@ function nextMonth() {
   renderCalendar()
 }
 
-// Schedule interview
+// Schedule interview - FIXED: Proper date handling
 async function scheduleInterview() {
   if (!selectedCandidate || !selectedDate || !selectedTimeSlot) {
     window.showToast("Please select a date and time", "error")
@@ -629,8 +629,8 @@ async function scheduleInterview() {
     const interviewsRef = collection(window.db, "interviews")
     const newInterviewRef = await addDoc(interviewsRef, {
       candidateId: selectedCandidate.id,
-      candidateName: selectedCandidate.name,
-      candidateEmail: selectedCandidate.email,
+      candidateName: selectedCandidate.candidateName,
+      candidateEmail: selectedCandidate.candidateEmail,
       jobTitle: selectedCandidate.jobTitle,
       date: formatDateForStorage(selectedDate),
       time: selectedTimeSlot,
@@ -638,7 +638,7 @@ async function scheduleInterview() {
       notes: notes,
       status: "scheduled",
       createdAt: new Date().toISOString(),
-      createdBy: window.auth.currentUser.uid,
+      createdBy: window.auth.currentUser?.uid || "admin",
       adminJoined: false,
       candidateJoined: false,
     })
@@ -679,11 +679,11 @@ function openAssignModal(candidateId) {
   document.getElementById("assignCandidateInfo").innerHTML = `
     <div class="candidate-info-header">
       <div class="candidate-info-avatar">
-        ${selectedCandidate.name.charAt(0).toUpperCase()}
+        ${selectedCandidate.candidateName.charAt(0).toUpperCase()}
       </div>
       <div class="candidate-info-details">
-        <h4>${selectedCandidate.name}</h4>
-        <p>${selectedCandidate.email} • ${selectedCandidate.jobTitle}</p>
+        <h4>${selectedCandidate.candidateName}</h4>
+        <p>${selectedCandidate.candidateEmail} • ${selectedCandidate.jobTitle}</p>
       </div>
     </div>
   `
@@ -693,12 +693,12 @@ function openAssignModal(candidateId) {
   document.getElementById("assignmentNotes").value = ""
 
   // Show modal
-  document.getElementById("assignModal").classList.add("active")
+  document.getElementById("assignModal").style.display = "flex"
 }
 
 // Close assign modal
 function closeAssignModal() {
-  document.getElementById("assignModal").classList.remove("active")
+  document.getElementById("assignModal").style.display = "none"
   selectedCandidate = null
 }
 
@@ -724,7 +724,7 @@ async function assignCandidate() {
       assignedRole: assignmentRole,
       assignmentNotes: assignmentNotes,
       assignedAt: new Date().toISOString(),
-      assignedBy: window.auth.currentUser.uid,
+      assignedBy: window.auth.currentUser?.uid || "admin",
       updatedAt: new Date().toISOString(),
     })
 
@@ -734,6 +734,429 @@ async function assignCandidate() {
   } catch (error) {
     console.error("Error assigning candidate:", error)
     window.showToast("Error assigning candidate", "error")
+  }
+}
+
+// Start video call - FIXED: Improved WebRTC implementation
+async function startVideoCall(candidateId) {
+  try {
+    const candidate = acceptedCandidates.find((c) => c.id === candidateId)
+    if (!candidate) {
+      window.showToast("Candidate not found", "error")
+      return
+    }
+
+    // Create or join meeting room
+    const meetingId = `interview_${candidate.id}_${Date.now()}`
+
+    // Update interview status to indicate admin joined
+    if (candidate.interviewId) {
+      const { doc, updateDoc } = window.firestoreUtils
+      const interviewRef = doc(window.db, "interviews", candidate.interviewId)
+      await updateDoc(interviewRef, {
+        meetingId: meetingId,
+        adminJoined: true,
+        adminJoinedAt: new Date().toISOString(),
+        status: "in_progress",
+      })
+    }
+
+    // Open video call modal for admin
+    await openVideoCallModal(meetingId, candidate, "admin")
+
+    window.showToast("Video call started. Candidate will be notified.", "success")
+  } catch (error) {
+    console.error("Error starting video call:", error)
+    window.showToast("Error starting video call", "error")
+  }
+}
+
+// Open video call modal - FIXED: Better modal handling
+async function openVideoCallModal(meetingId, candidate, userType) {
+  const modal = document.getElementById("videoCallModal")
+  const title = document.getElementById("callTitle")
+  const subtitle = document.getElementById("callSubtitle")
+
+  title.textContent = `Interview: ${candidate.jobTitle || "Position Interview"}`
+  subtitle.textContent = userType === "admin" ? "Waiting for candidate to join..." : "Connecting to interviewer..."
+
+  modal.style.display = "flex"
+
+  try {
+    await initializeWebRTC(meetingId, candidate, userType)
+  } catch (error) {
+    console.error("Error initializing WebRTC:", error)
+    window.showToast("Error starting video call", "error")
+    modal.style.display = "none"
+  }
+}
+
+// Initialize WebRTC - FIXED: Improved implementation
+async function initializeWebRTC(meetingId, candidate, userType) {
+  try {
+    console.log("Initializing WebRTC for meeting:", meetingId)
+
+    // Get user media
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    })
+
+    const localVideo = document.getElementById("localVideo")
+    localVideo.srcObject = localStream
+
+    // Create peer connection
+    peerConnection = new RTCPeerConnection(rtcConfiguration)
+
+    // Add local stream to peer connection
+    localStream.getTracks().forEach((track) => {
+      peerConnection.addTrack(track, localStream)
+    })
+
+    // Handle remote stream
+    peerConnection.ontrack = (event) => {
+      console.log("Received remote stream")
+      const remoteVideo = document.getElementById("remoteVideo")
+      remoteVideo.srcObject = event.streams[0]
+
+      const remoteParticipant = document.getElementById("remoteParticipant")
+      remoteParticipant.innerHTML = `<span>${userType === "admin" ? "Candidate" : "Interviewer"}</span>`
+
+      document.getElementById("callSubtitle").textContent = "Connected"
+      window.showToast("Connected successfully!", "success")
+    }
+
+    // Handle connection state changes
+    peerConnection.onconnectionstatechange = () => {
+      console.log("Connection state:", peerConnection.connectionState)
+
+      const subtitle = document.getElementById("callSubtitle")
+      switch (peerConnection.connectionState) {
+        case "connecting":
+          subtitle.textContent = "Connecting..."
+          break
+        case "connected":
+          subtitle.textContent = "Connected"
+          break
+        case "disconnected":
+          subtitle.textContent = "Disconnected"
+          break
+        case "failed":
+          subtitle.textContent = "Connection failed"
+          window.showToast("Connection lost. Trying to reconnect...", "warning")
+          break
+      }
+    }
+
+    // Handle ICE candidates - FIXED: Convert to plain object for Firestore
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        const candidateData = {
+          candidate: event.candidate.candidate,
+          sdpMLineIndex: event.candidate.sdpMLineIndex,
+          sdpMid: event.candidate.sdpMid,
+        }
+
+        sendSignalingMessage(meetingId, {
+          type: "ice-candidate",
+          candidate: candidateData,
+          from: userType,
+        })
+      }
+    }
+
+    // Listen for signaling messages
+    listenForSignalingMessages(meetingId, userType)
+
+    // If admin, create offer after a short delay
+    if (userType === "admin") {
+      setTimeout(async () => {
+        try {
+          const offer = await peerConnection.createOffer()
+          await peerConnection.setLocalDescription(offer)
+
+          sendSignalingMessage(meetingId, {
+            type: "offer",
+            offer: offer,
+            from: userType,
+          })
+        } catch (error) {
+          console.error("Error creating offer:", error)
+        }
+      }, 1000)
+    }
+
+    currentCall = {
+      meetingId,
+      candidate,
+      userType,
+      startTime: new Date(),
+    }
+
+    console.log("WebRTC initialization completed for", userType)
+  } catch (error) {
+    console.error("Error in initializeWebRTC:", error)
+
+    if (error.name === "NotAllowedError") {
+      window.showToast("Please allow camera and microphone access", "error")
+    } else {
+      window.showToast("Error accessing camera/microphone", "error")
+    }
+
+    throw error
+  }
+}
+
+// Send signaling message - FIXED: Better error handling
+async function sendSignalingMessage(meetingId, message) {
+  try {
+    const { collection, addDoc } = window.firestoreUtils
+    const signalingRef = collection(window.db, "signaling", meetingId, "messages")
+
+    await addDoc(signalingRef, {
+      ...message,
+      timestamp: new Date().toISOString(),
+    })
+
+    console.log("Sent signaling message:", message.type)
+  } catch (error) {
+    console.error("Error sending signaling message:", error)
+  }
+}
+
+// Listen for signaling messages - FIXED: Better message handling
+function listenForSignalingMessages(meetingId, userType) {
+  const { collection, onSnapshot, orderBy, query } = window.firestoreUtils
+  const signalingRef = collection(window.db, "signaling", meetingId, "messages")
+  const q = query(signalingRef, orderBy("timestamp"))
+
+  signalingUnsubscribe = onSnapshot(q, (snapshot) => {
+    snapshot.docChanges().forEach(async (change) => {
+      if (change.type === "added") {
+        const message = change.doc.data()
+
+        // Ignore messages from self
+        if (message.from === userType) return
+
+        console.log("Received signaling message:", message.type, "from", message.from)
+
+        try {
+          switch (message.type) {
+            case "offer":
+              await handleOffer(message.offer)
+              break
+            case "answer":
+              await handleAnswer(message.answer)
+              break
+            case "ice-candidate":
+              await handleIceCandidate(message.candidate)
+              break
+          }
+        } catch (error) {
+          console.error("Error handling signaling message:", error)
+        }
+      }
+    })
+  })
+}
+
+// Handle WebRTC offer - FIXED: Better error handling
+async function handleOffer(offer) {
+  try {
+    console.log("Handling offer")
+    await peerConnection.setRemoteDescription(offer)
+    const answer = await peerConnection.createAnswer()
+    await peerConnection.setLocalDescription(answer)
+
+    sendSignalingMessage(currentCall.meetingId, {
+      type: "answer",
+      answer: answer,
+      from: currentCall.userType,
+    })
+  } catch (error) {
+    console.error("Error handling offer:", error)
+  }
+}
+
+// Handle WebRTC answer - FIXED: Better error handling
+async function handleAnswer(answer) {
+  try {
+    console.log("Handling answer")
+    await peerConnection.setRemoteDescription(answer)
+  } catch (error) {
+    console.error("Error handling answer:", error)
+  }
+}
+
+// Handle ICE candidate - FIXED: Create RTCIceCandidate from plain object
+async function handleIceCandidate(candidateData) {
+  try {
+    console.log("Handling ICE candidate")
+    const candidate = new RTCIceCandidate({
+      candidate: candidateData.candidate,
+      sdpMLineIndex: candidateData.sdpMLineIndex,
+      sdpMid: candidateData.sdpMid,
+    })
+    await peerConnection.addIceCandidate(candidate)
+  } catch (error) {
+    console.error("Error handling ICE candidate:", error)
+  }
+}
+
+// Toggle mute
+function toggleMute() {
+  if (!localStream) return
+
+  const audioTrack = localStream.getAudioTracks()[0]
+  if (audioTrack) {
+    audioTrack.enabled = !audioTrack.enabled
+    const muteBtn = document.getElementById("muteBtn")
+
+    muteBtn.innerHTML = audioTrack.enabled
+      ? '<i class="fas fa-microphone"></i>'
+      : '<i class="fas fa-microphone-slash"></i>'
+
+    muteBtn.classList.toggle("muted", !audioTrack.enabled)
+  }
+}
+
+// Toggle video
+function toggleVideo() {
+  if (!localStream) return
+
+  const videoTrack = localStream.getVideoTracks()[0]
+  if (videoTrack) {
+    videoTrack.enabled = !videoTrack.enabled
+    const videoBtn = document.getElementById("videoBtn")
+
+    videoBtn.innerHTML = videoTrack.enabled ? '<i class="fas fa-video"></i>' : '<i class="fas fa-video-slash"></i>'
+
+    videoBtn.classList.toggle("muted", !videoTrack.enabled)
+  }
+}
+
+// End call - FIXED: Show post-interview actions for admin
+async function endCall() {
+  try {
+    if (currentCall && currentCall.userType === "admin") {
+      // Show post-interview actions for admin
+      document.getElementById("postInterviewActions").style.display = "block"
+      return // Don't close modal yet, wait for admin decision
+    }
+
+    await finalizeCallEnd()
+  } catch (error) {
+    console.error("Error ending call:", error)
+    window.showToast("Error ending call", "error")
+  }
+}
+
+// Finalize call end
+async function finalizeCallEnd() {
+  try {
+    if (currentCall) {
+      // Update interview status
+      const { doc, updateDoc } = window.firestoreUtils
+
+      if (currentCall.candidate.interviewId) {
+        const interviewRef = doc(window.db, "interviews", currentCall.candidate.interviewId)
+        await updateDoc(interviewRef, {
+          status: "completed",
+          endedAt: new Date().toISOString(),
+          duration: Math.floor((new Date() - currentCall.startTime) / 1000),
+        })
+      }
+
+      // Update candidate status to completed
+      const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
+      await updateDoc(candidateRef, {
+        interviewStatus: "completed",
+        interviewEndedAt: new Date().toISOString(),
+        interviewDuration: Math.floor((new Date() - currentCall.startTime) / 1000),
+      })
+    }
+
+    // Clean up WebRTC
+    if (localStream) {
+      localStream.getTracks().forEach((track) => track.stop())
+    }
+
+    if (peerConnection) {
+      peerConnection.close()
+    }
+
+    if (signalingUnsubscribe) {
+      signalingUnsubscribe()
+      signalingUnsubscribe = null
+    }
+
+    // Close modal
+    document.getElementById("videoCallModal").style.display = "none"
+    document.getElementById("postInterviewActions").style.display = "none"
+
+    // Reset variables
+    currentCall = null
+    localStream = null
+    peerConnection = null
+
+    window.showToast("Interview ended successfully", "success")
+
+    // Reload candidates to update status
+    await loadAcceptedCandidates()
+  } catch (error) {
+    console.error("Error finalizing call end:", error)
+    window.showToast("Error ending call", "error")
+  }
+}
+
+// NEW FEATURE: Assign candidate after interview
+async function assignCandidateAfterInterview() {
+  if (!currentCall) return
+
+  try {
+    const { doc, updateDoc } = window.firestoreUtils
+
+    // Update candidate status to assigned
+    const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
+    await updateDoc(candidateRef, {
+      interviewStatus: "assigned",
+      assignedRole: currentCall.candidate.jobTitle,
+      assignmentNotes: "Assigned after successful interview",
+      assignedAt: new Date().toISOString(),
+      assignedBy: window.auth.currentUser?.uid || "admin",
+      updatedAt: new Date().toISOString(),
+    })
+
+    window.showToast("Candidate assigned successfully!", "success")
+    await finalizeCallEnd()
+  } catch (error) {
+    console.error("Error assigning candidate:", error)
+    window.showToast("Error assigning candidate", "error")
+  }
+}
+
+// NEW FEATURE: Reject candidate after interview
+async function rejectCandidateAfterInterview() {
+  if (!currentCall) return
+
+  try {
+    const { doc, updateDoc } = window.firestoreUtils
+
+    // Update candidate status to rejected
+    const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
+    await updateDoc(candidateRef, {
+      interviewStatus: "rejected",
+      rejectionReason: "Not selected after interview",
+      rejectedAt: new Date().toISOString(),
+      rejectedBy: window.auth.currentUser?.uid || "admin",
+      updatedAt: new Date().toISOString(),
+    })
+
+    window.showToast("Candidate rejected", "info")
+    await finalizeCallEnd()
+  } catch (error) {
+    console.error("Error rejecting candidate:", error)
+    window.showToast("Error rejecting candidate", "error")
   }
 }
 
@@ -751,28 +1174,12 @@ function isSameDate(date1, date2) {
   )
 }
 
+// FIXED: Proper date formatting for storage to avoid timezone issues
 function formatDateForStorage(date) {
-  return date.toISOString().split("T")[0]
-}
-
-// View interview details
-function viewInterviewDetails(candidateId) {
-  window.showToast("Feature coming soon", "warning")
-}
-
-// Reschedule interview
-async function rescheduleInterview(candidateId) {
-  const candidate = acceptedCandidates.find((c) => c.id === candidateId)
-  if (!candidate) return
-
-  // Store the current interview details for unblocking
-  window.currentReschedule = {
-    candidateId: candidateId,
-    currentDate: candidate.interviewDate,
-    currentTime: candidate.interviewTime,
-  }
-
-  openScheduleModal(candidateId)
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
 }
 
 // Check if interview is starting soon (15 minutes before)
@@ -805,384 +1212,30 @@ function showJoinInterviewButton(candidate) {
         <i class="fas fa-video"></i>
         Join Interview
       `
-      joinBtn.addEventListener("click", () => startVideoCall(candidate))
+      joinBtn.onclick = () => startVideoCall(candidate.id)
       actionsDiv.insertBefore(joinBtn, actionsDiv.firstChild)
     }
   }
 }
 
-// Start video call
-async function startVideoCall(candidate) {
-  try {
-    // Create or join meeting room
-    const meetingId = `interview_${candidate.id}_${Date.now()}`
-
-    // Update interview status to indicate admin joined
-    const { doc, updateDoc } = window.firestoreUtils
-    const interviewRef = doc(window.db, "interviews", candidate.interviewId)
-    await updateDoc(interviewRef, {
-      meetingId: meetingId,
-      adminJoined: true,
-      adminJoinedAt: new Date().toISOString(),
-      status: "in_progress",
-    })
-
-    // Open video call modal for admin
-    window.openVideoCallModal(meetingId, candidate, "admin")
-
-    window.showToast("Video call started. Candidate will be notified.", "success")
-  } catch (error) {
-    console.error("Error starting video call:", error)
-    window.showToast("Error starting video call", "error")
-  }
+// View interview details
+function viewInterviewDetails(candidateId) {
+  window.showToast("Interview details feature coming soon", "info")
 }
 
-// Add the openVideoCallModal function for admin side
-function openVideoCallModal(meetingId, candidate, userType) {
-  // Create video call modal if it doesn't exist
-  if (!document.getElementById("videoCallModal")) {
-    createVideoCallModal()
+// Reschedule interview
+async function rescheduleInterview(candidateId) {
+  const candidate = acceptedCandidates.find((c) => c.id === candidateId)
+  if (!candidate) return
+
+  // Store the current interview details for unblocking
+  window.currentReschedule = {
+    candidateId: candidateId,
+    currentDate: candidate.interviewDate,
+    currentTime: candidate.interviewTime,
   }
 
-  const modal = document.getElementById("videoCallModal")
-  const title = document.getElementById("callTitle")
-  const subtitle = document.getElementById("callSubtitle")
-
-  title.textContent = `Interview: ${candidate.jobTitle || "Position Interview"}`
-  subtitle.textContent = userType === "admin" ? "Waiting for candidate to join..." : "Connecting to interviewer..."
-
-  modal.classList.add("active")
-
-  try {
-    initializeWebRTC(meetingId, candidate, userType)
-  } catch (error) {
-    console.error("Error initializing WebRTC:", error)
-    window.showToast("Error starting video call", "error")
-  }
-}
-
-// Create video call modal dynamically
-function createVideoCallModal() {
-  const modalHTML = `
-    <!-- Video Call Modal -->
-    <div id="videoCallModal" class="modal-overlay video-call-modal">
-        <div class="modal-content video-call-content">
-            <div class="video-call-header">
-                <div class="call-info">
-                    <h3 id="callTitle">Interview Call</h3>
-                    <p id="callSubtitle">Connecting...</p>
-                </div>
-                <div class="call-controls">
-                    <button class="control-btn" id="muteBtn" onclick="toggleMute()">
-                        <i class="fas fa-microphone"></i>
-                    </button>
-                    <button class="control-btn" id="videoBtn" onclick="toggleVideo()">
-                        <i class="fas fa-video"></i>
-                    </button>
-                    <button class="control-btn danger" onclick="endCall()">
-                        <i class="fas fa-phone-slash"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="video-call-body">
-                <div class="video-container">
-                    <video id="localVideo" autoplay muted playsinline></video>
-                    <video id="remoteVideo" autoplay playsinline></video>
-                    <div class="video-overlay">
-                        <div class="participant-info">
-                            <div class="participant local">
-                                <span>You (Admin)</span>
-                            </div>
-                            <div class="participant remote" id="remoteParticipant">
-                                <span>Waiting for candidate...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-  `
-
-  document.body.insertAdjacentHTML("beforeend", modalHTML)
-}
-
-// Add WebRTC functionality for admin side
-let currentCall = null
-let localStream = null
-let peerConnection = null
-
-// WebRTC configuration
-const rtcConfiguration = {
-  iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }],
-}
-
-// Initialize WebRTC
-async function initializeWebRTC(meetingId, candidate, userType) {
-  try {
-    // Get user media
-    localStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    })
-
-    const localVideo = document.getElementById("localVideo")
-    localVideo.srcObject = localStream
-
-    // Create peer connection
-    peerConnection = new RTCPeerConnection(rtcConfiguration)
-
-    // Add local stream to peer connection
-    localStream.getTracks().forEach((track) => {
-      peerConnection.addTrack(track, localStream)
-    })
-
-    // Handle remote stream
-    peerConnection.ontrack = (event) => {
-      const remoteVideo = document.getElementById("remoteVideo")
-      remoteVideo.srcObject = event.streams[0]
-
-      const remoteParticipant = document.getElementById("remoteParticipant")
-      remoteParticipant.innerHTML = `<span>${userType === "admin" ? "Candidate" : "Interviewer"}</span>`
-
-      // Update subtitle
-      const subtitle = document.getElementById("callSubtitle")
-      subtitle.textContent = "Connected"
-    }
-
-    // Handle ICE candidates
-    peerConnection.onicecandidate = (event) => {
-      if (event.candidate) {
-        // Send ICE candidate to remote peer via Firebase
-        sendSignalingMessage(meetingId, {
-          type: "ice-candidate",
-          candidate: event.candidate,
-          from: userType,
-        })
-      }
-    }
-
-    // Handle connection state changes
-    peerConnection.onconnectionstatechange = () => {
-      console.log("Connection state:", peerConnection.connectionState)
-      const subtitle = document.getElementById("callSubtitle")
-
-      switch (peerConnection.connectionState) {
-        case "connecting":
-          subtitle.textContent = "Connecting..."
-          break
-        case "connected":
-          subtitle.textContent = "Connected"
-          break
-        case "disconnected":
-          subtitle.textContent = "Disconnected"
-          break
-        case "failed":
-          subtitle.textContent = "Connection failed"
-          break
-      }
-    }
-
-    // Listen for signaling messages
-    listenForSignalingMessages(meetingId, userType)
-
-    // If admin, create offer
-    if (userType === "admin") {
-      setTimeout(async () => {
-        try {
-          const offer = await peerConnection.createOffer()
-          await peerConnection.setLocalDescription(offer)
-
-          sendSignalingMessage(meetingId, {
-            type: "offer",
-            offer: offer,
-            from: userType,
-          })
-        } catch (error) {
-          console.error("Error creating offer:", error)
-        }
-      }, 1000)
-    }
-
-    currentCall = {
-      meetingId,
-      candidate,
-      userType,
-      startTime: new Date(),
-    }
-
-    console.log("WebRTC initialized for", userType)
-  } catch (error) {
-    console.error("Error accessing media devices:", error)
-    window.showToast("Error accessing camera/microphone", "error")
-  }
-}
-
-// Send signaling message
-async function sendSignalingMessage(meetingId, message) {
-  try {
-    const { collection, addDoc } = window.firestoreUtils
-    const signalingRef = collection(window.db, "signaling", meetingId, "messages")
-    await addDoc(signalingRef, {
-      ...message,
-      timestamp: new Date().toISOString(),
-    })
-    console.log("Sent signaling message:", message.type)
-  } catch (error) {
-    console.error("Error sending signaling message:", error)
-  }
-}
-
-// Listen for signaling messages
-function listenForSignalingMessages(meetingId, userType) {
-  const { collection, onSnapshot, orderBy, query } = window.firestoreUtils
-  const signalingRef = collection(window.db, "signaling", meetingId, "messages")
-  const q = query(signalingRef, orderBy("timestamp"))
-
-  onSnapshot(q, (snapshot) => {
-    snapshot.docChanges().forEach(async (change) => {
-      if (change.type === "added") {
-        const message = change.doc.data()
-
-        // Ignore messages from self
-        if (message.from === userType) return
-
-        console.log("Received signaling message:", message.type, "from", message.from)
-
-        switch (message.type) {
-          case "offer":
-            await handleOffer(message.offer)
-            break
-          case "answer":
-            await handleAnswer(message.answer)
-            break
-          case "ice-candidate":
-            await handleIceCandidate(message.candidate)
-            break
-        }
-      }
-    })
-  })
-}
-
-// Handle WebRTC offer
-async function handleOffer(offer) {
-  try {
-    console.log("Handling offer")
-    await peerConnection.setRemoteDescription(offer)
-    const answer = await peerConnection.createAnswer()
-    await peerConnection.setLocalDescription(answer)
-
-    sendSignalingMessage(currentCall.meetingId, {
-      type: "answer",
-      answer: answer,
-      from: currentCall.userType,
-    })
-  } catch (error) {
-    console.error("Error handling offer:", error)
-  }
-}
-
-// Handle WebRTC answer
-async function handleAnswer(answer) {
-  try {
-    console.log("Handling answer")
-    await peerConnection.setRemoteDescription(answer)
-  } catch (error) {
-    console.error("Error handling answer:", error)
-  }
-}
-
-// Handle ICE candidate
-async function handleIceCandidate(candidate) {
-  try {
-    console.log("Handling ICE candidate")
-    await peerConnection.addIceCandidate(candidate)
-  } catch (error) {
-    console.error("Error handling ICE candidate:", error)
-  }
-}
-
-// Toggle mute
-function toggleMute() {
-  if (!localStream) return
-
-  const audioTrack = localStream.getAudioTracks()[0]
-  if (audioTrack) {
-    audioTrack.enabled = !audioTrack.enabled
-    const muteBtn = document.getElementById("muteBtn")
-    muteBtn.innerHTML = audioTrack.enabled
-      ? '<i class="fas fa-microphone"></i>'
-      : '<i class="fas fa-microphone-slash"></i>'
-    muteBtn.classList.toggle("muted", !audioTrack.enabled)
-  }
-}
-
-// Toggle video
-function toggleVideo() {
-  if (!localStream) return
-
-  const videoTrack = localStream.getVideoTracks()[0]
-  if (videoTrack) {
-    videoTrack.enabled = !videoTrack.enabled
-    const videoBtn = document.getElementById("videoBtn")
-    videoBtn.innerHTML = videoTrack.enabled ? '<i class="fas fa-video"></i>' : '<i class="fas fa-video-slash"></i>'
-    videoBtn.classList.toggle("muted", !videoTrack.enabled)
-  }
-}
-
-// End call
-async function endCall() {
-  try {
-    if (currentCall) {
-      // Update interview status
-      const { doc, updateDoc } = window.firestoreUtils
-
-      // Find the interview by candidate ID and current date/time
-      const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
-      await updateDoc(candidateRef, {
-        interviewStatus: "completed",
-        interviewEndedAt: new Date().toISOString(),
-        interviewDuration: Math.floor((new Date() - currentCall.startTime) / 1000),
-      })
-
-      // Also update the interview record if we have the interview ID
-      if (currentCall.candidate.interviewId) {
-        const interviewRef = doc(window.db, "interviews", currentCall.candidate.interviewId)
-        await updateDoc(interviewRef, {
-          status: "completed",
-          endedAt: new Date().toISOString(),
-          duration: Math.floor((new Date() - currentCall.startTime) / 1000),
-        })
-      }
-    }
-
-    // Clean up WebRTC
-    if (localStream) {
-      localStream.getTracks().forEach((track) => track.stop())
-    }
-    if (peerConnection) {
-      peerConnection.close()
-    }
-
-    // Close modal
-    const modal = document.getElementById("videoCallModal")
-    if (modal) {
-      modal.classList.remove("active")
-    }
-
-    currentCall = null
-    localStream = null
-    peerConnection = null
-
-    window.showToast("Call ended successfully", "success")
-
-    // Reload candidates to update status
-    await loadAcceptedCandidates()
-  } catch (error) {
-    console.error("Error ending call:", error)
-    window.showToast("Error ending call", "error")
-  }
+  openScheduleModal(candidateId)
 }
 
 // View candidate details
@@ -1190,9 +1243,6 @@ function viewCandidateDetails(candidateId) {
   const candidate = acceptedCandidates.find((c) => c.id === candidateId)
   if (!candidate) return
 
-  // Create a simple details modal or redirect
-  window.showToast(`Viewing details for ${candidate.name}`, "info")
-
-  // You can implement a detailed view modal here
+  window.showToast(`Viewing details for ${candidate.candidateName}`, "info")
   console.log("Candidate details:", candidate)
 }
