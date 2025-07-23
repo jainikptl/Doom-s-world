@@ -1246,7 +1246,7 @@ async function finalizeCallEnd() {
 
     // Close modal
     document.getElementById("videoCallModal").style.display = "none"
-    document.getElementById("postInterviewActions").style.display = "none"
+    document.getElementById("postInterviewModal").style.display = "none"
 
     // Reset variables
     currentCall = null
