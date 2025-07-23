@@ -14,6 +14,9 @@ let signalingUnsubscribe = null
 // Global variable for selected decision
 let selectedDecision = null
 
+// Add a flag to track if a decision was made during the interview
+let interviewDecisionMade = false
+
 // WebRTC configuration
 const rtcConfiguration = {
   iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }],
@@ -1053,6 +1056,9 @@ async function endCall() {
         // Show post-interview decision modal
         await showPostInterviewModal()
         return // Don't close video modal yet, wait for admin decision
+      } else {
+        // User chose not to make a decision
+        interviewDecisionMade = false
       }
     }
 
@@ -1154,6 +1160,11 @@ async function confirmInterviewDecision() {
     const { doc, updateDoc } = window.firestoreUtils
     const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
 
+    // Set the flag that a decision was made
+    interviewDecisionMade = true
+
+    console.log("Making decision:", selectedDecision) // Debug log
+
     if (selectedDecision === "assign") {
       const role = document.getElementById("postInterviewRole").value
 
@@ -1171,6 +1182,7 @@ async function confirmInterviewDecision() {
         updatedAt: new Date().toISOString(),
       })
 
+      console.log("Candidate assigned successfully") // Debug log
       window.showToast("Candidate assigned successfully!", "success")
     } else {
       await updateDoc(candidateRef, {
@@ -1181,12 +1193,17 @@ async function confirmInterviewDecision() {
         updatedAt: new Date().toISOString(),
       })
 
+      console.log("Candidate rejected") // Debug log
       window.showToast("Candidate rejected", "info")
     }
 
     // Close modal and end call
     closePostInterviewModal()
-    await finalizeCallEnd()
+
+    // Wait a moment for Firebase to update before finalizing
+    setTimeout(async () => {
+      await finalizeCallEnd()
+    }, 1000)
   } catch (error) {
     console.error("Error confirming decision:", error)
     window.showToast("Error saving decision", "error")
@@ -1208,6 +1225,8 @@ window.showPostInterviewModal = showPostInterviewModal
 // Finalize call end
 async function finalizeCallEnd() {
   try {
+    console.log("Finalizing call end. Decision made:", interviewDecisionMade) // Debug log
+
     if (currentCall) {
       // Update interview status
       const { doc, updateDoc } = window.firestoreUtils
@@ -1221,13 +1240,18 @@ async function finalizeCallEnd() {
         })
       }
 
-      // Update candidate status to completed
-      const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
-      await updateDoc(candidateRef, {
-        interviewStatus: "completed",
-        interviewEndedAt: new Date().toISOString(),
-        interviewDuration: Math.floor((new Date() - currentCall.startTime) / 1000),
-      })
+      // Only update candidate status to completed if no decision was made
+      if (!interviewDecisionMade) {
+        console.log("No decision made, setting status to completed") // Debug log
+        const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
+        await updateDoc(candidateRef, {
+          interviewStatus: "completed",
+          interviewEndedAt: new Date().toISOString(),
+          interviewDuration: Math.floor((new Date() - currentCall.startTime) / 1000),
+        })
+      } else {
+        console.log("Decision was made, not overriding status") // Debug log
+      }
     }
 
     // Clean up WebRTC
@@ -1252,11 +1276,15 @@ async function finalizeCallEnd() {
     currentCall = null
     localStream = null
     peerConnection = null
+    selectedDecision = null
+    interviewDecisionMade = false // Reset the decision flag
 
     window.showToast("Interview ended successfully", "success")
 
-    // Reload candidates to update status
-    await loadAcceptedCandidates()
+    // Wait a bit more before reloading to ensure Firebase has updated
+    setTimeout(async () => {
+      await loadAcceptedCandidates()
+    }, 2000)
   } catch (error) {
     console.error("Error finalizing call end:", error)
     window.showToast("Error ending call", "error")
