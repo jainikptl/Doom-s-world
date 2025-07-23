@@ -43,6 +43,10 @@
                         <i class="fas fa-users"></i>
                         <span>Applications</span>
                     </button>
+                    <button class="header-btn" id="savedApplicationsBtn">
+                        <i class="fas fa-bookmark"></i>
+                        <span>Saved</span>
+                    </button>
                     <button class="header-btn primary" id="createJobBtn">
                         <i class="fas fa-plus"></i>
                         <span>Create Job</span>
@@ -317,19 +321,106 @@
         </div>
     </div>
 
-    <!-- Applications Modal -->
+    <!-- Applications Modal with Swipe Cards -->
     <div class="modal-overlay" id="applicationsModal">
-        <div class="modal-content large">
+        <div class="modal-content extra-large">
             <div class="modal-header">
                 <h3>Job Applications</h3>
+                <div class="application-controls">
+                    <button class="control-btn" id="showInstructionsBtn">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Instructions</span>
+                    </button>
+                </div>
                 <button class="modal-close" id="applicationsClose">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
             <div class="modal-body">
-                <div class="applications-list" id="applicationsList">
-                    <!-- Applications will be loaded here -->
+                <!-- Swipe Instructions -->
+                <div class="swipe-instructions" id="swipeInstructions">
+                    <div class="instruction-item">
+                        <div class="instruction-icon reject">
+                            <i class="fas fa-arrow-left"></i>
+                        </div>
+                        <span>Swipe Left to Reject</span>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon save">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <span>Swipe Up to Save for Later</span>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon like">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <span>Swipe Down to Like (Top Candidate)</span>
+                    </div>
+                    <div class="instruction-item">
+                        <div class="instruction-icon shortlist">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <span>Swipe Right to Shortlist for Interview</span>
+                    </div>
+                </div>
+
+                <!-- Swipe Cards Container -->
+                <div class="swipe-container" id="swipeContainer">
+                    <div class="swipe-stack" id="swipeStack">
+                        <!-- Application cards will be loaded here -->
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="action-btn reject" id="rejectBtn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <button class="action-btn save" id="saveBtn">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                        <button class="action-btn like" id="likeBtn">
+                            <i class="fas fa-heart"></i>
+                        </button>
+                        <button class="action-btn shortlist" id="shortlistBtn">
+                            <i class="fas fa-check"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-applications" id="emptyApplications" style="display: none;">
+                    <div class="empty-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <h3>No More Applications</h3>
+                    <p>You've reviewed all applications. New applications will appear here when candidates apply.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Saved Applications Modal -->
+    <div class="modal-overlay" id="savedApplicationsModal">
+        <div class="modal-content extra-large">
+            <div class="modal-header">
+                <h3>Saved Applications</h3>
+                <div class="saved-filters">
+                    <select id="savedFilter">
+                        <option value="all">All Saved</option>
+                        <option value="saved">Saved for Later</option>
+                        <option value="liked">Top Candidates</option>
+                    </select>
+                </div>
+                <button class="modal-close" id="savedApplicationsClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="saved-applications-container" id="savedApplicationsContainer">
+                    <!-- Saved applications will be loaded here -->
                 </div>
             </div>
         </div>

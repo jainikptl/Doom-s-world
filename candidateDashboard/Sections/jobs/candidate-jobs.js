@@ -647,6 +647,7 @@ async function handleApplicationSubmit(e) {
       candidateId: currentUser.uid,
       candidateName: currentUser.name,
       candidateEmail: currentUser.email,
+      adminAction: null,
       candidateStats: {
         combat: currentUser.combatPoints || 0,
         defense: currentUser.defensePoints || 0,
