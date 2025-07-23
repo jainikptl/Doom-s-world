@@ -493,6 +493,7 @@ async function cancelInterview(interviewId) {
     const interviewRef = doc(window.db, "interviews", interviewId)
     await updateDoc(interviewRef, {
       status: "cancelled",
+      time: "",
       cancelledAt: new Date().toISOString(),
       cancelledBy: window.auth.currentUser.uid,
     })
