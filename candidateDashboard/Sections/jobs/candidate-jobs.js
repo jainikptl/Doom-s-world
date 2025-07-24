@@ -140,19 +140,22 @@ async function ensureCandidateProfile(user) {
   try {
     const candidateRef = db.collection("candidates").doc(user.uid)
     const candidateDoc = await candidateRef.get()
+    const userRef = db.collection("users").doc(user.uid)
+    const userDoc = await userRef.get()
+    const userData = userDoc.data() || {}
 
     if (!candidateDoc.exists) {
       // Create new candidate with random stats
       const candidateData = {
         uid: user.uid,
         email: user.email || `candidate_${user.uid}@example.com`,
-        name: user.displayName || `Candidate ${user.uid.substring(0, 6)}`,
-        combatPoints: Math.floor(Math.random() * 50) + 10,
-        defensePoints: Math.floor(Math.random() * 50) + 10,
-        techPoints: Math.floor(Math.random() * 50) + 10,
-        leadershipPoints: Math.floor(Math.random() * 50) + 10,
-        stealthPoints: Math.floor(Math.random() * 50) + 10,
-        intelligencePoints: Math.floor(Math.random() * 50) + 10,
+        name: userData.name || `Candidate ${user.uid.substring(0, 6)}`,
+        combatPoints: userData.combatPoints || 0,
+        defensePoints: userData.defensePoints || 0,
+        techPoints: userData.techPoints || 0,
+        leadershipPoints: userData.leadershipPoints || 0,
+        stealthPoints: userData.stealthPoints||0,
+        intelligencePoints: userData.intelligencePoints||0,
         joinDate: firebase.firestore.FieldValue.serverTimestamp(),
         lastActive: firebase.firestore.FieldValue.serverTimestamp(),
         isOnline: true,
@@ -232,6 +235,9 @@ function updateProfileDisplay() {
   combatPoints.textContent = currentUser.combatPoints || 0
   defensePoints.textContent = currentUser.defensePoints || 0
   techPoints.textContent = currentUser.techPoints || 0
+  stealthPoints.textContent = currentUser.stealthPoints || 0
+  leadershipPoints.textContent = currentUser.leadershipPoints || 0
+  intelligencePoints.textContent = currentUser.intelligencePoints || 0
 }
 
 // Load jobs
@@ -352,12 +358,12 @@ function checkJobEligibility(job) {
 
   const requirements = job.requirements
   const userStats = {
-    combat: currentUser.combatPoints || 0,
-    defense: currentUser.defensePoints || 0,
-    tech: currentUser.techPoints || 0,
-    leadership: currentUser.leadershipPoints || 0,
-    stealth: currentUser.stealthPoints || 0,
-    intelligence: currentUser.intelligencePoints || 0,
+    combatPoints: currentUser.combatPoints || 0,
+    defensePoints: currentUser.defensePoints || 0,
+    techPoints: currentUser.techPoints || 0,
+    leadershipPoints: currentUser.leadershipPoints || 0,
+    stealthPoints: currentUser.stealthPoints || 0,
+    intelligencePoints: currentUser.intelligencePoints || 0,
   }
 
   const unmetRequirements = []
@@ -381,21 +387,21 @@ function checkJobEligibility(job) {
 // Generate requirements HTML with user comparison
 function generateRequirementsHTML(requirements, user) {
   const skillIcons = {
-    combat: "fist-raised",
-    defense: "shield-alt",
-    tech: "cog",
-    leadership: "crown",
-    stealth: "user-ninja",
-    intelligence: "brain",
+    combatPoints: "fist-raised",
+    defensePoints: "shield-alt",
+    techPoints: "cog",
+    leadershipPoints: "crown",
+    stealthPoints: "user-ninja",
+    intelligencePoints: "brain",
   }
 
   const userStats = {
-    combat: user?.combatPoints || 0,
-    defense: user?.defensePoints || 0,
-    tech: user?.techPoints || 0,
-    leadership: user?.leadershipPoints || 0,
-    stealth: user?.stealthPoints || 0,
-    intelligence: user?.intelligencePoints || 0,
+    combatPoints: user?.combatPoints || 0,
+    defensePoints: user?.defensePoints || 0,
+    techPoints: user?.techPoints || 0,
+    leadershipPoints: user?.leadershipPoints || 0,
+    stealthPoints: user?.stealthPoints || 0,
+    intelligencePoints: user?.intelligencePoints || 0,
   }
 
   return Object.entries(requirements)
@@ -418,12 +424,12 @@ function generateRequirementsHTML(requirements, user) {
 // Generate rewards HTML
 function generateRewardsHTML(rewards) {
   const skillIcons = {
-    combat: "fist-raised",
-    defense: "shield-alt",
-    tech: "cog",
-    leadership: "crown",
-    stealth: "user-ninja",
-    intelligence: "brain",
+    combatPoints: "fist-raised",
+    defensePoints: "shield-alt",
+    techPoints: "cog",
+    leadershipPoints: "crown",
+    stealthPoints: "user-ninja",
+    intelligencePoints: "brain",
   }
 
   return Object.entries(rewards)
@@ -442,12 +448,12 @@ function generateRewardsHTML(rewards) {
 // Generate penalties HTML
 function generatePenaltiesHTML(penalties) {
   const skillIcons = {
-    combat: "fist-raised",
-    defense: "shield-alt",
-    tech: "cog",
-    leadership: "crown",
-    stealth: "user-ninja",
-    intelligence: "brain",
+    combatPoints: "fist-raised",
+    defensePoints: "shield-alt",
+    techPoints: "cog",
+    leadershipPoints: "crown",
+    stealthPoints: "user-ninja",
+    intelligencePoints: "brain",
   }
 
   return Object.entries(penalties)
@@ -522,12 +528,12 @@ function showApplicationModal(job) {
 
   // Update current stats
   const userStats = {
-    combat: currentUser.combatPoints || 0,
-    defense: currentUser.defensePoints || 0,
-    tech: currentUser.techPoints || 0,
-    leadership: currentUser.leadershipPoints || 0,
-    stealth: currentUser.stealthPoints || 0,
-    intelligence: currentUser.intelligencePoints || 0,
+    combatPoints: currentUser.combatPoints || 0,
+    defensePoints: currentUser.defensePoints || 0,
+    techPoints: currentUser.techPoints || 0,
+    leadershipPoints: currentUser.leadershipPoints || 0,
+    stealthPoints: currentUser.stealthPoints || 0,
+    intelligencePoints: currentUser.intelligencePoints || 0,
   }
 
   currentStats.innerHTML = Object.entries(userStats)
@@ -649,12 +655,12 @@ async function handleApplicationSubmit(e) {
       candidateEmail: currentUser.email,
       adminAction: null,
       candidateStats: {
-        combat: currentUser.combatPoints || 0,
-        defense: currentUser.defensePoints || 0,
-        tech: currentUser.techPoints || 0,
-        leadership: currentUser.leadershipPoints || 0,
-        stealth: currentUser.stealthPoints || 0,
-        intelligence: currentUser.intelligencePoints || 0,
+        combatPoints: currentUser.combatPoints || 0,
+        defensePoints: currentUser.defensePoints || 0,
+        techPoints: currentUser.techPoints || 0,
+        leadershipPoints: currentUser.leadershipPoints || 0,
+        stealthPoints: currentUser.stealthPoints || 0,
+        intelligencePoints: currentUser.intelligencePoints || 0,
       },
       resumeText: resumeText,
       resumeFileUrl: resumeFileUrl,
@@ -768,12 +774,12 @@ function getInitials(name) {
 
 function getSkillIcon(skill) {
   const skillIcons = {
-    combat: "fist-raised",
-    defense: "shield-alt",
-    tech: "cog",
-    leadership: "crown",
-    stealth: "user-ninja",
-    intelligence: "brain",
+    combatPoints: "fist-raised",
+    defensePoints: "shield-alt",
+    techPoints: "cog",
+    leadershipPoints: "crown",
+    stealthPoints: "user-ninja",
+    intelligencePoints: "brain",
   }
   return skillIcons[skill] || "star"
 }
