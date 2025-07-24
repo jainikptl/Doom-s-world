@@ -924,7 +924,7 @@ function navigateToSection(section) {
     candidates: "Sections/candidates/candidates.html",
     applications: "Sections/job/admin-jobs.html",
     interviews: "Sections/interview/accepted-candidates.html",
-    hired: "Sections/selection/selection.html",
+    hired: "Sections/interview/accepted-candidates.html",
   }
 
   if (sectionMap[section]) {
