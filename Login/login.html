@@ -6,6 +6,9 @@
   <title>Login - DoomBoard</title>
   <link href="https://fonts.googleapis.com/css2?family=Bruno+Ace+SC&family=Orbitron&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="loginstyle.css" />
+  <script>
+  localStorage.removeItem("userLoggedIn");
+</script>
 </head>
 <body>
   <div class="background-overlay"></div>
@@ -74,6 +77,7 @@
             const character = userData.character;
             const userName = userData.name || userData.email || 'User';
 
+            localStorage.setItem("userLoggedIn", character);
             // Redirect to welcome screen with user info
             const welcomeUrl = `welcome.html?type=${character}&name=${encodeURIComponent(userName)}`;
             window.location.href = welcomeUrl;

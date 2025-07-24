@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Profile - Candidate Portal</title>
+    <script>
+    const isLoggedIn = localStorage.getItem("userLoggedIn");
+    if (isLoggedIn!="candidate") {
+        window.location.href = "../../Login/login.html";
+    }
+    </script>
     <style>
         * {
             margin: 0;

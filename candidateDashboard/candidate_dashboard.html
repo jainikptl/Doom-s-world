@@ -13,6 +13,12 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="candidate_dashboard.css" />
+    <script>
+    const isLoggedIn = localStorage.getItem("userLoggedIn");
+    if (isLoggedIn!="candidate") {
+        window.location.href = "../Login/login.html";
+    }
+    </script>
   </head>
   <body>
     <div class="container">
