@@ -80,6 +80,14 @@
             return db.collection("users").doc(user.uid).set({
               name: name,
               email: email,
+              phone: null,
+              combat: 0,
+              defence: 0,
+              intelligence: 0,
+              leadership: 0,
+              stealth: 0,
+              tech: 0,
+              completedAssignments:0,
               character: "candidate",
               status: "idle"
             });
