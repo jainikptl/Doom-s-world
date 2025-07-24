@@ -193,14 +193,14 @@ async function loadApplicationsData() {
 // Load interviews data
 async function loadInterviewsData() {
   try {
-    const interviewsQuery = query(collection(db, "interview"), where("status", "==", "pending"))
+    const interviewsQuery = query(collection(db, "interviews"), where("status", "==", "pending"))
     const interviewsSnap = await getDocs(interviewsQuery)
 
     dashboardData.previousData.interviews = dashboardData.interviews
     dashboardData.interviews = interviewsSnap.size
 
     // Also load completed interviews for hired count
-    const completedQuery = query(collection(db, "interview"), where("status", "==", "completed"))
+    const completedQuery = query(collection(db, "applications"), where("interviewStatus", "==", "assigned"))
     const completedSnap = await getDocs(completedQuery)
 
     dashboardData.previousData.hired = dashboardData.hired
@@ -244,12 +244,12 @@ async function loadRecentActivity() {
     const activities = []
 
     // Get recent applications
-    const recentApplicationsQuery = query(collection(db, "applications"), orderBy("createdAt", "desc"), limit(10))
+    const recentApplicationsQuery = query(collection(db, "applications"), orderBy("appliedAt", "desc"), limit(10))
     const applicationsSnap = await getDocs(recentApplicationsQuery)
 
     applicationsSnap.forEach((doc) => {
       const data = doc.data()
-      const createdAt = data.createdAt?.toDate() || new Date()
+      const createdAt = data.appliedAt?.toDate() || new Date()
 
       activities.push({
         type: "candidate",
@@ -261,17 +261,17 @@ async function loadRecentActivity() {
     })
 
     // Get recent interviews
-    const recentInterviewsQuery = query(collection(db, "interview"), orderBy("createdAt", "desc"), limit(5))
+    const recentInterviewsQuery = query(collection(db, "applications"), orderBy("interviewDate", "desc"), limit(5))
     const interviewsSnap = await getDocs(recentInterviewsQuery)
 
     interviewsSnap.forEach((doc) => {
       const data = doc.data()
-      const createdAt = data.createdAt?.toDate() || new Date()
+      const createdAt = data.reviewedAt?.toDate() || new Date()
 
       activities.push({
         type: "interview",
         title: "Interview Scheduled",
-        description: `Interview scheduled with ${data.candidateName || "candidate"} for ${data.position || "position"}`,
+        description: `Interview scheduled with ${data.candidateName || "candidate"}`,
         time: formatTimeAgo(createdAt),
         timestamp: createdAt,
       })
@@ -314,9 +314,9 @@ async function loadUpcomingEvents() {
 
     // Get upcoming interviews
     const upcomingInterviewsQuery = query(
-      collection(db, "interview"),
+      collection(db, "interviews"),
       where("status", "in", ["scheduled", "pending"]),
-      orderBy("scheduledDate", "asc"),
+      orderBy("date", "asc"),
       limit(10),
     )
 
@@ -327,11 +327,11 @@ async function loadUpcomingEvents() {
       let eventDate = null
 
       // Handle different date formats
-      if (data.scheduledDate) {
-        if (data.scheduledDate.toDate) {
-          eventDate = data.scheduledDate.toDate()
-        } else if (typeof data.scheduledDate === "string") {
-          eventDate = new Date(data.scheduledDate)
+      if (data.date) {
+        if (data.date.toDate) {
+          eventDate = data.date.toDate()
+        } else if (typeof data.date === "string") {
+          eventDate = new Date(data.date)
         }
       }
 
@@ -341,7 +341,7 @@ async function loadUpcomingEvents() {
           title: `Interview: ${data.candidateName || "Candidate"}`,
           description: `${data.interviewType || "Interview"} session for ${data.position || "position"}`,
           date: eventDate,
-          time: formatTime(eventDate),
+          time: data.time,
           status: isToday(eventDate) ? "today" : "upcoming",
         })
       }
@@ -360,7 +360,7 @@ async function loadPipelineData() {
   try {
     // Get all applications and categorize by status
     const applicationsSnap = await getDocs(collection(db, "applications"))
-    const interviewsSnap = await getDocs(collection(db, "interview"))
+    const interviewsSnap = await getDocs(collection(db, "interviews"))
 
     let applied = 0
     let screening = 0
@@ -371,39 +371,42 @@ async function loadPipelineData() {
     applicationsSnap.forEach((doc) => {
       const data = doc.data()
       const status = data.status?.toLowerCase() || "applied"
+      const interviewStatus = data.interviewStatus?.toLowerCase() || "applied"
 
       switch (status) {
-        case "applied":
-        case "new":
+        case "pending":
           applied++
           break
-        case "screening":
-        case "review":
+        case "accepted":
           screening++
           break
-        case "interview":
+        default:
+          null
+      }
+
+      switch (interviewStatus) {
+        case "interview_scheduled":
           interview++
           break
-        case "hired":
-        case "accepted":
+        case "assigned":
           hired++
           break
         default:
-          applied++
+          null
       }
     })
 
-    // Add interview data
-    interviewsSnap.forEach((doc) => {
-      const data = doc.data()
-      const status = data.status?.toLowerCase()
+    // // Add interview data
+    // interviewsSnap.forEach((doc) => {
+    //   const data = doc.data()
+    //   const status = data.status?.toLowerCase()
 
-      if (status === "completed") {
-        hired++
-      } else if (status === "scheduled" || status === "pending") {
-        interview++
-      }
-    })
+    //   if (status === "completed") {
+    //     hired++
+    //   } else if (status === "scheduled") {
+    //     interview++
+    //   }
+    // })
 
     dashboardData.pipelineData = {
       applied,
@@ -427,8 +430,8 @@ async function loadMetricsData() {
 
     const metricsQuery = query(
       collection(db, "applications"),
-      where("createdAt", ">=", Timestamp.fromDate(thirtyDaysAgo)),
-      orderBy("createdAt", "asc"),
+      where("appliedAt", ">=", Timestamp.fromDate(thirtyDaysAgo)),
+      orderBy("appliedAt", "asc"),
     )
 
     const metricsSnap = await getDocs(metricsQuery)
@@ -460,7 +463,7 @@ async function loadMetricsData() {
 // Setup real-time listeners
 function setupRealTimeListeners() {
   // Listen for new applications
-  const applicationsQuery = query(collection(db, "applications"), where("isActive", "==", true))
+  const applicationsQuery = query(collection(db, "applications"), where("status", "==", "pending"))
   onSnapshot(applicationsQuery, (snapshot) => {
     const newCount = snapshot.size
     if (newCount !== dashboardData.applications) {
@@ -471,7 +474,7 @@ function setupRealTimeListeners() {
   })
 
   // Listen for interview changes
-  const interviewsQuery = query(collection(db, "interview"), where("status", "==", "pending"))
+  const interviewsQuery = query(collection(db, "interviews"), where("status", "==", "scheduled"))
   onSnapshot(interviewsQuery, (snapshot) => {
     const newCount = snapshot.size
     if (newCount !== dashboardData.interviews) {
@@ -930,17 +933,17 @@ function navigateToSection(section) {
 }
 
 // Filter activity
-function filterActivity(filter) {
-  const activityItems = document.querySelectorAll(".activity-item")
+// function filterActivity(filter) {
+//   const activityItems = document.querySelectorAll(".activity-item")
 
-  activityItems.forEach((item) => {
-    if (filter === "all" || item.dataset.type === filter) {
-      item.style.display = "flex"
-    } else {
-      item.style.display = "none"
-    }
-  })
-}
+//   activityItems.forEach((item) => {
+//     if (filter === "all" || item.dataset.type === filter) {
+//       item.style.display = "flex"
+//     } else {
+//       item.style.display = "none"
+//     }
+//   })
+// }
 
 // Refresh dashboard
 function refreshDashboard() {
