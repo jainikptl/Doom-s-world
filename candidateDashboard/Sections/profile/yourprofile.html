@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Profile - Candidate Portal</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../../candidate_dashboard.css" />
+    <script>
+    const isLoggedIn = localStorage.getItem("userLoggedIn");
+    if (isLoggedIn !== "candidate") {
+        window.location.href = "../../Login/login.html";
+    }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <button class="toggle-btn" onclick="toggleSidebar()">
+                <i class="fas fa-chevron-left" id="toggleIcon"></i>
+            </button>
+
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <div class="logo-text">Candidate Portal</div>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-item">
+                    <a href="../../candidate_dashboard.html" class="nav-link">
+                        <i class="nav-icon fas fa-home"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="yourprofile.html" class="nav-link active">
+                        <i class="nav-icon fas fa-user"></i>
+                        <span class="nav-text">Your Profile</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="../chat/chat.html" class="nav-link">
+                        <i class="nav-icon fas fa-comments"></i>
+                        <span class="nav-text">Direct Chat</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="../interview/candidate-interview.html" class="nav-link">
+                        <i class="nav-icon fas fa-video"></i>
+                        <span class="nav-text">Interviews</span>
+                        <span class="nav-badge" id="interviewBadge">0</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="../jobs/candidate-jobs.html" class="nav-link">
+                        <i class="nav-icon fas fa-clipboard-list"></i>
+                        <span class="nav-text">Job Portal</span>
+                        <span class="nav-badge" id="jobsBadge">0</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="../leaderboard/leaderboard.html" class="nav-link">
+                        <i class="nav-icon fas fa-trophy"></i>
+                        <span class="nav-text">Leaderboard</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="greeting">
+                    <span class="greeting-emoji">👤</span>
+                    <div>
+                        <h1 class="greeting-text">Your Profile</h1>
+                        <p style="color: var(--text-muted); font-size: 0.875rem">
+                            Manage your profile and track your progress
+                        </p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-sun" id="themeIcon"></i>
+                    </button>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span id="userStatus">Loading...</span>
+                    </div>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </header>
+
+            <!-- Loading Screen -->
+            <div id="loadingScreen" class="loading-screen">
+                <div class="loading-spinner"></div>
+                <p>Loading your profile...</p>
+            </div>
+
+            <!-- Profile Content -->
+            <div id="profileContent" style="display: none;">
+                <!-- Profile Header Card -->
+                <div class="card fade-in" style="margin-bottom: 2rem;">
+                    <div class="profile-header-content">
+                        <div class="profile-avatar-section">
+                            <div class="profile-avatar-large">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <button class="btn btn-secondary" onclick="changeAvatar()">
+                                <i class="fas fa-camera"></i>
+                                Change Avatar
+                            </button>
+                        </div>
+                        <div class="profile-info-section">
+                            <h2 id="profileName" class="profile-name">Loading...</h2>
+                            <p id="profileEmail" class="profile-email">Loading...</p>
+                            <div class="profile-stats-grid">
+                                <div class="stat-item">
+                                    <span id="totalPoints" class="stat-number">0</span>
+                                    <span class="stat-label">Total Points</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span id="userRank" class="stat-number">#-</span>
+                                    <span class="stat-label">Global Rank</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span id="missionsCompleted" class="stat-number">0</span>
+                                    <span class="stat-label">Missions</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Form and Abilities Grid -->
+                <div class="dashboard-grid">
+                    <!-- Personal Information -->
+                    <div class="card slide-in">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-edit"></i>
+                            </div>
+                            <h3 class="card-title">Personal Information</h3>
+                        </div>
+                        <div class="card-content">
+                            <form id="profileForm">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" id="userName" class="form-input" placeholder="Enter your name">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" id="userPhone" class="form-input" placeholder="Enter your phone">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" id="userEmail" class="form-input" readonly>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Update Profile
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Abilities -->
+                    <div class="card slide-in">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-person-military-rifle"></i>
+                            </div>
+                            <h3 class="card-title">Combat Abilities</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="abilities-grid">
+                                <div class="ability-item">
+                                    <div class="ability-icon combat">
+                                        <i class="fas fa-fist-raised"></i>
+                                    </div>
+                                    <div class="ability-info">
+                                        <span class="ability-name">Combat</span>
+                                        <span id="combatPoints" class="ability-points">0</span>
+                                    </div>
+                                </div>
+                                <div class="ability-item">
+                                    <div class="ability-icon defense">
+                                        <i class="fas fa-shield-alt"></i>
+                                    </div>
+                                    <div class="ability-info">
+                                        <span class="ability-name">Defense</span>
+                                        <span id="defensePoints" class="ability-points">0</span>
+                                    </div>
+                                </div>
+                                <div class="ability-item">
+                                    <div class="ability-icon stealth">
+                                        <i class="fas fa-user-ninja"></i>
+                                    </div>
+                                    <div class="ability-info">
+                                        <span class="ability-name">Stealth</span>
+                                        <span id="stealthPoints" class="ability-points">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tech & Intelligence -->
+                    <div class="card slide-in">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h3 class="card-title">Tech & Intelligence</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="abilities-grid">
+                                <div class="ability-item">
+                                    <div class="ability-icon tech">
+                                        <i class="fas fa-laptop-code"></i>
+                                    </div>
+                                    <div class="ability-info">
+                                        <span class="ability-name">Tech</span>
+                                        <span id="techPoints" class="ability-points">0</span>
+                                    </div>
+                                </div>
+                                <div class="ability-item">
+                                    <div class="ability-icon intelligence">
+                                        <i class="fas fa-lightbulb"></i>
+                                    </div>
+                                    <div class="ability-info">
+                                        <span class="ability-name">Intelligence</span>
+                                        <span id="intelligencePoints" class="ability-points">0</span>
+                                    </div>
+                                </div>
+                                <div class="ability-item">
+                                    <div class="ability-icon leadership">
+                                        <i class="fas fa-crown"></i>
+                                    </div>
+                                    <div class="ability-info">
+                                        <span class="ability-name">Leadership</span>
+                                        <span id="leadershipPoints" class="ability-points">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Past Missions -->
+                    <div class="card slide-in" style="grid-column: 1 / -1;">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h3 class="card-title">Mission History</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="missionsContainer">
+                                <div class="loading-missions">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    Loading missions...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <style>
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-primary);
+            border-top: 3px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .profile-header-content {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .profile-avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            box-shadow: var(--shadow-glow);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .profile-info-section {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .profile-email {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-primary);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(245, 67, 79, 0.1);
+        }
+
+        .form-input:readonly {
+            background: var(--bg-tertiary);
+            cursor: not-allowed;
+        }
+
+        .abilities-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .ability-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .ability-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .ability-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .ability-icon.combat { background: linear-gradient(45deg, #ef4444, #dc2626); }
+        .ability-icon.defense { background: linear-gradient(45deg, #3b82f6, #2563eb); }
+        .ability-icon.stealth { background: linear-gradient(45deg, #8b5cf6, #7c3aed); }
+        .ability-icon.tech { background: linear-gradient(45deg, #10b981, #059669); }
+        .ability-icon.intelligence { background: linear-gradient(45deg, #f59e0b, #d97706); }
+        .ability-icon.leadership { background: linear-gradient(45deg, #f5434f, #631e29); }
+
+        .ability-info {
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ability-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .ability-points {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .mission-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .mission-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .mission-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .mission-info {
+            flex: 1;
+        }
+
+        .mission-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .mission-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mission-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .mission-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .mission-status.completed {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .mission-status.in-progress {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .mission-status.failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .loading-missions {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+        }
+
+        .no-missions {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-card);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-color: #22c55e;
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .toast.error {
+            border-color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .profile-header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import {
+            getFirestore,
+            collection,
+            doc,
+            getDoc,
+            getDocs,
+            updateDoc,
+            query,
+            where,
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import {
+            getAuth,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
+            authDomain: "doom-s-world.firebaseapp.com",
+            projectId: "doom-s-world",
+            storageBucket: "doom-s-world.firebasestorage.app",
+            messagingSenderId: "445783209326",
+            appId: "1:445783209326:web:700e95a429e7d06104fd7f",
+            measurementId: "G-86151LPWTC",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+            // Start initialization
+            initializeProfile(user);
+            console.log("Firebase recognizes user:", user.uid);
+            } else {
+            console.log("User not signed in.");
+            }
+        });
+
+        let currentUser = null;
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toast.className = `toast ${type}`;
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Load user profile data
+        async function loadUserProfile(user) {
+            try {
+                // const userEmail = localStorage.getItem('userEmail') || 
+                //                 localStorage.getItem('candidateEmail') ||
+                //                 JSON.parse(localStorage.getItem('userData') || '{}').email;
+
+                // if (!userEmail) {
+                //     throw new Error('No user email found');
+                // }
+                // Try candidates collection first
+                let userDoc = await getDoc(doc(db, 'candidates', user.uid));
+                let userData = null;
+                let isCandidate = true;
+                let userEmail = "";
+
+                if (userDoc.exists()) {
+                    userData = userDoc.data();
+                    userEmail = userData.email
+                } else {
+                    // Try users collection
+                    userDoc = await getDoc(doc(db, 'users', user.uid));
+                    if (userDoc.exists()) {
+                        userData = userDoc.data();
+                        userEmail = userData.email
+                        isCandidate = false;
+                    }
+                }
+
+                if (!userData) {
+                    throw new Error('User not found in database');
+                }
+
+                currentUser = { ...userData, email: userEmail, isCandidate };
+                
+                // Update UI with user data
+                updateProfileUI(userData);
+                
+                await loadUserMissions(userEmail);
+
+                // Calculate and display rank
+                await calculateUserRank(userEmail);
+
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showToast('Error loading profile data', 'error');
+            }
+        }
+
+        // Update profile UI
+        function updateProfileUI(userData) {
+            document.getElementById('profileName').textContent = userData.name || 'Unknown User';
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            document.getElementById('userName').value = userData.name || '';
+            document.getElementById('userPhone').value = userData.phone || '';
+            document.getElementById('userEmail').value = currentUser.email;
+            document.getElementById('userStatus').textContent = userData.status || 'Active';
+
+            // Update ability points
+            const abilities = [
+                'combatPoints', 'defensePoints', 'techPoints', 
+                'intelligencePoints', 'stealthPoints', 'leadershipPoints'
+            ];
+
+            let totalPoints = 0;
+            abilities.forEach(ability => {
+                const points = userData[ability] || 0;
+                document.getElementById(ability).textContent = points;
+                totalPoints += points;
+            });
+
+            document.getElementById('totalPoints').textContent = totalPoints;
+        }
+
+        // Load user missions
+        async function loadUserMissions(userEmail) {
+            try {
+                const missionsQuery = query(
+                    collection(db, 'applications'),
+                    where('candidateEmail', '==', userEmail),
+                    where('assignedBy','==','jSkUeAiMmKgLG5FYxa0I6eaYof73'),
+                    orderBy('appliedAt', 'desc')
+                );
+
+                const missionsSnapshot = await getDocs(missionsQuery);
+                const missions = [];
+
+                missionsSnapshot.forEach(doc => {
+                    missions.push({ id: doc.id, ...doc.data() });
+                });
+
+                displayMissions(missions);
+                document.getElementById('missionsCompleted').textContent = missions.length;
+
+            } catch (error) {
+                console.error('Error loading missions:', error);
+                document.getElementById('missionsContainer').innerHTML = `
+                    <div class="no-missions">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>Error loading missions</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Display missions
+        function displayMissions(missions) {
+            const container = document.getElementById('missionsContainer');
+            
+            if (missions.length === 0) {
+                container.innerHTML = `
+                    <div class="no-missions">
+                        <i class="fas fa-clipboard-list"></i>
+                        <p>No missions assigned yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = missions.map(mission => `
+                <div class="mission-item">
+                    <div class="mission-icon">
+                        <i class="fas fa-${getMissionIcon(mission.type)}"></i>
+                    </div>
+                    <div class="mission-info">
+                        <div class="mission-title">${mission.jobTitle || 'Untitled Mission'}</div>
+                        <div class="mission-description">${mission.description || 'No description available'}</div>
+                        <div class="mission-meta">
+                            <span><i class="fas fa-calendar"></i> ${formatDate(mission.createdAt)}</span>
+                            <span><i class="fas fa-star"></i> ${mission.points || 0} points</span>
+                        </div>
+                    </div>
+                    <div class="mission-status ${mission.status || 'pending'}">${mission.status || 'Pending'}</div>
+                </div>
+            `).join('');
+        }
+
+        // Get mission icon based on type
+        function getMissionIcon(type) {
+            const icons = {
+                combat: 'sword',
+                defense: 'shield-alt',
+                tech: 'laptop-code',
+                intelligence: 'lightbulb',
+                stealth: 'user-ninja',
+                leadership: 'crown'
+            };
+            return icons[type] || 'tasks';
+        }
+
+        // Format date
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Unknown';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString();
+        }
+
+        // Calculate user rank
+        async function calculateUserRank(userEmail) {
+            try {
+                const candidatesSnapshot = await getDocs(collection(db, 'candidates'));
+                const candidates = [];
+
+                candidatesSnapshot.forEach(doc => {
+                    const data = doc.data();
+                    const totalPoints = (data.combatPoints || 0) + 
+                                      (data.defensePoints || 0) + 
+                                      (data.techPoints || 0) + 
+                                      (data.intelligencePoints || 0) + 
+                                      (data.stealthPoints || 0) + 
+                                      (data.leadershipPoints || 0);
+                    
+                    candidates.push({
+                        email: doc.id,
+                        name: data.name,
+                        totalPoints
+                    });
+                });
+
+                // Sort by total points
+                candidates.sort((a, b) => b.totalPoints - a.totalPoints);
+
+                // Find user rank
+                const userRank = candidates.findIndex(candidate => candidate.email === userEmail) + 1;
+                document.getElementById('userRank').textContent = userRank > 0 ? `#${userRank}` : '#-';
+
+            } catch (error) {
+                console.error('Error calculating rank:', error);
+                document.getElementById('userRank').textContent = '#-';
+            }
+        }
+
+        // Handle profile form submission
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            try {
+                const name = document.getElementById('userName').value.trim();
+                const phone = document.getElementById('userPhone').value.trim();
+
+                if (!name) {
+                    showToast('Name is required', 'error');
+                    return;
+                }
+
+                const updateData = { name, phone };
+                const collection_name = currentUser.isCandidate ? 'candidates' : 'users';
+                
+                await updateDoc(doc(db, collection_name, currentUser.uid), updateData);
+                
+                // Update current user data
+                currentUser.name = name;
+                currentUser.phone = phone;
+                
+                // Update UI
+                document.getElementById('profileName').textContent = name;
+                
+                showToast('Profile updated successfully!', 'success');
+
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showToast('Error updating profile', 'error');
+            }
+        });
+
+        // Change avatar function
+        window.changeAvatar = function() {
+            showToast('Avatar change feature coming soon!', 'info');
+        };
+
+        // Logout function
+        window.logout = function() {
+            localStorage.clear();
+            window.location.href = '../../Login/login.html';
+        };
+
+        // Theme toggle
+        window.toggleTheme = function() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            const isLight = body.getAttribute('data-theme') === 'light';
+            
+            body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+            themeIcon.classList.toggle('fa-moon', !isLight);
+            themeIcon.classList.toggle('fa-sun', isLight);
+        };
+
+        // Sidebar toggle
+        window.toggleSidebar = function() {
+            const sidebar = document.getElementById('sidebar');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            sidebar.classList.toggle('collapsed');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                toggleIcon.classList.remove('fa-chevron-left');
+                toggleIcon.classList.add('fa-chevron-right');
+            } else {
+                toggleIcon.classList.remove('fa-chevron-right');
+                toggleIcon.classList.add('fa-chevron-left');
+            }
+        };
+
+        // Initialize profile
+        async function initializeProfile(user) {
+            document.getElementById('loadingScreen').style.display = 'flex';
+            document.getElementById('profileContent').style.display = 'none';
+
+            try {
+                await loadUserProfile(user);
+                
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('profileContent').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error initializing profile:', error);
+                showToast('Error loading profile', 'error');
+                
+                document.getElementById('loadingScreen').innerHTML = `
+                    <div style="text-align: center;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--accent-danger); margin-bottom: 1rem;"></i>
+                        <h3>Error Loading Profile</h3>
+                        <p>Please try refreshing the page</p>
+                        <button class="btn btn-primary" onclick="location.reload()">Refresh</button>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

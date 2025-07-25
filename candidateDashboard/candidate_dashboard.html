@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="candidate_dashboard.css" />
     <script>
     const isLoggedIn = localStorage.getItem("userLoggedIn");
-    if (isLoggedIn!="candidate") {
+    if (isLoggedIn !== "candidate") {
         window.location.href = "../Login/login.html";
     }
     </script>
@@ -43,48 +43,33 @@
             </a>
           </div>
           <div class="nav-item">
-            <a
-              href="../candidateDashboard/Sections/yourprofile.html"
-              class="nav-link"
-            >
+            <a href="Sections/profile/yourprofile.html" class="nav-link">
               <i class="nav-icon fas fa-user"></i>
               <span class="nav-text">Your Profile</span>
             </a>
           </div>
           <div class="nav-item">
-            <a
-              href="../candidateDashboard/Sections/chat/chat.html"
-              class="nav-link"
-            >
+            <a href="Sections/chat/chat.html" class="nav-link">
               <i class="nav-icon fas fa-comments"></i>
               <span class="nav-text">Direct Chat</span>
             </a>
           </div>
           <div class="nav-item">
-            <a
-              href="../candidateDashboard/Sections/interview/candidate-interview.html"
-              class="nav-link"
-            >
+            <a href="Sections/interview/candidate-interview.html" class="nav-link">
               <i class="nav-icon fas fa-video"></i>
               <span class="nav-text">Interviews</span>
-              <span class="nav-badge">1</span>
+              <span class="nav-badge" id="interviewBadge">0</span>
             </a>
           </div>
           <div class="nav-item">
-            <a
-              href="../candidateDashboard/Sections/jobs/candidate-jobs.html"
-              class="nav-link"
-            >
+            <a href="Sections/jobs/candidate-jobs.html" class="nav-link">
               <i class="nav-icon fas fa-clipboard-list"></i>
               <span class="nav-text">Job Portal</span>
-              <span class="nav-badge">3</span>
+              <span class="nav-badge" id="jobsBadge">0</span>
             </a>
           </div>
           <div class="nav-item">
-            <a
-              href="../candidateDashboard/Sections/leaderboard.html"
-              class="nav-link"
-            >
+            <a href="Sections/leaderboard/leaderboard.html" class="nav-link">
               <i class="nav-icon fas fa-trophy"></i>
               <span class="nav-text">Leaderboard</span>
             </a>
@@ -99,7 +84,7 @@
           <div class="greeting">
             <span class="greeting-emoji">👋</span>
             <div>
-              <h1 class="greeting-text">Hello, Alex!</h1>
+              <h1 class="greeting-text">Hello, <span id="userName">Candidate</span>!</h1>
               <p style="color: var(--text-muted); font-size: 0.875rem">
                 Welcome back to your dashboard
               </p>
@@ -111,162 +96,312 @@
             </button>
             <div class="status-indicator">
               <div class="status-dot"></div>
-              <span>Online</span>
+              <span id="userStatus">Loading...</span>
             </div>
-            <button class="logout-btn">
+            <button class="logout-btn" onclick="logout()">
               <i class="fas fa-sign-out-alt"></i>
               Logout
             </button>
           </div>
         </header>
 
-        <!-- Stats Grid -->
-        <div class="stats-grid fade-in">
-          <div class="stat-card">
-            <div class="stat-number">12</div>
-            <div class="stat-label">Active Applications</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">5</div>
-            <div class="stat-label">Interview Requests</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">89%</div>
-            <div class="stat-label">Profile Completion</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-number">8.5</div>
-            <div class="stat-label">Skill Rating</div>
-          </div>
+        <!-- Loading Screen -->
+        <div id="loadingScreen" class="loading-screen">
+          <div class="loading-spinner"></div>
+          <p>Loading your dashboard...</p>
         </div>
 
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-          <!-- Profile Card -->
-          <div class="card slide-in">
-            <div class="card-header">
-              <div class="card-icon">
-                <i class="fas fa-user"></i>
-              </div>
-              <h3 class="card-title">Your Profile</h3>
+        <!-- Dashboard Content -->
+        <div id="dashboardContent" style="display: none;">
+          <!-- Stats Grid -->
+          <div class="stats-grid fade-in">
+            <div class="stat-card">
+              <div class="stat-number" id="totalApplications">0</div>
+              <div class="stat-label">Active Applications</div>
             </div>
-            <div class="card-content">
-              <div class="profile-avatar">
-                <i class="fas fa-user"></i>
-              </div>
-              <div class="profile-name">Alex Johnson</div>
-              <div class="profile-role">Senior Software Engineer</div>
-              <button class="btn btn-primary">
-                <i class="fas fa-edit"></i>
-                Edit Profile
-              </button>
+            <div class="stat-card">
+              <div class="stat-number" id="interviewRequests">0</div>
+              <div class="stat-label">Interview Requests</div>
             </div>
-          </div>
-
-          <!-- Skills Arsenal -->
-          <div class="card slide-in">
-            <div class="card-header">
-              <div class="card-icon">
-                <i class="fas fa-bullseye"></i>
-              </div>
-              <h3 class="card-title">Skills Arsenal</h3>
+            <div class="stat-card">
+              <div class="stat-number" id="profileCompletion">0%</div>
+              <div class="stat-label">Profile Completion</div>
             </div>
-            <div class="card-content">
-              <div class="skills-container">
-                <div class="skill-tag">JavaScript</div>
-                <div class="skill-tag">React</div>
-                <div class="skill-tag">Node.js</div>
-                <div class="skill-tag">Python</div>
-                <div class="skill-tag">AWS</div>
-                <div class="skill-tag">HTML</div>
-              </div>
-              <!-- Progress Bars for Skills -->
-              <div class="progress-item">
-                <div class="progress-label">
-                  <span>JavaScript</span>
-                  <span>90%</span>
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: 90%"></div>
-                </div>
-              </div>
-
-              <div class="progress-item">
-                <div class="progress-label">
-                  <span>React</span>
-                  <span>85%</span>
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: 85%"></div>
-                </div>
-              </div>
-
-              <div class="progress-item">
-                <div class="progress-label">
-                  <span>Node.js</span>
-                  <span>75%</span>
-                </div>
-                <div class="progress-bar">
-                  <div class="progress-fill" style="width: 75%"></div>
-                </div>
-              </div>
+            <div class="stat-card">
+              <div class="stat-number" id="totalPoints">0</div>
+              <div class="stat-label">Total Points</div>
             </div>
           </div>
 
-          <!-- Project Showcase -->
-          <div class="card slide-in">
-            <div class="card-header">
-              <div class="card-icon">
-                <i class="fas fa-project-diagram"></i>
+          <!-- Dashboard Grid -->
+          <div class="dashboard-grid">
+            <!-- Profile Card -->
+            <div class="card slide-in">
+              <div class="card-header">
+                <div class="card-icon">
+                  <i class="fas fa-user"></i>
+                </div>
+                <h3 class="card-title">Your Profile</h3>
               </div>
-              <h3 class="card-title">Project Showcase</h3>
+              <div class="card-content">
+                <div class="profile-avatar">
+                  <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-name" id="profileName">Loading...</div>
+                <div class="profile-role" id="profileRole">Candidate</div>
+                <a href="Sections/profile/yourprofile.html" class="btn btn-primary">
+                  <i class="fas fa-edit"></i>
+                  Edit Profile
+                </a>
+              </div>
             </div>
-            <div class="card-content">
-              <p style="color: var(--text-secondary); margin-bottom: 1rem">
-                Highlight your top 3 projects to impress recruiters.
-              </p>
-              <a href="#" class="btn btn-secondary">
-                <i class="fas fa-plus-circle"></i>
-                Add Project
-              </a>
-            </div>
-          </div>
 
-          <!-- Resume Manager -->
-          <div class="card slide-in">
-            <div class="card-header">
-              <div class="card-icon">
-                <i class="fas fa-file-alt"></i>
+            <!-- Abilities Card -->
+            <div class="card slide-in">
+              <div class="card-header">
+                <div class="card-icon">
+                  <i class="fas fa-fist-raised"></i>
+                </div>
+                <h3 class="card-title">Your Abilities</h3>
               </div>
-              <h3 class="card-title">Resume Manager</h3>
+              <div class="card-content">
+                <div class="abilities-overview">
+                  <div class="ability-stat">
+                    <span class="ability-name">Combat</span>
+                    <span class="ability-value" id="combatPoints">0</span>
+                  </div>
+                  <div class="ability-stat">
+                    <span class="ability-name">Defense</span>
+                    <span class="ability-value" id="defensePoints">0</span>
+                  </div>
+                  <div class="ability-stat">
+                    <span class="ability-name">Tech</span>
+                    <span class="ability-value" id="techPoints">0</span>
+                  </div>
+                  <div class="ability-stat">
+                    <span class="ability-name">Intelligence</span>
+                    <span class="ability-value" id="intelligencePoints">0</span>
+                  </div>
+                  <div class="ability-stat">
+                    <span class="ability-name">Stealth</span>
+                    <span class="ability-value" id="stealthPoints">0</span>
+                  </div>
+                  <div class="ability-stat">
+                    <span class="ability-name">Leadership</span>
+                    <span class="ability-value" id="leadershipPoints">0</span>
+                  </div>
+                </div>
+                <a href="Sections/profile/yourprofile.html" class="btn btn-secondary">
+                  <i class="fas fa-chart-bar"></i>
+                  View Details
+                </a>
+              </div>
             </div>
-            <div class="card-content">
-              <p style="color: var(--text-secondary); margin-bottom: 1rem">
-                Upload and manage multiple versions of your resume.
-              </p>
-              <a href="#" class="btn btn-primary">
-                <i class="fas fa-upload"></i>
-                Upload Resume
-              </a>
+
+            <!-- Recent Missions -->
+            <div class="card slide-in">
+              <div class="card-header">
+                <div class="card-icon">
+                  <i class="fas fa-history"></i>
+                </div>
+                <h3 class="card-title">Recent Missions</h3>
+              </div>
+              <div class="card-content">
+                <div id="recentMissions">
+                  <div class="loading-missions">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Loading missions...
+                  </div>
+                </div>
+                <a href="Sections/profile/yourprofile.html" class="btn btn-secondary">
+                  <i class="fas fa-list"></i>
+                  View All Missions
+                </a>
+              </div>
+            </div>
+
+            <!-- Leaderboard Preview -->
+            <div class="card slide-in">
+              <div class="card-header">
+                <div class="card-icon">
+                  <i class="fas fa-trophy"></i>
+                </div>
+                <h3 class="card-title">Your Ranking</h3>
+              </div>
+              <div class="card-content">
+                <div class="rank-display">
+                  <div class="rank-number" id="userRank">#-</div>
+                  <div class="rank-info">
+                    <p>Global Ranking</p>
+                    <p class="rank-points" id="rankPoints">0 total points</p>
+                  </div>
+                </div>
+                <a href="Sections/leaderboard/leaderboard.html" class="btn btn-primary">
+                  <i class="fas fa-trophy"></i>
+                  View Leaderboard
+                </a>
+              </div>
             </div>
           </div>
         </div>
-        <!-- End Dashboard Grid -->
       </main>
     </div>
 
-    <!-- JavaScript -->
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+      <span id="toastMessage"></span>
+    </div>
+
+    <style>
+      .loading-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 400px;
+        color: var(--text-secondary);
+      }
+
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--border-primary);
+        border-top: 3px solid var(--accent-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      .abilities-overview {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .ability-stat {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        background: var(--bg-glass);
+        border: 1px solid var(--border-primary);
+        border-radius: 8px;
+      }
+
+      .ability-name {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+
+      .ability-value {
+        font-weight: 700;
+        color: var(--accent-primary);
+      }
+
+      .loading-missions {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-secondary);
+      }
+
+      .mission-preview {
+        padding: 1rem;
+        background: var(--bg-glass);
+        border: 1px solid var(--border-primary);
+        border-radius: 8px;
+        margin-bottom: 1rem;
+      }
+
+      .mission-title {
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+      }
+
+      .mission-status {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+      }
+
+      .rank-display {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .rank-number {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--accent-primary);
+        text-align: center;
+      }
+
+      .rank-info p {
+        margin: 0;
+        color: var(--text-secondary);
+      }
+
+      .rank-points {
+        font-weight: 600;
+        color: var(--text-primary) !important;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--bg-card);
+        color: var(--text-primary);
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        border: 1px solid var(--border-primary);
+        box-shadow: var(--shadow-card);
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+      }
+
+      .toast.show {
+        transform: translateX(0);
+      }
+
+      .toast.success {
+        border-color: #22c55e;
+        background: rgba(34, 197, 94, 0.1);
+      }
+
+      .toast.error {
+        border-color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+      }
+    </style>
+
     <script type="module">
-
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
-
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        doc,
+        getDoc,
+        getDocs,
+        query,
+        where,
+        orderBy,
+        limit
+      } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
       import {
         getAuth,
         onAuthStateChanged,
-      } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-auth.js";
+      } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
       const firebaseConfig = {
-        // Replace with your Firebase config
         apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
         authDomain: "doom-s-world.firebaseapp.com",
         projectId: "doom-s-world",
@@ -276,38 +411,286 @@
         measurementId: "G-86151LPWTC",
       };
 
-      // Initialize Firebase
       const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
       const auth = getAuth(app);
+
       onAuthStateChanged(auth, (user) => {
-        if (user) {
-          console.log("Firebase recognizes user:", user.uid);
-        } else {
-          console.log("User not signed in.");
-        }
-      });
+            if (user) {
+            // Start initialization
+            initializeDashboard(user);
+            console.log("Firebase recognizes user:", user.uid);
+            } else {
+            console.log("User not signed in.");
+            }
+        });
 
-      function toggleSidebar() {
-        const sidebar = document.getElementById("sidebar");
-        const toggleIcon = document.getElementById("toggleIcon");
-        sidebar.classList.toggle("collapsed");
-        if (sidebar.classList.contains("collapsed")) {
-          toggleIcon.classList.remove("fa-chevron-left");
-          toggleIcon.classList.add("fa-chevron-right");
-        } else {
-          toggleIcon.classList.remove("fa-chevron-right");
-          toggleIcon.classList.add("fa-chevron-left");
+      let currentUser = null;
+
+      // Show toast notification
+      function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        
+        toast.className = `toast ${type}`;
+        toastMessage.textContent = message;
+        toast.classList.add('show');
+        
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 3000);
+      }
+
+      // Load user dashboard data
+      async function loadDashboardData(user) {
+        try {
+          // const userEmail = localStorage.getItem('userEmail') || 
+          //                  localStorage.getItem('candidateEmail') ||
+          //                  JSON.parse(localStorage.getItem('userData') || '{}').email;
+
+          // if (!userEmail) {
+          //   throw new Error('No user email found');
+          // }
+
+          // Try candidates collection first
+          let userDoc = await getDoc(doc(db, 'candidates', user.uid));
+          let userData = null;
+          let isCandidate = true;
+          let userEmail = "";
+
+          if (userDoc.exists()) {
+            userData = userDoc.data();
+            userEmail = userData.email
+          } else {
+            // Try users collection
+            userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+              userData = userDoc.data();
+              userEmail = userData.email
+              isCandidate = false;
+            }
+          }
+
+          if (!userData) {
+            throw new Error('User not found in database');
+          }
+
+          currentUser = { ...userData, email: userEmail, isCandidate };
+          
+          // Update UI with user data
+          updateDashboardUI(userData);
+          
+          // Load additional data
+          await Promise.all([
+            loadRecentMissions(userEmail),
+            calculateUserRank(userEmail),
+            loadJobsAndInterviews()
+          ]);
+
+        } catch (error) {
+          console.error('Error loading dashboard:', error);
+          showToast('Error loading dashboard data', 'error');
         }
       }
 
-      function toggleTheme() {
+      // Update dashboard UI
+      function updateDashboardUI(userData) {
+        document.getElementById('userName').textContent = userData.name || 'Candidate';
+        document.getElementById('profileName').textContent = userData.name || 'Unknown User';
+        document.getElementById('userStatus').textContent = userData.status || 'Active';
+
+        // Update ability points
+        const abilities = [
+          'combatPoints', 'defensePoints', 'techPoints', 
+          'intelligencePoints', 'stealthPoints', 'leadershipPoints'
+        ];
+
+        let totalPoints = 0;
+        abilities.forEach(ability => {
+          const points = userData[ability] || 0;
+          document.getElementById(ability).textContent = points;
+          totalPoints += points;
+        });
+
+        document.getElementById('totalPoints').textContent = totalPoints;
+
+        // Calculate profile completion
+        const requiredFields = ['name', 'phone'];
+        const completedFields = requiredFields.filter(field => userData[field]);
+        const completionPercent = Math.round((completedFields.length / requiredFields.length) * 100);
+        document.getElementById('profileCompletion').textContent = `${completionPercent}%`;
+      }
+
+      // Load recent missions
+      async function loadRecentMissions(userEmail) {
+        try {
+          const missionsQuery = query(
+                    collection(db, 'applications'),
+                    where('candidateEmail', '==', userEmail),
+                    where('assignedBy','==','jSkUeAiMmKgLG5FYxa0I6eaYof73'),
+                    orderBy('appliedAt', 'desc'),
+                    limit(3)
+                );
+
+          const missionsSnapshot = await getDocs(missionsQuery);
+          const missions = [];
+
+          missionsSnapshot.forEach(doc => {
+            missions.push({ id: doc.id, ...doc.data() });
+          });
+
+          displayRecentMissions(missions);
+
+        } catch (error) {
+          console.error('Error loading missions:', error);
+          document.getElementById('recentMissions').innerHTML = `
+            <div class="no-missions">
+              <p>No recent missions</p>
+            </div>
+          `;
+        }
+      }
+
+      // Display recent missions
+      function displayRecentMissions(missions) {
+        const container = document.getElementById('recentMissions');
+        
+        if (missions.length === 0) {
+          container.innerHTML = `
+            <div class="no-missions">
+              <p>No missions assigned yet</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = missions.map(mission => `
+          <div class="mission-preview">
+            <div class="mission-title">${mission.title || 'Untitled Mission'}</div>
+            <div class="mission-status">Status: ${mission.status || 'Pending'}</div>
+          </div>
+        `).join('');
+      }
+
+      // Calculate user rank
+      async function calculateUserRank(userEmail) {
+        try {
+          const candidatesSnapshot = await getDocs(collection(db, 'candidates'));
+          const candidates = [];
+
+          candidatesSnapshot.forEach(doc => {
+            const data = doc.data();
+            const totalPoints = (data.combatPoints || 0) + 
+                              (data.defensePoints || 0) + 
+                              (data.techPoints || 0) + 
+                              (data.intelligencePoints || 0) + 
+                              (data.stealthPoints || 0) + 
+                              (data.leadershipPoints || 0);
+            
+            candidates.push({
+              email: doc.id,
+              totalPoints
+            });
+          });
+
+          // Sort by total points
+          candidates.sort((a, b) => b.totalPoints - a.totalPoints);
+
+          // Find user rank
+          const userRank = candidates.findIndex(candidate => candidate.email === userEmail) + 1;
+          const userPoints = candidates.find(candidate => candidate.email === userEmail)?.totalPoints || 0;
+
+          document.getElementById('userRank').textContent = userRank > 0 ? `#${userRank}` : '#-';
+          document.getElementById('rankPoints').textContent = `${userPoints} total points`;
+
+        } catch (error) {
+          console.error('Error calculating rank:', error);
+          document.getElementById('userRank').textContent = '#-';
+          document.getElementById('rankPoints').textContent = '0 total points';
+        }
+      }
+
+      async function updateBadge(badgeId, count) {
+        const badge = document.getElementById(badgeId)
+        if (badge) {
+          badge.textContent = count
+          badge.style.display = count > 0 ? "block" : "none"
+        }
+      }
+
+      // Load jobs and interviews count
+      async function loadJobsAndInterviews() {
+        try {
+          // This would depend on your jobs and interviews collection structure
+          // For now, setting placeholder values
+          document.getElementById('totalApplications').textContent = '0';
+          document.getElementById('interviewRequests').textContent = '0';
+          document.getElementById('interviewBadge').textContent = '0';
+          document.getElementById('jobsBadge').textContent = '0';
+
+        } catch (error) {
+          console.error('Error loading jobs/interviews:', error);
+        }
+      }
+
+      // Global functions
+      window.logout = function() {
+        localStorage.clear();
+        window.location.href = '../Login/login.html';
+      };
+
+      window.toggleTheme = function() {
         const body = document.body;
-        const themeIcon = document.getElementById("themeIcon");
-        const isLight = body.getAttribute("data-theme") === "light";
-        body.setAttribute("data-theme", isLight ? "dark" : "light");
-        themeIcon.classList.toggle("fa-moon", !isLight);
-        themeIcon.classList.toggle("fa-sun", isLight);
+        const themeIcon = document.getElementById('themeIcon');
+        const isLight = body.getAttribute('data-theme') === 'light';
+        
+        body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+        themeIcon.classList.toggle('fa-moon', !isLight);
+        themeIcon.classList.toggle('fa-sun', isLight);
+      };
+
+      window.toggleSidebar = function() {
+        const sidebar = document.getElementById('sidebar');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        sidebar.classList.toggle('collapsed');
+        
+        if (sidebar.classList.contains('collapsed')) {
+          toggleIcon.classList.remove('fa-chevron-left');
+          toggleIcon.classList.add('fa-chevron-right');
+        } else {
+          toggleIcon.classList.remove('fa-chevron-right');
+          toggleIcon.classList.add('fa-chevron-left');
+        }
+      };
+
+      // Initialize dashboard
+      async function initializeDashboard(user) {
+        document.getElementById('loadingScreen').style.display = 'flex';
+        document.getElementById('dashboardContent').style.display = 'none';
+
+        try {
+          await loadDashboardData(user);
+          
+          document.getElementById('loadingScreen').style.display = 'none';
+          document.getElementById('dashboardContent').style.display = 'block';
+
+        } catch (error) {
+          console.error('Error initializing dashboard:', error);
+          showToast('Error loading dashboard', 'error');
+          
+          document.getElementById('loadingScreen').innerHTML = `
+            <div style="text-align: center;">
+              <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--accent-danger); margin-bottom: 1rem;"></i>
+              <h3>Error Loading Dashboard</h3>
+              <p>Please try refreshing the page</p>
+              <button class="btn btn-primary" onclick="location.reload()">Refresh</button>
+            </div>
+          `;
+        }
       }
+
+      
     </script>
   </body>
 </html>
