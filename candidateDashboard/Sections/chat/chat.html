@@ -26,75 +26,35 @@
         </div>
     </div>
 
-    <!-- Login Screen -->
-    <div class="login-screen" id="loginScreen">
-        <div class="login-container">
-            <div class="login-header">
+    <!-- Status Check Section (shown when user can't chat) -->
+    <div class="status-screen" id="statusScreen" style="display: none;">
+        <div class="status-container">
+            <div class="status-header">
                 <div class="logo-large">
                     <div class="logo-icon-large">
                         <i class="fas fa-mask"></i>
                     </div>
                     <h1>Avenger Portal</h1>
-                    <p>Connect with Doom's Digital World</p>
+                    <p>Chat Access Status</p>
                 </div>
             </div>
             
-            <div class="login-form">
-                <h2>Candidate Login</h2>
-                <p>Enter your credentials to access the chat</p>
-                
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="candidateEmail">Email Address</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-envelope input-icon"></i>
-                            <input type="email" id="candidateEmail" required placeholder="your.email@example.com">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="candidateName">Full Name</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-user input-icon"></i>
-                            <input type="text" id="candidateName" required placeholder="Your Full Name">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="candidatePosition">Position Applied For</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-briefcase input-icon"></i>
-                            <select id="candidatePosition" required>
-                                <option value="">Select Position</option>
-                                <option value="iron-man">Iron Man</option>
-                                <option value="captain-america">Captain America</option>
-                                <option value="thor">Thor</option>
-                                <option value="hulk">Hulk</option>
-                                <option value="black-widow">Black Widow</option>
-                                <option value="hawkeye">Hawkeye</option>
-                                <option value="spider-man">Spider-Man</option>
-                                <option value="doctor-strange">Doctor Strange</option>
-                                <option value="captain-marvel">Captain Marvel</option>
-                                <option value="ant-man">Ant-Man</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="login-btn" id="loginBtn">
-                        <span>Enter Chat Portal</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </form>
-                
-                <div class="login-footer">
-                    <p>First time here? Your account will be created automatically.</p>
+            <div class="status-message">
+                <div class="status-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2>Chat Access Restricted</h2>
+                <p id="statusMessage">Only shortlisted or assigned candidates can access the chat feature.</p>
+                <div class="status-info">
+                    <p>Your current status: <span id="userStatus">Loading...</span></p>
+                    <p>Please wait for further updates from our team.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Main Chat Interface -->
-    <div class="chat-interface" id="chatInterface" style="display: none;">
+    <div class="chat-interface" id="chatInterface">
         <!-- Chat Header -->
         <div class="chat-header">
             <div class="header-left">

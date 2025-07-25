@@ -1,42 +1,49 @@
 // Import Firebase
-// Firebase core
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js";
-
-// Firebase Auth
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-auth.js";
-
-// Firestore core
-import { getFirestore, collection, getDocs, addDoc, Timestamp, query, orderBy, limit, where, onSnapshot } 
-from "https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-app.js"
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.1.1/firebase-auth.js"
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  Timestamp,
+  query,
+  where,
+  onSnapshot,
+  doc,
+  updateDoc,
+  setDoc,
+  orderBy,
+  increment,
+} from "https://www.gstatic.com/firebasejs/9.1.1/firebase-firestore.js"
 
 // Firebase Configuration
 const firebaseConfig = {
-  // Replace with your Firebase config
   apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
   authDomain: "doom-s-world.firebaseapp.com",
   projectId: "doom-s-world",
   storageBucket: "doom-s-world.firebasestorage.app",
   messagingSenderId: "445783209326",
   appId: "1:445783209326:web:700e95a429e7d06104fd7f",
-  measurementId: "G-86151LPWTC"
+  measurementId: "G-86151LPWTC",
 }
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig)
-const db = firebase.firestore()
-const auth = firebase.auth()
+const app = initializeApp(firebaseConfig)
+const db = getFirestore(app)
+const auth = getAuth(app)
 
 // Global Variables
 let currentUser = null
 let messagesListener = null
 let typingTimeout = null
 let isTyping = false
+let userType = null // 'candidate' or 'doom'
 
 // DOM Elements
-const loginScreen = document.getElementById("loginScreen")
+const statusScreen = document.getElementById("statusScreen")
 const chatInterface = document.getElementById("chatInterface")
-const loginForm = document.getElementById("loginForm")
-const loginBtn = document.getElementById("loginBtn")
+const loadingScreen = document.getElementById("loadingScreen")
 const chatMessages = document.getElementById("chatMessages")
 const messageInput = document.getElementById("messageInput")
 const sendBtn = document.getElementById("sendBtn")
@@ -44,6 +51,8 @@ const characterCount = document.getElementById("characterCount")
 const typingIndicator = document.getElementById("typingIndicator")
 const connectionStatus = document.getElementById("connectionStatus")
 const welcomeMessage = document.getElementById("welcomeMessage")
+const userStatus = document.getElementById("userStatus")
+const statusMessage = document.getElementById("statusMessage")
 
 // Modal elements
 const profileModal = document.getElementById("profileModal")
@@ -54,34 +63,305 @@ const logoutBtn = document.getElementById("logoutBtn")
 
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
+  showLoadingScreen()
   setupEventListeners()
-  checkExistingSession()
+  initializeAuth()
 })
+
+// Show loading screen
+function showLoadingScreen() {
+  if (loadingScreen) {
+    loadingScreen.style.display = "flex"
+  }
+  if (statusScreen) {
+    statusScreen.style.display = "none"
+  }
+  if (chatInterface) {
+    chatInterface.style.display = "none"
+  }
+}
+
+// Hide loading screen
+function hideLoadingScreen() {
+  if (loadingScreen) {
+    loadingScreen.style.display = "none"
+  }
+}
+
+// Initialize authentication
+function initializeAuth() {
+  // Use Firebase Auth State Changed for authentication check
+  onAuthStateChanged(auth, (firebaseUser) => {
+    console.log("Firebase auth state changed:", firebaseUser)
+
+    if (!firebaseUser) {
+      console.log("No authenticated user found, redirecting to login")
+      hideLoadingScreen()
+      redirectToLogin()
+      return
+    }
+
+    // Set user type from Firebase user (you can modify based on your logic)
+    // const userType = firebaseUser?.displayName?.toLowerCase() || "candidate" // Default to 'candidate' if not set
+
+    // if (userType !== "candidate" && userType !== "doom") {
+    //   console.log("Invalid user type:", userType)
+    //   hideLoadingScreen()
+    //   redirectToLogin()
+    //   return
+    // }
+
+    // Initialize chat or any other feature with the authenticated user
+    initializeChat(firebaseUser)
+  })
+}
+
+
+// Redirect to login
+function redirectToLogin() {
+  showError("Please login to access chat")
+  setTimeout(() => {
+    window.location.href = "../../../Login/login.html"
+  }, 2000)
+}
+
+// Initialize chat
+async function initializeChat(userData) {
+  try {
+    console.log("Initializing chat with user data:", userData)
+    hideLoadingScreen()
+
+    await loadUserData(userData)
+  } catch (error) {
+    console.error("Error initializing chat:", error)
+    hideLoadingScreen()
+    showError("Error initializing chat")
+  }
+}
+
+// Load user data from candidates or users collection
+async function loadUserData(userData) {
+  try {
+    let userFound = false
+
+    // For Doom user, skip database lookup and allow direct access
+    if (userType === "doom") {
+      currentUser = {
+        id: userData.id || "doom",
+        name: userData.name || "Dr. Doom",
+        email: userData.email || "doom@digitalworld.com",
+        status: "admin",
+        source: "doom",
+        userType: "doom",
+      }
+      showChatInterface()
+      return
+    }
+
+    // For candidates, check database and status
+    if (userData.email) {
+      // First try to find user in candidates collection
+      try {
+        const candidatesRef = collection(db, "candidates")
+        const candidateQuery = query(candidatesRef, where("email", "==", userData.email))
+        const candidateSnapshot = await getDocs(candidateQuery)
+
+        if (!candidateSnapshot.empty) {
+          candidateSnapshot.forEach((doc) => {
+            currentUser = {
+              id: doc.id,
+              ...doc.data(),
+              source: "candidates",
+              userType: "candidate",
+            }
+            userFound = true
+          })
+        }
+      } catch (error) {
+        console.log("Error querying candidates collection:", error)
+      }
+
+      // If not found in candidates, try users collection
+      if (!userFound) {
+        try {
+          const usersRef = collection(db, "users")
+          const userQuery = query(usersRef, where("email", "==", userData.email))
+          const userSnapshot = await getDocs(userQuery)
+
+          if (!userSnapshot.empty) {
+            userSnapshot.forEach((doc) => {
+              currentUser = {
+                id: doc.id,
+                ...doc.data(),
+                source: "users",
+                userType: "candidate",
+              }
+              userFound = true
+            })
+          }
+        } catch (error) {
+          console.log("Error querying users collection:", error)
+        }
+      }
+    }
+
+    // Fallback to userData from localStorage
+    if (!userFound) {
+      currentUser = {
+        id: userData.id || Date.now().toString(),
+        name: userData.name || "Unknown User",
+        email: userData.email || "unknown@example.com",
+        source: "localStorage",
+        userType: "candidate",
+      }
+    }
+
+    console.log("Current user loaded:", currentUser)
+
+    // Check user status for candidates
+    await checkUserStatus()
+  } catch (error) {
+    console.error("Error loading user data:", error)
+    showError("Error loading user data")
+  }
+}
+
+// Check user status from users collection
+async function checkUserStatus() {
+  try {
+    if (!currentUser.email) {
+      showStatusScreen("Unable to verify user status")
+      return
+    }
+
+    // Always check status from users collection for candidates
+    const usersRef = collection(db, "users")
+    const userQuery = query(usersRef, where("email", "==", currentUser.email))
+    const userSnapshot = await getDocs(userQuery)
+
+    let userStatus = "idle" // default status
+
+    if (!userSnapshot.empty) {
+      userSnapshot.forEach((doc) => {
+        const userData = doc.data()
+        userStatus = userData.status || "idle"
+        currentUser.status = userStatus
+      })
+    }
+
+    console.log("User status:", userStatus)
+
+    // Check if user can access chat
+    const allowedStatuses = ["shortlisted", "assigned"]
+
+    if (allowedStatuses.includes(userStatus)) {
+      // User can access chat
+      showChatInterface()
+    } else {
+      // User cannot access chat
+      showStatusScreen(
+        `Your current status is "${userStatus}". Only shortlisted or assigned candidates can access chat.`,
+      )
+    }
+  } catch (error) {
+    console.error("Error checking user status:", error)
+    showStatusScreen("Error checking user status. Please try again later.")
+  }
+}
+
+// Show status screen when user can't access chat
+function showStatusScreen(message) {
+  if (statusScreen) {
+    statusScreen.style.display = "flex"
+  }
+  if (chatInterface) {
+    chatInterface.style.display = "none"
+  }
+
+  if (currentUser && currentUser.status && userStatus) {
+    userStatus.textContent = currentUser.status
+  }
+
+  if (message && statusMessage) {
+    statusMessage.textContent = message
+  }
+}
+
+// Show chat interface
+function showChatInterface() {
+  console.log("Showing chat interface for user:", currentUser)
+
+  if (statusScreen) {
+    statusScreen.style.display = "none"
+  }
+  if (chatInterface) {
+    chatInterface.style.display = "flex"
+  }
+
+  // Load messages
+  loadMessages()
+
+  // Update online status
+  updateOnlineStatus(true)
+
+  // Load profile data
+  loadProfileData()
+
+  // Listen for typing indicators
+  if (currentUser.userType === "candidate") {
+    listenForDoomTyping()
+  }
+
+  // Focus on input
+  setTimeout(() => {
+    if (messageInput) {
+      messageInput.focus()
+    }
+  }, 500)
+
+  showSuccess("Connected to chat successfully!")
+}
 
 // Event Listeners
 function setupEventListeners() {
-  // Login form
-  loginForm.addEventListener("submit", handleLogin)
-
   // Chat functionality
-  sendBtn.addEventListener("click", sendMessage)
-  messageInput.addEventListener("keypress", handleKeyPress)
-  messageInput.addEventListener("input", handleInputChange)
+  if (sendBtn) {
+    sendBtn.addEventListener("click", sendMessage)
+  }
+
+  if (messageInput) {
+    messageInput.addEventListener("keypress", handleKeyPress)
+    messageInput.addEventListener("input", handleInputChange)
+
+    // Auto-resize textarea
+    messageInput.addEventListener("input", function () {
+      this.style.height = "auto"
+      this.style.height = Math.min(this.scrollHeight, 120) + "px"
+    })
+  }
 
   // Quick actions
   document.querySelectorAll(".quick-action").forEach((btn) => {
     btn.addEventListener("click", function () {
       const message = this.dataset.message
-      messageInput.value = message
-      messageInput.focus()
-      updateCharacterCount()
+      if (messageInput) {
+        messageInput.value = message
+        messageInput.focus()
+        updateCharacterCount()
+      }
     })
   })
 
   // Header buttons
-  profileBtn.addEventListener("click", () => showModal(profileModal))
-  settingsBtn.addEventListener("click", () => showModal(settingsModal))
-  logoutBtn.addEventListener("click", handleLogout)
+  if (profileBtn) {
+    profileBtn.addEventListener("click", () => showModal(profileModal))
+  }
+  if (settingsBtn) {
+    settingsBtn.addEventListener("click", () => showModal(settingsModal))
+  }
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", handleLogout)
+  }
 
   // Modal close buttons
   document.querySelectorAll(".modal-close").forEach((btn) => {
@@ -113,113 +393,13 @@ function setupEventListeners() {
       // Implement theme change logic here
     })
   })
-
-  // Auto-resize textarea
-  messageInput.addEventListener("input", function () {
-    this.style.height = "auto"
-    this.style.height = Math.min(this.scrollHeight, 120) + "px"
-  })
-}
-
-// Check for existing session
-function checkExistingSession() {
-  const savedUser = localStorage.getItem("candidateUser")
-  if (savedUser) {
-    currentUser = JSON.parse(savedUser)
-    showChatInterface()
-  }
-}
-
-// Handle login
-async function handleLogin(e) {
-  e.preventDefault()
-
-  const email = document.getElementById("candidateEmail").value.trim()
-  const name = document.getElementById("candidateName").value.trim()
-  const position = document.getElementById("candidatePosition").value
-
-  if (!email || !name || !position) {
-    showError("Please fill in all fields")
-    return
-  }
-
-  loginBtn.disabled = true
-  loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Connecting...</span>'
-
-  try {
-    // Create or update candidate profile
-    const candidateData = {
-      name: name,
-      email: email,
-      position: position,
-      joinDate: firebase.firestore.FieldValue.serverTimestamp(),
-      lastActive: firebase.firestore.FieldValue.serverTimestamp(),
-      isOnline: true,
-      messageCount: 0,
-    }
-
-    // Save to Firestore
-    await db.collection("candidates").doc(email).set(candidateData, { merge: true })
-
-    // Initialize chat document
-    await db.collection("chats").doc(email).set(
-      {
-        candidateName: name,
-        candidateEmail: email,
-        candidatePosition: position,
-        lastMessageTime: firebase.firestore.FieldValue.serverTimestamp(),
-        unreadCount: 0,
-        isOnline: true,
-      },
-      { merge: true },
-    )
-
-    // Store user session
-    currentUser = {
-      email: email,
-      name: name,
-      position: position,
-      avatar: getInitials(name),
-    }
-
-    localStorage.setItem("candidateUser", JSON.stringify(currentUser))
-
-    showSuccess("Welcome to Doom's Digital World!")
-    setTimeout(() => {
-      showChatInterface()
-    }, 1000)
-  } catch (error) {
-    console.error("Login error:", error)
-    showError("Failed to connect. Please try again.")
-  } finally {
-    loginBtn.disabled = false
-    loginBtn.innerHTML = '<span>Enter Chat Portal</span> <i class="fas fa-arrow-right"></i>'
-  }
-}
-
-// Show chat interface
-function showChatInterface() {
-  loginScreen.style.display = "none"
-  chatInterface.style.display = "flex"
-
-  // Load messages
-  loadMessages()
-
-  // Update online status
-  updateOnlineStatus(true)
-
-  // Load profile data
-  loadProfileData()
-
-  // Focus on input
-  setTimeout(() => {
-    messageInput.focus()
-  }, 500)
 }
 
 // Load messages
 function loadMessages() {
   if (!currentUser) return
+
+  console.log("Loading messages for user:", currentUser.email)
 
   // Clear existing listener
   if (messagesListener) {
@@ -227,39 +407,43 @@ function loadMessages() {
   }
 
   // Listen for messages
-  messagesListener = db
-    .collection("chats")
-    .doc(currentUser.email)
-    .collection("messages")
-    .orderBy("timestamp", "asc")
-    .onSnapshot(
-      (snapshot) => {
-        const messages = []
-        snapshot.forEach((doc) => {
-          messages.push({
-            id: doc.id,
-            ...doc.data(),
-          })
+  const messagesRef = collection(db, "chats", currentUser.email, "messages")
+  const messagesQuery = query(messagesRef, orderBy("timestamp", "asc"))
+
+  messagesListener = onSnapshot(
+    messagesQuery,
+    (snapshot) => {
+      const messages = []
+      snapshot.forEach((doc) => {
+        messages.push({
+          id: doc.id,
+          ...doc.data(),
         })
+      })
 
-        renderMessages(messages)
+      console.log("Messages loaded:", messages.length)
+      renderMessages(messages)
 
-        // Hide welcome message if there are messages
-        if (messages.length > 0) {
-          welcomeMessage.style.display = "none"
-        }
-      },
-      (error) => {
-        console.error("Error loading messages:", error)
-        showError("Failed to load messages")
-      },
-    )
+      // Hide welcome message if there are messages
+      if (messages.length > 0 && welcomeMessage) {
+        welcomeMessage.style.display = "none"
+      }
+    },
+    (error) => {
+      console.error("Error loading messages:", error)
+      showError("Failed to load messages")
+    },
+  )
 }
 
 // Render messages
 function renderMessages(messages) {
+  if (!chatMessages) return
+
   if (messages.length === 0) {
-    welcomeMessage.style.display = "flex"
+    if (welcomeMessage) {
+      welcomeMessage.style.display = "flex"
+    }
     return
   }
 
@@ -267,7 +451,7 @@ function renderMessages(messages) {
     .map((message) => {
       const isSent = message.senderId === currentUser.email
       const senderName = isSent ? currentUser.name : "Dr. Doom"
-      const avatar = isSent ? currentUser.avatar : '<i class="fas fa-skull"></i>'
+      const avatar = isSent ? getInitials(currentUser.name) : '<i class="fas fa-skull"></i>'
 
       return `
         <div class="message ${isSent ? "sent" : "received"}">
@@ -276,7 +460,7 @@ function renderMessages(messages) {
           </div>
           <div class="message-content">
             <div class="message-bubble">
-              ${message.text}
+              ${escapeHtml(message.text)}
             </div>
             <div class="message-time">
               ${formatTime(message.timestamp)}
@@ -318,6 +502,8 @@ function handleInputChange() {
 
 // Update character count
 function updateCharacterCount() {
+  if (!messageInput || !characterCount) return
+
   const count = messageInput.value.length
   characterCount.textContent = `${count}/1000`
 
@@ -340,7 +526,7 @@ function handleTypingIndicator() {
   }
 
   // Send typing status if not already typing
-  if (!isTyping && messageInput.value.trim()) {
+  if (!isTyping && messageInput && messageInput.value.trim()) {
     isTyping = true
     updateTypingStatus(true)
   }
@@ -357,10 +543,17 @@ function handleTypingIndicator() {
 // Update typing status
 async function updateTypingStatus(typing) {
   try {
-    await db.collection("chats").doc(currentUser.email).update({
-      candidateTyping: typing,
-      lastTypingTime: firebase.firestore.FieldValue.serverTimestamp(),
-    })
+    const chatRef = doc(db, "chats", currentUser.email)
+    const typingField = currentUser.userType === "candidate" ? "candidateTyping" : "doomTyping"
+
+    await setDoc(
+      chatRef,
+      {
+        [typingField]: typing,
+        lastTypingTime: Timestamp.now(),
+      },
+      { merge: true },
+    )
   } catch (error) {
     console.error("Error updating typing status:", error)
   }
@@ -368,7 +561,7 @@ async function updateTypingStatus(typing) {
 
 // Send message
 async function sendMessage() {
-  if (!currentUser || !messageInput.value.trim()) {
+  if (!currentUser || !messageInput || !messageInput.value.trim()) {
     return
   }
 
@@ -378,7 +571,9 @@ async function sendMessage() {
   updateCharacterCount()
 
   // Disable send button temporarily
-  sendBtn.disabled = true
+  if (sendBtn) {
+    sendBtn.disabled = true
+  }
 
   // Stop typing indicator
   if (isTyping) {
@@ -387,10 +582,11 @@ async function sendMessage() {
   }
 
   try {
-    const timestamp = firebase.firestore.FieldValue.serverTimestamp()
+    const timestamp = Timestamp.now()
 
     // Add message to subcollection
-    await db.collection("chats").doc(currentUser.email).collection("messages").add({
+    const messagesRef = collection(db, "chats", currentUser.email, "messages")
+    await addDoc(messagesRef, {
       text: messageText,
       senderId: currentUser.email,
       senderName: currentUser.name,
@@ -398,33 +594,43 @@ async function sendMessage() {
       read: false,
     })
 
-    // Update chat document
-    await db
-      .collection("chats")
-      .doc(currentUser.email)
-      .update({
+    // Update or create chat document
+    const chatRef = doc(db, "chats", currentUser.email)
+    await setDoc(
+      chatRef,
+      {
+        candidateName: currentUser.name,
+        candidateEmail: currentUser.email,
+        candidatePosition: currentUser.status || "Candidate",
         lastMessage: messageText,
         lastMessageTime: timestamp,
         lastMessageSender: currentUser.email,
-        unreadCount: firebase.firestore.FieldValue.increment(1),
-      })
+        unreadCount: increment(1),
+        isOnline: true,
+      },
+      { merge: true },
+    )
 
-    // Update candidate message count
-    await db
-      .collection("candidates")
-      .doc(currentUser.email)
-      .update({
-        messageCount: firebase.firestore.FieldValue.increment(1),
+    // Update candidate message count if in candidates collection
+    if (currentUser.source === "candidates") {
+      const candidateRef = doc(db, "candidates", currentUser.id)
+      await updateDoc(candidateRef, {
+        messageCount: increment(1),
         lastActive: timestamp,
       })
+    }
 
     console.log("Message sent successfully")
   } catch (error) {
     console.error("Error sending message:", error)
     showError("Failed to send message")
-    messageInput.value = messageText // Restore message
+    if (messageInput) {
+      messageInput.value = messageText // Restore message
+    }
   } finally {
-    sendBtn.disabled = false
+    if (sendBtn) {
+      sendBtn.disabled = false
+    }
   }
 }
 
@@ -435,13 +641,18 @@ async function updateOnlineStatus(online) {
   try {
     const updates = {
       isOnline: online,
-      lastActive: firebase.firestore.FieldValue.serverTimestamp(),
+      lastActive: Timestamp.now(),
     }
 
-    await Promise.all([
-      db.collection("candidates").doc(currentUser.email).update(updates),
-      db.collection("chats").doc(currentUser.email).update(updates),
-    ])
+    // Update in the source collection
+    if (currentUser.source === "candidates") {
+      const candidateRef = doc(db, "candidates", currentUser.id)
+      await updateDoc(candidateRef, updates)
+    }
+
+    // Also update chat document
+    const chatRef = doc(db, "chats", currentUser.email)
+    await setDoc(chatRef, updates, { merge: true })
   } catch (error) {
     console.error("Error updating online status:", error)
   }
@@ -452,18 +663,35 @@ async function loadProfileData() {
   if (!currentUser) return
 
   try {
-    const doc = await db.collection("candidates").doc(currentUser.email).get()
-    if (doc.exists) {
-      const data = doc.data()
+    // Update profile modal elements if they exist
+    const profileAvatarLarge = document.getElementById("profileAvatarLarge")
+    const profileName = document.getElementById("profileName")
+    const profileEmail = document.getElementById("profileEmail")
+    const profilePosition = document.getElementById("profilePosition")
+    const messageCount = document.getElementById("messageCount")
+    const joinDate = document.getElementById("joinDate")
+    const lastActive = document.getElementById("lastActive")
 
-      // Update profile modal
-      document.getElementById("profileAvatarLarge").textContent = currentUser.avatar
-      document.getElementById("profileName").textContent = currentUser.name
-      document.getElementById("profileEmail").textContent = currentUser.email
-      document.getElementById("profilePosition").textContent = currentUser.position
-      document.getElementById("messageCount").textContent = data.messageCount || 0
-      document.getElementById("joinDate").textContent = formatDate(data.joinDate)
-      document.getElementById("lastActive").textContent = formatTime(data.lastActive)
+    if (profileAvatarLarge) {
+      profileAvatarLarge.textContent = getInitials(currentUser.name)
+    }
+    if (profileName) {
+      profileName.textContent = currentUser.name
+    }
+    if (profileEmail) {
+      profileEmail.textContent = currentUser.email
+    }
+    if (profilePosition) {
+      profilePosition.textContent = currentUser.status || "Candidate"
+    }
+    if (messageCount) {
+      messageCount.textContent = currentUser.messageCount || 0
+    }
+    if (joinDate) {
+      joinDate.textContent = formatDate(currentUser.joinDate || currentUser.createdAt)
+    }
+    if (lastActive) {
+      lastActive.textContent = formatTime(currentUser.lastActive)
     }
   } catch (error) {
     console.error("Error loading profile data:", error)
@@ -482,27 +710,28 @@ function handleLogout() {
     }
 
     // Clear session
-    localStorage.removeItem("candidateUser")
+    localStorage.removeItem("userData")
+    localStorage.removeItem("userLoggedIn")
+    localStorage.removeItem("loggedInUser")
+    localStorage.removeItem("currentUser")
     currentUser = null
 
-    // Show login screen
-    chatInterface.style.display = "none"
-    loginScreen.style.display = "flex"
-
-    // Reset form
-    loginForm.reset()
-
-    showSuccess("Logged out successfully")
+    // Redirect to login
+    window.location.href = "../../../Login/login.html"
   }
 }
 
 // Modal functions
 function showModal(modal) {
-  modal.classList.add("active")
+  if (modal) {
+    modal.classList.add("active")
+  }
 }
 
 function hideModal(modal) {
-  modal.classList.remove("active")
+  if (modal) {
+    modal.classList.remove("active")
+  }
 }
 
 // Handle setting changes
@@ -534,41 +763,51 @@ function handleSettingChange(e) {
   }
 }
 
-// Listen for Doom's typing status
+// Listen for Doom's typing status (only for candidates)
 function listenForDoomTyping() {
-  if (!currentUser) return
+  if (!currentUser || currentUser.userType !== "candidate") return
 
-  db.collection("chats")
-    .doc(currentUser.email)
-    .onSnapshot((doc) => {
-      if (doc.exists) {
-        const data = doc.data()
-        if (data.doomTyping) {
-          showTypingIndicator()
-        } else {
-          hideTypingIndicator()
-        }
+  const chatRef = doc(db, "chats", currentUser.email)
+  onSnapshot(chatRef, (doc) => {
+    if (doc.exists()) {
+      const data = doc.data()
+      if (data.doomTyping) {
+        showTypingIndicator()
+      } else {
+        hideTypingIndicator()
       }
-    })
+    }
+  })
 }
 
 // Show typing indicator
 function showTypingIndicator() {
-  typingIndicator.classList.add("show")
+  if (typingIndicator) {
+    typingIndicator.classList.add("show")
+  }
 }
 
 // Hide typing indicator
 function hideTypingIndicator() {
-  typingIndicator.classList.remove("show")
+  if (typingIndicator) {
+    typingIndicator.classList.remove("show")
+  }
 }
 
 // Utility Functions
 function getInitials(name) {
+  if (!name) return "?"
   return name
     .split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase()
+}
+
+function escapeHtml(text) {
+  const div = document.createElement("div")
+  div.textContent = text
+  return div.innerHTML
 }
 
 function formatTime(timestamp) {
@@ -643,26 +882,21 @@ function createToast(message, type) {
 
 // Connection status monitoring
 function monitorConnection() {
-  window.addEventListener("online", () => {
-    connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>Connected</span>'
-    connectionStatus.style.color = "var(--accent-green)"
-  })
+  if (connectionStatus) {
+    window.addEventListener("online", () => {
+      connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>Connected</span>'
+      connectionStatus.style.color = "var(--accent-green)"
+    })
 
-  window.addEventListener("offline", () => {
-    connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>Disconnected</span>'
-    connectionStatus.style.color = "var(--accent-red)"
-  })
+    window.addEventListener("offline", () => {
+      connectionStatus.innerHTML = '<i class="fas fa-circle"></i> <span>Disconnected</span>'
+      connectionStatus.style.color = "var(--accent-red)"
+    })
+  }
 }
 
 // Initialize connection monitoring
 monitorConnection()
-
-// Listen for Doom's typing when chat interface is shown
-setTimeout(() => {
-  if (currentUser) {
-    listenForDoomTyping()
-  }
-}, 1000)
 
 // Cleanup on page unload
 window.addEventListener("beforeunload", () => {
@@ -677,6 +911,36 @@ window.addEventListener("beforeunload", () => {
 
 // Add toast styles
 const toastStyles = `
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.loading-spinner {
+  font-size: 3rem;
+  color: var(--accent-primary);
+  animation: spin 2s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .toast {
   position: fixed;
   top: 20px;
@@ -718,6 +982,96 @@ const toastStyles = `
 
 .toast-success i {
   color: var(--accent-green);
+}
+
+.status-screen {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  padding: 2rem;
+  background: var(--bg-primary);
+}
+
+.status-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: var(--shadow-xl);
+}
+
+.status-icon {
+  font-size: 4rem;
+  color: var(--accent-orange);
+  margin-bottom: 1.5rem;
+}
+
+.status-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.status-description {
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.status-info {
+  margin-bottom: 2rem;
+}
+
+.current-status {
+  display: inline-block;
+  background: var(--accent-orange);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: white;
+}
+
+.btn-secondary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-primary);
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
 }
 `
 

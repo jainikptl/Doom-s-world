@@ -899,6 +899,11 @@ async function handleSwipeAction(action, applicationId = null) {
   try {
     // Update application status in Firestore
     const applicationRef = doc(db, "applications", appId)
+    const applicationSnap = await getDoc(applicationRef)
+    const applicationData = applicationSnap.data() || {}
+
+    const userRef = doc(db, "users", applicationData.candidateId)
+
     const updateData = {
       adminAction: action,
       reviewedAt: serverTimestamp(),
@@ -912,6 +917,10 @@ async function handleSwipeAction(action, applicationId = null) {
     } else if (action === "shortlisted") {
       updateData.status = "accepted"
       updateData.interviewEnabled = true
+      const userUpdate = {
+        status : "shortlisted"
+      }
+      await updateDoc(userRef,userUpdate)
     }
 
     await updateDoc(applicationRef, updateData)
