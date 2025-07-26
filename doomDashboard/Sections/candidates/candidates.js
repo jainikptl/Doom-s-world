@@ -66,12 +66,12 @@ async function loadCandidates() {
         ...data,
         // Ensure ability scores exist
         abilityScores: data.abilityScores || {
-          combat: data.combat || 0,
-          defence: data.defence || 0,
-          intelligence: data.intelligence || 0,
-          leadership: data.leadership || 0,
-          stealth: data.stealth || 0,
-          tech: data.tech || 0,
+          combatPoints: data.combatPoints || 0,
+          defensePoints: data.defensePoints || 0,
+          intelligencePoints: data.intelligencePoints || 0,
+          leadershipPoints: data.leadershipPoints || 0,
+          stealthPoints: data.stealthPoints || 0,
+          techPoints: data.techPoints || 0,
         },
         completedAssignments: data.completedAssignments || 0,
       })
@@ -147,27 +147,27 @@ function createCandidateCard(candidate) {
         <div class="ability-scores-display">
           <div class="ability-score">
             <div class="score-name">Combat</div>
-            <div class="score-value">${candidate.abilityScores.combat || candidate.combat || 0}</div>
+            <div class="score-value">${candidate.abilityScores.combatPoints || candidate.combatPoints || 0}</div>
           </div>
           <div class="ability-score">
             <div class="score-name">Defence</div>
-            <div class="score-value">${candidate.abilityScores.defence || candidate.defence || 0}</div>
+            <div class="score-value">${candidate.abilityScores.defensePoints || candidate.defensePoints || 0}</div>
           </div>
           <div class="ability-score">
             <div class="score-name">Intel</div>
-            <div class="score-value">${candidate.abilityScores.intelligence || candidate.intelligence || 0}</div>
+            <div class="score-value">${candidate.abilityScores.intelligencePoints || candidate.intelligencePoints || 0}</div>
           </div>
           <div class="ability-score">
             <div class="score-name">Leader</div>
-            <div class="score-value">${candidate.abilityScores.leadership || candidate.leadership || 0}</div>
+            <div class="score-value">${candidate.abilityScores.leadershipPoints || candidate.leadershipPoints || 0}</div>
           </div>
           <div class="ability-score">
             <div class="score-name">Stealth</div>
-            <div class="score-value">${candidate.abilityScores.stealth || candidate.stealth || 0}</div>
+            <div class="score-value">${candidate.abilityScores.stealthPoints || candidate.stealthPoints || 0}</div>
           </div>
           <div class="ability-score">
             <div class="score-name">Tech</div>
-            <div class="score-value">${candidate.abilityScores.tech || candidate.tech || 0}</div>
+            <div class="score-value">${candidate.abilityScores.techPoints || candidate.techPoints || 0}</div>
           </div>
         </div>
         <div class="total-score-display">
@@ -195,12 +195,12 @@ function createCandidateCard(candidate) {
 function calculateTotalScore(candidate) {
   if (!candidate) return 0
   return (
-    (candidate.combat || 0) +
-    (candidate.defence || 0) +
-    (candidate.intelligence || 0) +
-    (candidate.leadership || 0) +
-    (candidate.stealth || 0) +
-    (candidate.tech || 0)
+    (candidate.combatPoints || 0) +
+    (candidate.defensePoints || 0) +
+    (candidate.intelligencePoints || 0) +
+    (candidate.leadershipPoints || 0) +
+    (candidate.stealthPoints || 0) +
+    (candidate.techPoints || 0)
   )
 }
 
@@ -291,7 +291,7 @@ function openAddCandidateModal() {
   // Reset ability scores to default
   const scoreInputs = [
     "combatScore",
-    "defenceScore",
+    "defenseScore",
     "intelligenceScore",
     "leadershipScore",
     "stealthScore",
@@ -325,12 +325,12 @@ async function handleAddCandidate(e) {
     password: document.getElementById("candidatePassword").value,
     bio: document.getElementById("candidateBio").value.trim(),
     status: document.getElementById("candidateStatus").value,
-    combat: Number.parseInt(document.getElementById("combatScore").value),
-    defence: Number.parseInt(document.getElementById("defenceScore").value),
-    intelligence: Number.parseInt(document.getElementById("intelligenceScore").value),
-    leadership: Number.parseInt(document.getElementById("leadershipScore").value),
-    stealth: Number.parseInt(document.getElementById("stealthScore").value),
-    tech: Number.parseInt(document.getElementById("techScore").value),
+    combatPoints: Number.parseInt(document.getElementById("combatScore").value),
+    defensePoints: Number.parseInt(document.getElementById("defenceScore").value),
+    intelligencePoints: Number.parseInt(document.getElementById("intelligenceScore").value),
+    leadershipPoints: Number.parseInt(document.getElementById("leadershipScore").value),
+    stealthPoints: Number.parseInt(document.getElementById("stealthScore").value),
+    techPoints: Number.parseInt(document.getElementById("techScore").value),
     completedAssignments: 0,
   }
 
@@ -371,12 +371,12 @@ async function handleAddCandidate(e) {
       bio: formData.bio,
       character: "candidate",
       status: formData.status,
-      combat: formData.combat,
-      defence: formData.defence,
-      intelligence: formData.intelligence,
-      leadership: formData.leadership,
-      stealth: formData.stealth,
-      tech: formData.tech,
+      combatPoints: formData.combatPoints,
+      defensePoints: formData.defensePoints,
+      intelligencePoints: formData.intelligencePoints,
+      leadershipPoints: formData.leadershipPoints,
+      stealthPoints: formData.stealthPoints,
+      techPoints: formData.techPoints,
       completedAssignments: formData.completedAssignments,
       createdAt: new Date().toISOString(),
       createdBy: window.auth.currentUser?.uid || "admin",
@@ -479,27 +479,27 @@ function viewCandidate(candidateId) {
         <div class="ability-scores-grid-view">
           <div class="ability-score-large">
             <div class="score-name">Combat</div>
-            <div class="score-value">${candidate.combat || 0}</div>
+            <div class="score-value">${candidate.combatPoints || 0}</div>
           </div>
           <div class="ability-score-large">
             <div class="score-name">Defence</div>
-            <div class="score-value">${candidate.defence || 0}</div>
+            <div class="score-value">${candidate.defensePoints || 0}</div>
           </div>
           <div class="ability-score-large">
             <div class="score-name">Intelligence</div>
-            <div class="score-value">${candidate.intelligence || 0}</div>
+            <div class="score-value">${candidate.intelligencePoints || 0}</div>
           </div>
           <div class="ability-score-large">
             <div class="score-name">Leadership</div>
-            <div class="score-value">${candidate.leadership || 0}</div>
+            <div class="score-value">${candidate.leadershipPoints || 0}</div>
           </div>
           <div class="ability-score-large">
             <div class="score-name">Stealth</div>
-            <div class="score-value">${candidate.stealth || 0}</div>
+            <div class="score-value">${candidate.stealthPoints || 0}</div>
           </div>
           <div class="ability-score-large">
             <div class="score-name">Tech</div>
-            <div class="score-value">${candidate.tech || 0}</div>
+            <div class="score-value">${candidate.techPoints || 0}</div>
           </div>
         </div>
         <div class="total-score-large">
