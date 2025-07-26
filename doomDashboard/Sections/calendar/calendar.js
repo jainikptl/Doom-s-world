@@ -91,7 +91,7 @@ function loadUpcomingInterviews() {
   futureDate.setDate(today.getDate() + filterDays)
 
   upcomingInterviews = interviews.filter((interview) => {
-    const interviewDate = new Date(interview.date)
+    const interviewDate = combineDateTimeLocal(interview.date, interview.time)
     return interviewDate >= today && interviewDate <= futureDate
   })
 
@@ -357,8 +357,20 @@ function renderDayView(container) {
 
 // Get interviews for a specific date
 function getInterviewsForDate(date) {
-  const dateString = formatDateForStorage(date)
-  return interviews.filter((interview) => interview.date === dateString)
+  return interviews.filter((interview) => {
+    const interviewDate = combineDateTimeLocal(interview.date, interview.time)
+    return (
+      interviewDate.getDate() === date.getDate() &&
+      interviewDate.getMonth() === date.getMonth() &&
+      interviewDate.getFullYear() === date.getFullYear()
+    )
+  })
+}
+
+function combineDateTimeLocal(dateStr, timeStr) {
+  const [year, month, day] = dateStr.split("-").map(Number)
+  const [hours, minutes] = timeStr.split(":").map(Number)
+  return new Date(year, month - 1, day, hours, minutes)
 }
 
 // Navigation functions

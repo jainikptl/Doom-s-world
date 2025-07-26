@@ -193,7 +193,7 @@ async function loadApplicationsData() {
 // Load interviews data
 async function loadInterviewsData() {
   try {
-    const interviewsQuery = query(collection(db, "interviews"), where("status", "==", "pending"))
+    const interviewsQuery = query(collection(db, "interviews"), where("status", "==", "scheduled"))
     const interviewsSnap = await getDocs(interviewsQuery)
 
     dashboardData.previousData.interviews = dashboardData.interviews
@@ -480,7 +480,7 @@ function setupRealTimeListeners() {
     if (newCount !== dashboardData.interviews) {
       dashboardData.interviews = newCount
       updateStatCard("pendingInterviews", newCount)
-      updateBadge("interviewsBadge", newCount)
+      // updateBadge("interviewsBadge", newCount)
       showNotification("Interviews updated", "info")
     }
   })
@@ -492,7 +492,7 @@ function setupRealTimeListeners() {
     if (newCount !== dashboardData.candidates) {
       dashboardData.candidates = newCount
       updateStatCard("totalCandidates", newCount)
-      updateBadge("candidatesBadge", newCount)
+      // updateBadge("candidatesBadge", newCount)
       showNotification("Candidates updated", "info")
     }
   })
@@ -509,9 +509,9 @@ function updateAllDisplays() {
   updateStatCard("totalHired", dashboardData.hired)
 
   // Update badges
-  updateBadge("candidatesBadge", dashboardData.candidates)
-  updateBadge("interviewsBadge", dashboardData.interviews)
-  updateBadge("messagesBadge", dashboardData.messages)
+  // updateBadge("candidatesBadge", dashboardData.candidates)
+  // updateBadge("interviewsBadge", dashboardData.interviews)
+  // updateBadge("messagesBadge", dashboardData.messages)
 
   // Update change percentages
   updateChangePercentages()
@@ -532,13 +532,13 @@ function updateStatCard(elementId, value) {
 }
 
 // Update badge
-function updateBadge(badgeId, count) {
-  const badge = document.getElementById(badgeId)
-  if (badge) {
-    badge.textContent = count
-    badge.style.display = count > 0 ? "block" : "none"
-  }
-}
+// function updateBadge(badgeId, count) {
+//   const badge = document.getElementById(badgeId)
+//   if (badge) {
+//     badge.textContent = count
+//     badge.style.display = count > 0 ? "block" : "none"
+//   }
+// }
 
 // Update change percentages based on previous data
 function updateChangePercentages() {
