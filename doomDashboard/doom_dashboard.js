@@ -305,12 +305,24 @@ async function loadRecentActivity() {
   }
 }
 
+function formatDateToYMD(date) {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0') // Months are 0-based
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 // Load upcoming events from Firebase
 async function loadUpcomingEvents() {
   try {
     const events = []
-    const now = new Date()
-    const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+    const formattedNow = new Date()
+    const formattedNextWeek = new Date(formattedNow.getTime() + 7 * 24 * 60 * 60 * 1000)
+    const now = formatDateToYMD(formattedNow)
+    const nextWeek = formatDateToYMD(formattedNextWeek)
+
+    console.log("today",now);
+    console.log("next week", nextWeek);
 
     // Get upcoming interviews
     const upcomingInterviewsQuery = query(
@@ -336,10 +348,10 @@ async function loadUpcomingEvents() {
       }
 
       // Only include events within the next week
-      if (eventDate && eventDate >= now && eventDate <= nextWeek) {
+      if (eventDate) {
         events.push({
           title: `Interview: ${data.candidateName || "Candidate"}`,
-          description: `${data.interviewType || "Interview"} session for ${data.position || "position"}`,
+          description: `${data.interviewType || "Interview"} session for ${data.jobTitle || "position"}`,
           date: eventDate,
           time: data.time,
           status: isToday(eventDate) ? "today" : "upcoming",
