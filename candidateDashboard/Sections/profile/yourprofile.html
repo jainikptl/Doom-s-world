@@ -16,7 +16,7 @@
     <script>
     const isLoggedIn = localStorage.getItem("userLoggedIn");
     if (isLoggedIn !== "candidate") {
-        window.location.href = "../../Login/login.html";
+        window.location.href = "../../../Login/login.html";
     }
     </script>
 </head>
@@ -58,14 +58,14 @@
                     <a href="../interview/candidate-interview.html" class="nav-link">
                         <i class="nav-icon fas fa-video"></i>
                         <span class="nav-text">Interviews</span>
-                        <span class="nav-badge" id="interviewBadge">0</span>
+                        <!-- <span class="nav-badge" id="interviewBadge">0</span> -->
                     </a>
                 </div>
                 <div class="nav-item">
                     <a href="../jobs/candidate-jobs.html" class="nav-link">
                         <i class="nav-icon fas fa-clipboard-list"></i>
                         <span class="nav-text">Job Portal</span>
-                        <span class="nav-badge" id="jobsBadge">0</span>
+                        <!-- <span class="nav-badge" id="jobsBadge">0</span> -->
                     </a>
                 </div>
                 <div class="nav-item">
@@ -723,25 +723,55 @@
         // Load user missions
         async function loadUserMissions(userEmail) {
             try {
-                const missionsQuery = query(
+                // 1. Fetch applications for this user
+                const applicationsQuery = query(
                     collection(db, 'applications'),
                     where('candidateEmail', '==', userEmail),
                     where('assignedBy','==','jSkUeAiMmKgLG5FYxa0I6eaYof73'),
                     orderBy('appliedAt', 'desc')
                 );
 
-                const missionsSnapshot = await getDocs(missionsQuery);
+                const applicationsSnapshot = await getDocs(applicationsQuery);
+                if (applicationsSnapshot.empty) {
+                    console.log("No applications found for:", userEmail);
+                    displayMissions([]); // Show empty UI
+                    return;
+                }
+
                 const missions = [];
 
-                missionsSnapshot.forEach(doc => {
-                    missions.push({ id: doc.id, ...doc.data() });
-                });
+                // 2. Loop through applications and fetch job info
+                for (const appDoc of applicationsSnapshot.docs) {
+                    const appData = appDoc.data();
+                    const { jobId, status } = appData;
 
-                displayMissions(missions);
+                    if (!jobId) continue;
+
+                    const jobRef = doc(db, 'jobs', jobId);
+                    const jobSnap = await getDoc(jobRef);
+
+                    if (jobSnap.exists()) {
+                        const jobData = jobSnap.data();
+
+                        // 3. Merge job and application data
+                        missions.push({
+                            jobId,
+                            appStatus:status,
+                            jobTitle: jobData.title || 'Untitled Job',
+                            jobDescription: jobData.description || '',
+                            jobPostedAt: jobData.cratedAt || '',
+                            ...jobData // if you want all job fields
+                        });
+                    }
+                }
+
                 document.getElementById('missionsCompleted').textContent = missions.length;
 
+                // 4. Send to display
+                displayMissions(missions);
+
             } catch (error) {
-                console.error('Error loading missions:', error);
+                console.error("Error loading missions:", error);
                 document.getElementById('missionsContainer').innerHTML = `
                     <div class="no-missions">
                         <i class="fas fa-exclamation-triangle"></i>
@@ -772,13 +802,13 @@
                     </div>
                     <div class="mission-info">
                         <div class="mission-title">${mission.jobTitle || 'Untitled Mission'}</div>
-                        <div class="mission-description">${mission.description || 'No description available'}</div>
+                        <div class="mission-description">${mission.jobDescription || 'No description available'}</div>
                         <div class="mission-meta">
                             <span><i class="fas fa-calendar"></i> ${formatDate(mission.createdAt)}</span>
-                            <span><i class="fas fa-star"></i> ${mission.points || 0} points</span>
+                            <span><i class="fas fa-star"></i> ${(mission.rewards.combatPoints+mission.rewards.defensePoints+mission.rewards.techPoints+mission.rewards.leadershipPoints+mission.rewards.stealthPoints+mission.rewards.intelligencePoints) || 0} points</span>
                         </div>
                     </div>
-                    <div class="mission-status ${mission.status || 'pending'}">${mission.status || 'Pending'}</div>
+                    <div class="mission-status ${mission.appStatus || 'pending'}">${mission.appStatus || 'Pending'}</div>
                 </div>
             `).join('');
         }
@@ -806,34 +836,26 @@
         // Calculate user rank
         async function calculateUserRank(userEmail) {
             try {
-                const candidatesSnapshot = await getDocs(collection(db, 'candidates'));
-                const candidates = [];
+                const q = query(
+                    collection(db, "candidates"),
+                    where("email", "==", userEmail)
+                );
 
-                candidatesSnapshot.forEach(doc => {
-                    const data = doc.data();
-                    const totalPoints = (data.combatPoints || 0) + 
-                                      (data.defensePoints || 0) + 
-                                      (data.techPoints || 0) + 
-                                      (data.intelligencePoints || 0) + 
-                                      (data.stealthPoints || 0) + 
-                                      (data.leadershipPoints || 0);
-                    
-                    candidates.push({
-                        email: doc.id,
-                        name: data.name,
-                        totalPoints
-                    });
-                });
+                const snapshot = await getDocs(q);
 
-                // Sort by total points
-                candidates.sort((a, b) => b.totalPoints - a.totalPoints);
+                if (snapshot.empty) {
+                    console.warn("No candidate found with email:", userEmail);
+                    document.getElementById('userRank').textContent = '#-';
+                    return;
+                }
 
-                // Find user rank
-                const userRank = candidates.findIndex(candidate => candidate.email === userEmail) + 1;
-                document.getElementById('userRank').textContent = userRank > 0 ? `#${userRank}` : '#-';
+                const candidateData = snapshot.docs[0].data();
+                const rank = candidateData.rank;
+
+                document.getElementById('userRank').textContent = rank ? `#${rank}` : '#-';
 
             } catch (error) {
-                console.error('Error calculating rank:', error);
+                console.error('Error fetching rank:', error);
                 document.getElementById('userRank').textContent = '#-';
             }
         }
@@ -879,7 +901,8 @@
         // Logout function
         window.logout = function() {
             localStorage.clear();
-            window.location.href = '../../Login/login.html';
+            localStorage.removeItem("userLoggedIn");
+            window.location.href = '../../../Login/login.html';
         };
 
         // Theme toggle

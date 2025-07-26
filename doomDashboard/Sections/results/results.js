@@ -1074,10 +1074,11 @@ function logout() {
   if (confirm("Are you sure you want to logout?")) {
     // Clear any stored data
     localStorage.clear()
+    localStorage.removeItem("userLoggedIn");
     sessionStorage.clear()
 
     // Redirect to login page
-    window.location.href = "../../index.html"
+    window.location.href = "../../../Login/login.html"
   }
 }
 

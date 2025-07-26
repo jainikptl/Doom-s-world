@@ -84,7 +84,7 @@ async function loadCandidateData() {
 
     if (!user) {
       console.log("No authenticated user found, redirecting to login")
-      window.location.href = "candidate-login.html"
+      window.location.href = "../../../Login/login.html"
       return
     }
 
@@ -1101,18 +1101,19 @@ function viewInterviewSummary(interviewId) {
 
 // Logout
 function logout() {
+  localStorage.removeItem("userLoggedIn");
   if (window.auth && window.auth.signOut) {
     window.auth
       .signOut()
       .then(() => {
-        window.location.href = "candidate-login.html"
+        window.location.href = "../../../Login/login.html"
       })
       .catch((error) => {
         console.error("Error signing out:", error)
         showToast("Error signing out", "error")
       })
   } else {
-    window.location.href = "candidate-login.html"
+    window.location.href = "../../../Login/login.html"
   }
 }
 

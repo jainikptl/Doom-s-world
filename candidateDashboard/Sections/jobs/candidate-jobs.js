@@ -723,6 +723,7 @@ async function handleLogout() {
   if (confirm("Are you sure you want to logout?")) {
     try {
       // Update user status
+      localStorage.removeItem("userLoggedIn");
       if (currentUser) {
         await db.collection("candidates").doc(currentUser.uid).update({
           isOnline: false,

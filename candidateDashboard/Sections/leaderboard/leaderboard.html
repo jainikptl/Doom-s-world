@@ -16,7 +16,7 @@
     <script>
     const isLoggedIn = localStorage.getItem("userLoggedIn");
     if (isLoggedIn !== "candidate") {
-        window.location.href = "../../Login/login.html";
+        window.location.href = "../../../Login/login.html";
     }
     </script>
 </head>
@@ -58,14 +58,14 @@
                     <a href="../interview/candidate-interview.html" class="nav-link">
                         <i class="nav-icon fas fa-video"></i>
                         <span class="nav-text">Interviews</span>
-                        <span class="nav-badge" id="interviewBadge">0</span>
+                        <!-- <span class="nav-badge" id="interviewBadge">0</span> -->
                     </a>
                 </div>
                 <div class="nav-item">
                     <a href="../jobs/candidate-jobs.html" class="nav-link">
                         <i class="nav-icon fas fa-clipboard-list"></i>
                         <span class="nav-text">Job Portal</span>
-                        <span class="nav-badge" id="jobsBadge">0</span>
+                        <!-- <span class="nav-badge" id="jobsBadge">0</span> -->
                     </a>
                 </div>
                 <div class="nav-item">
@@ -579,8 +579,15 @@
             collection,
             getDocs,
             doc,
-            getDoc
+            getDoc,
+            query,
+            where,
+            updateDoc
         } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import {
+            getAuth,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC_aPXz8M3ru6UATZr_bf8u_5RzlB7ek8s",
@@ -594,6 +601,18 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+            // Start initialization
+            initializeLeaderboard(user);
+            console.log("Firebase recognizes user:", user.uid);
+            } else {
+            console.log("User not signed in.");
+            }
+        });
+
 
         let allCandidates = [];
         let currentUserEmail = '';
@@ -613,7 +632,7 @@
         }
 
         // Load all candidates data
-        async function loadCandidatesData() {
+        async function loadCandidatesData(user) {
             try {
                 const candidatesSnapshot = await getDocs(collection(db, 'candidates'));
                 allCandidates = [];
@@ -628,7 +647,7 @@
                                       (data.leadershipPoints || 0);
                     
                     allCandidates.push({
-                        email: doc.id,
+                        email: data.email,
                         name: data.name || 'Unknown',
                         combatPoints: data.combatPoints || 0,
                         defensePoints: data.defensePoints || 0,
@@ -641,9 +660,7 @@
                 });
 
                 // Get current user email
-                currentUserEmail = localStorage.getItem('userEmail') || 
-                                 localStorage.getItem('candidateEmail') ||
-                                 JSON.parse(localStorage.getItem('userData') || '{}').email;
+                currentUserEmail = user.email;
 
                 return allCandidates;
 
@@ -691,12 +708,36 @@
         }
 
         // Update your rank display
-        function updateYourRank(candidates) {
+        async function updateYourRank(candidates) {
+            console.log("your email is",currentUserEmail);
             const userIndex = candidates.findIndex(candidate => candidate.email === currentUserEmail);
             
             if (userIndex !== -1) {
                 const user = candidates[userIndex];
                 const rank = userIndex + 1;
+
+                try {
+                    // 1. Query for the candidate with matching email
+                    const candidatesRef = collection(db, "candidates");
+                    const q = query(candidatesRef, where("email", "==", currentUserEmail));
+                    const querySnapshot = await getDocs(q);
+
+                    if (querySnapshot.empty) {
+                    console.warn("No candidate found with email:", currentUserEmail);
+                    return;
+                    }
+
+                    // 2. Update rank of each matching document (usually just one)
+                    querySnapshot.forEach(async (candidateDoc) => {
+                    const candidateRef = doc(db, "candidates", candidateDoc.id);
+                    await updateDoc(candidateRef, {
+                        rank: rank
+                    });
+                    console.log(`Updated rank to ${rank} for:`, currentUserEmail);
+                    });
+                } catch (error) {
+                    console.error("Error updating candidate rank:", error);
+                }
                 
                 document.getElementById('yourRank').textContent = `#${rank}`;
                 document.getElementById('yourName').textContent = user.name;
@@ -770,12 +811,12 @@
         }
 
         // Initialize leaderboard
-        async function initializeLeaderboard() {
+        async function initializeLeaderboard(user) {
             document.getElementById('loadingScreen').style.display = 'flex';
             document.getElementById('leaderboardContent').style.display = 'none';
 
             try {
-                await loadCandidatesData();
+                await loadCandidatesData(user);
                 updateLeaderboard();
                 
                 document.getElementById('loadingScreen').style.display = 'none';
@@ -804,7 +845,8 @@
         // Global functions
         window.logout = function() {
             localStorage.clear();
-            window.location.href = '../../Login/login.html';
+            localStorage.removeItem("userLoggedIn");
+            window.location.href = '../../../Login/login.html';
         };
 
         window.toggleTheme = function() {
@@ -831,9 +873,6 @@
                 toggleIcon.classList.add('fa-chevron-left');
             }
         };
-
-        // Start initialization
-        initializeLeaderboard();
     </script>
 </body>
 </html>

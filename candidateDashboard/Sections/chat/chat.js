@@ -235,16 +235,16 @@ async function checkUserStatus() {
     }
 
     // Always check status from users collection for candidates
-    const usersRef = collection(db, "users")
-    const userQuery = query(usersRef, where("email", "==", currentUser.email))
+    const usersRef = collection(db, "applications")
+    const userQuery = query(usersRef, where("candidateEmail", "==", currentUser.email))
     const userSnapshot = await getDocs(userQuery)
 
-    let userStatus = "idle" // default status
+    let userStatus = "pending" // default status
 
     if (!userSnapshot.empty) {
       userSnapshot.forEach((doc) => {
         const userData = doc.data()
-        userStatus = userData.status || "idle"
+        userStatus = userData.status || "pending"
         currentUser.status = userStatus
       })
     }
@@ -252,7 +252,7 @@ async function checkUserStatus() {
     console.log("User status:", userStatus)
 
     // Check if user can access chat
-    const allowedStatuses = ["shortlisted", "assigned"]
+    const allowedStatuses = ["shortlisted", "accepted"]
 
     if (allowedStatuses.includes(userStatus)) {
       // User can access chat

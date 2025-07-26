@@ -586,18 +586,19 @@ function getToastIcon(type) {
 
 // Logout function
 function logout() {
+  localStorage.removeItem("userLoggedIn");
   if (window.auth && window.auth.signOut) {
     window.auth
       .signOut()
       .then(() => {
-        window.location.href = "login.html"
+        window.location.href = "../../../Login/login.html"
       })
       .catch((error) => {
         console.error("Error signing out:", error)
         showToast("Error signing out", "error")
       })
   } else {
-    window.location.href = "login.html"
+    window.location.href = "../../../Login/login.html"
   }
 }
 

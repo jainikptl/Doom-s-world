@@ -62,8 +62,9 @@ onAuthStateChanged(auth, (user) => {
 // Logout function
 async function logout() {
   try {
+    localStorage.removeItem("userLoggedIn");
     await signOut(auth)
-    window.location.href = "login.html"
+    window.location.href = "../../../Login/login.html"
   } catch (error) {
     console.error("Error signing out:", error)
     showToast("Error signing out", "error")

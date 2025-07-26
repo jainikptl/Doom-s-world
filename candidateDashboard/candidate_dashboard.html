@@ -58,14 +58,14 @@
             <a href="Sections/interview/candidate-interview.html" class="nav-link">
               <i class="nav-icon fas fa-video"></i>
               <span class="nav-text">Interviews</span>
-              <span class="nav-badge" id="interviewBadge">0</span>
+              <!-- <span class="nav-badge" id="interviewBadge">0</span> -->
             </a>
           </div>
           <div class="nav-item">
             <a href="Sections/jobs/candidate-jobs.html" class="nav-link">
               <i class="nav-icon fas fa-clipboard-list"></i>
               <span class="nav-text">Job Portal</span>
-              <span class="nav-badge" id="jobsBadge">0</span>
+              <!-- <span class="nav-badge" id="jobsBadge">0</span> -->
             </a>
           </div>
           <div class="nav-item">
@@ -394,7 +394,10 @@
         query,
         where,
         orderBy,
-        limit
+        limit,
+        updateDoc,
+        serverTimestamp,
+        setDoc
       } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
       import {
         getAuth,
@@ -484,7 +487,7 @@
           await Promise.all([
             loadRecentMissions(userEmail),
             calculateUserRank(userEmail),
-            loadJobsAndInterviews()
+            loadJobsAndInterviews(userEmail)
           ]);
 
         } catch (error) {
@@ -566,7 +569,7 @@
 
         container.innerHTML = missions.map(mission => `
           <div class="mission-preview">
-            <div class="mission-title">${mission.title || 'Untitled Mission'}</div>
+            <div class="mission-title">${mission.jobTitle || 'Untitled Mission'}</div>
             <div class="mission-status">Status: ${mission.status || 'Pending'}</div>
           </div>
         `).join('');
@@ -575,67 +578,91 @@
       // Calculate user rank
       async function calculateUserRank(userEmail) {
         try {
-          const candidatesSnapshot = await getDocs(collection(db, 'candidates'));
+          const candidatesSnapshot = await getDocs(collection(db, "candidates"));
           const candidates = [];
 
-          candidatesSnapshot.forEach(doc => {
-            const data = doc.data();
-            const totalPoints = (data.combatPoints || 0) + 
-                              (data.defensePoints || 0) + 
-                              (data.techPoints || 0) + 
-                              (data.intelligencePoints || 0) + 
-                              (data.stealthPoints || 0) + 
-                              (data.leadershipPoints || 0);
-            
+          candidatesSnapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const totalPoints =
+              (data.combatPoints || 0) +
+              (data.defensePoints || 0) +
+              (data.techPoints || 0) +
+              (data.intelligencePoints || 0) +
+              (data.stealthPoints || 0) +
+              (data.leadershipPoints || 0);
+
             candidates.push({
-              email: doc.id,
+              docId: docSnap.id, // important for update
+              email: data.email,
               totalPoints
             });
           });
 
-          // Sort by total points
+          // Sort by total points descending
           candidates.sort((a, b) => b.totalPoints - a.totalPoints);
 
-          // Find user rank
-          const userRank = candidates.findIndex(candidate => candidate.email === userEmail) + 1;
-          const userPoints = candidates.find(candidate => candidate.email === userEmail)?.totalPoints || 0;
+          // Find the user's rank (1-based index)
+          const userIndex = candidates.findIndex(candidate => candidate.email === userEmail);
+          const userRank = userIndex >= 0 ? userIndex + 1 : null;
 
-          document.getElementById('userRank').textContent = userRank > 0 ? `#${userRank}` : '#-';
+          // Get user's total points
+          const userPoints = userIndex >= 0 ? candidates[userIndex].totalPoints : 0;
+
+          // Update rank in Firestore if user found
+          if (userRank !== null) {
+            const userDocId = candidates[userIndex].docId;
+            const userRef = doc(db, "candidates", userDocId);
+            await updateDoc(userRef, {
+              rank: userRank
+            });
+          }
+
+          // Update UI
+          document.getElementById('userRank').textContent = userRank ? `#${userRank}` : '#-';
           document.getElementById('rankPoints').textContent = `${userPoints} total points`;
 
         } catch (error) {
-          console.error('Error calculating rank:', error);
+          console.error('Error calculating and updating rank:', error);
           document.getElementById('userRank').textContent = '#-';
           document.getElementById('rankPoints').textContent = '0 total points';
         }
       }
 
-      async function updateBadge(badgeId, count) {
-        const badge = document.getElementById(badgeId)
-        if (badge) {
-          badge.textContent = count
-          badge.style.display = count > 0 ? "block" : "none"
-        }
-      }
-
       // Load jobs and interviews count
-      async function loadJobsAndInterviews() {
+      async function loadJobsAndInterviews(userEmail) {
         try {
-          // This would depend on your jobs and interviews collection structure
-          // For now, setting placeholder values
-          document.getElementById('totalApplications').textContent = '0';
-          document.getElementById('interviewRequests').textContent = '0';
-          document.getElementById('interviewBadge').textContent = '0';
-          document.getElementById('jobsBadge').textContent = '0';
+          // Query applications where candidateEmail == userEmail
+          const applicationsQuery = query(
+            collection(db, 'applications'),
+            where('candidateEmail', '==', userEmail)
+          );
+          const applicationsSnapshot = await getDocs(applicationsQuery);
+          const totalApplications = applicationsSnapshot.size;
+
+          // Query interviews where candidateEmail == userEmail
+          const interviewsQuery = query(
+            collection(db, 'interviews'),
+            where('candidateEmail', '==', userEmail)
+          );
+          const interviewsSnapshot = await getDocs(interviewsQuery);
+          const totalInterviews = interviewsSnapshot.size;
+          console.log("interviews",totalInterviews)
+          console.log("applications",totalApplications)
+          // Update the UI
+          document.getElementById('totalApplications').textContent = totalApplications.toString();
+          document.getElementById('interviewRequests').textContent = totalInterviews.toString();
 
         } catch (error) {
           console.error('Error loading jobs/interviews:', error);
+          document.getElementById('totalApplications').textContent = '0';
+          document.getElementById('interviewRequests').textContent = '0';
         }
       }
 
       // Global functions
       window.logout = function() {
         localStorage.clear();
+        localStorage.removeItem("userLoggedIn");
         window.location.href = '../Login/login.html';
       };
 
@@ -670,8 +697,50 @@
         document.getElementById('dashboardContent').style.display = 'none';
 
         try {
+          const candidateRef = doc(db, "candidates", user.uid);
+          const candidateDoc = await getDoc(candidateRef);
+
+          const userRef = doc(db, "users", user.uid);
+          const userDoc = await getDoc(userRef);
+          const userData = userDoc.exists() ? userDoc.data() : {};
+
+          if (!candidateDoc.exists()) {
+            // Create new candidate with random stats
+            const candidateData = {
+              uid: user.uid,
+              email: user.email || `candidate_${user.uid}@example.com`,
+              name: userData.name || `Candidate ${user.uid.substring(0, 6)}`,
+              combatPoints: userData.combatPoints || 0,
+              defensePoints: userData.defensePoints || 0,
+              techPoints: userData.techPoints || 0,
+              leadershipPoints: userData.leadershipPoints || 0,
+              stealthPoints: userData.stealthPoints || 0,
+              intelligencePoints: userData.intelligencePoints || 0,
+              joinDate: serverTimestamp(),
+              lastActive: serverTimestamp(),
+              isOnline: true,
+            };
+
+            await setDoc(candidateRef, candidateData);
+            currentUser = candidateData;
+
+          } else {
+            // Update existing candidate
+            const candidateData = candidateDoc.data();
+
+            await updateDoc(candidateRef, {
+              lastActive: serverTimestamp(),
+              isOnline: true,
+            });
+
+            currentUser = {
+              uid: user.uid,
+              ...candidateData,
+            };
+          }
+
           await loadDashboardData(user);
-          
+
           document.getElementById('loadingScreen').style.display = 'none';
           document.getElementById('dashboardContent').style.display = 'block';
 

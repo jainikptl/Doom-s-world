@@ -70,6 +70,7 @@ onAuthStateChanged(auth, (user) => {
 // Logout function
 async function logout() {
   try {
+    localStorage.removeItem("userLoggedIn");
     await signOut(auth)
     window.location.href = "../../doom_dashboard.html"
   } catch (error) {

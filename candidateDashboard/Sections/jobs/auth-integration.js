@@ -33,7 +33,7 @@ function isAdmin() {
 }
 
 // Function to redirect if not authenticated
-function requireAuth(redirectUrl = "index.html") {
+function requireAuth(redirectUrl = "../../../Login/login.html") {
   const user = getCurrentUser()
   if (!user) {
     alert("Please login first")
