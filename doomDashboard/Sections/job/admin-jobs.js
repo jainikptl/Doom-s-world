@@ -915,6 +915,7 @@ async function handleSwipeAction(action, applicationId = null) {
     // Set specific status based on action
     if (action === "rejected") {
       updateData.status = "rejected"
+      sendNotification(applicationData.candidateEmail,applicationData.candidateName,'rejected');
     } else if (action === "shortlisted") {
       updateData.status = "accepted"
       updateData.interviewEnabled = true
@@ -922,7 +923,28 @@ async function handleSwipeAction(action, applicationId = null) {
         status : "shortlisted"
       }
       await updateDoc(userRef,userUpdate)
+
+      sendNotification(applicationData.candidateEmail,applicationData.candidateName,'shortlisted');
+
     }
+
+    async function sendNotification(email, name, event) {
+  try {
+    const response = await fetch('http://localhost:5000/api/notify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, name, event })
+    });
+
+    const data = await response.json();
+    console.log('✅ Email Sent:', data.message);
+  } catch (error) {
+    console.error('❌ Failed to send email:', error);
+  }
+}
+
 
     await updateDoc(applicationRef, updateData)
 

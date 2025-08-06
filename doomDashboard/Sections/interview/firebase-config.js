@@ -4,6 +4,7 @@ import {
   getFirestore,
   collection,
   doc,
+  getDoc,
   getDocs,
   addDoc,
   updateDoc,
@@ -37,6 +38,7 @@ window.auth = auth
 window.firestoreUtils = {
   collection,
   doc,
+  getDoc,
   getDocs,
   addDoc,
   updateDoc,

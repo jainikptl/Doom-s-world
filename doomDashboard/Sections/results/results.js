@@ -597,7 +597,7 @@ async function confirmEvaluation() {
       return
     }
 
-    const { doc, updateDoc, arrayUnion } = window.firestoreUtils
+    const { getDoc, doc, updateDoc, arrayUnion } = window.firestoreUtils
 
     // Calculate new abilities
     const newAbilities = { ...selectedCandidate.abilities }
@@ -667,6 +667,16 @@ async function confirmEvaluation() {
 
     closeEvaluationModal()
     await loadAssignedCandidates()
+    if(isCompleted){
+      const candidateSnap = await getDoc(candidateRef);
+      const candidateData = candidateSnap.data() || {}
+      sendNotification(candidateData.candidateEmail,candidateData.candidateName,'task-success');
+    }
+    else{
+      const candidateSnap = await getDoc(candidateRef);
+      const candidateData = candidateSnap.data() || {}
+      sendNotification(candidateData.candidateEmail,candidateData.candidateName,'task-failure');
+    }
   } catch (error) {
     console.error("Error confirming evaluation:", error)
     showNotification("Error saving evaluation", "error")
@@ -793,7 +803,7 @@ async function bulkMarkCompleted() {
   }
 
   try {
-    const { doc, updateDoc, arrayUnion } = window.firestoreUtils
+    const {getDoc, doc, updateDoc, arrayUnion } = window.firestoreUtils
 
     for (const candidateId of selectedIds) {
       const candidate = assignedCandidates.find((c) => c.id === candidateId)
@@ -844,6 +854,9 @@ async function bulkMarkCompleted() {
       }
     }
 
+    const candidateSnap = await getDoc(candidateRef);
+    const candidateData = candidateSnap.data() || {}
+    sendNotification(candidateData.candidateEmail,candidateData.candidateName,'task-success');
     showNotification(`${selectedIds.length} candidates marked as completed`, "success")
     closeBulkActionsModal()
     await loadAssignedCandidates()
@@ -852,6 +865,24 @@ async function bulkMarkCompleted() {
     showNotification("Error processing bulk action", "error")
   }
 }
+
+async function sendNotification(email, name, event) {
+  try {
+    const response = await fetch('http://localhost:5000/api/notify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, name, event })
+    });
+
+    const data = await response.json();
+    console.log('✅ Email Sent:', data.message);
+  } catch (error) {
+    console.error('❌ Failed to send email:', error);
+  }
+}
+
 
 // Bulk mark as failed
 async function bulkMarkFailed() {
@@ -862,7 +893,7 @@ async function bulkMarkFailed() {
   }
 
   try {
-    const { doc, updateDoc, arrayUnion } = window.firestoreUtils
+    const { getDoc, doc, updateDoc, arrayUnion } = window.firestoreUtils
 
     for (const candidateId of selectedIds) {
       const candidate = assignedCandidates.find((c) => c.id === candidateId)
@@ -913,6 +944,9 @@ async function bulkMarkFailed() {
       }
     }
 
+    const candidateSnap = await getDoc(candidateRef);
+    const candidateData = candidateSnap.data() || {}
+    sendNotification(candidateData.candidateEmail,candidateData.candidateName,'task-failure');
     showNotification(`${selectedIds.length} candidates marked as failed`, "info")
     closeBulkActionsModal()
     await loadAssignedCandidates()

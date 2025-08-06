@@ -615,7 +615,7 @@ async function scheduleInterview() {
   const notes = document.getElementById("interviewNotes").value
 
   try {
-    const { collection, addDoc, doc, updateDoc, query, where, getDocs, deleteDoc } = window.firestoreUtils
+    const { collection, addDoc, doc, getDoc, updateDoc, query, where, getDocs, deleteDoc } = window.firestoreUtils
 
     // If this is a reschedule, delete the old interview
     if (window.currentReschedule) {
@@ -672,6 +672,9 @@ async function scheduleInterview() {
     closeScheduleModal()
     await loadAcceptedCandidates()
     await loadBookedSlots()
+    const candidateSnap = await getDoc(candidateRef);
+    const candidateData = candidateSnap.data() || {}
+    sendNotification(candidateData.candidateEmail,candidateData.candidateName,'interview');
   } catch (error) {
     console.error("Error scheduling interview:", error)
     window.showToast("Error scheduling interview", "error")
@@ -723,7 +726,7 @@ async function assignCandidate() {
   }
 
   try {
-    const { doc, updateDoc } = window.firestoreUtils
+    const { getDoc, doc, updateDoc } = window.firestoreUtils
 
     // Update candidate status
     const candidateRef = doc(window.db, "applications", selectedCandidate.id)
@@ -735,7 +738,9 @@ async function assignCandidate() {
       assignedBy: window.auth.currentUser?.uid || "admin",
       updatedAt: new Date().toISOString(),
     })
-
+    const candidateSnap = await getDoc(candidateRef);
+    const candidateData = candidateSnap.data() || {}
+    sendNotification(candidateData.candidateEmail,candidateData.candidateName,'interview');
     window.showToast("Candidate assigned successfully!", "success")
     closeAssignModal()
     await loadAcceptedCandidates()
@@ -1157,7 +1162,7 @@ async function confirmInterviewDecision() {
 
   try {
     const notes = document.getElementById("decisionNotes").value
-    const { doc, updateDoc } = window.firestoreUtils
+    const { getDoc, doc, updateDoc } = window.firestoreUtils
     const candidateRef = doc(window.db, "applications", currentCall.candidate.id)
 
     // Set the flag that a decision was made
@@ -1181,6 +1186,9 @@ async function confirmInterviewDecision() {
         assignedBy: window.auth.currentUser?.uid || "admin",
         updatedAt: new Date().toISOString(),
       })
+      const candidateSnap = await getDoc(candidateRef);
+      const candidateData = candidateSnap.data() || {}
+      sendNotification(candidateData.candidateEmail,candidateData.candidateName,'task-assigned');
 
       console.log("Candidate assigned successfully") // Debug log
       window.showToast("Candidate assigned successfully!", "success")
@@ -1192,7 +1200,9 @@ async function confirmInterviewDecision() {
         rejectedBy: window.auth.currentUser?.uid || "admin",
         updatedAt: new Date().toISOString(),
       })
-
+      const candidateSnap = await getDoc(candidateRef);
+      const candidateData = candidateSnap.data() || {}
+      sendNotification(candidateData.candidateEmail,candidateData.candidateName,'rejected');
       console.log("Candidate rejected") // Debug log
       window.showToast("Candidate rejected", "info")
     }
@@ -1346,6 +1356,23 @@ function showJoinInterviewButton(candidate) {
       joinBtn.onclick = () => startVideoCall(candidate.id)
       actionsDiv.insertBefore(joinBtn, actionsDiv.firstChild)
     }
+  }
+}
+
+async function sendNotification(email, name, event) {
+  try {
+    const response = await fetch('http://localhost:5000/api/notify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, name, event })
+    });
+
+    const data = await response.json();
+    console.log('✅ Email Sent:', data.message);
+  } catch (error) {
+    console.error('❌ Failed to send email:', error);
   }
 }
 
