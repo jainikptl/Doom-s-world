@@ -929,8 +929,9 @@ async function handleSwipeAction(action, applicationId = null) {
     }
 
     async function sendNotification(email, name, event) {
+      const BACKEND_SERVER = "https://doom-s-world.onrender.com";
   try {
-    const response = await fetch('http://localhost:5000/api/notify', {
+      const response = await fetch(`${BACKEND_SERVER}/api/notify`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

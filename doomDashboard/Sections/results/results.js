@@ -868,7 +868,8 @@ async function bulkMarkCompleted() {
 
 async function sendNotification(email, name, event) {
   try {
-    const response = await fetch('http://localhost:5000/api/notify', {
+    const BACKEND_SERVER = "https://doom-s-world.onrender.com";
+    const response = await fetch(`${BACKEND_SERVER}/api/notify`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
