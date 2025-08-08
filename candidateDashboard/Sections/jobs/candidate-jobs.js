@@ -740,7 +740,7 @@ async function handleLogout() {
       await auth.signOut()
 
       // Redirect
-      window.location.href = "index.html"
+      window.location.href = "../../../Login/login.html"
     } catch (error) {
       console.error("Error logging out:", error)
       showError("Failed to logout")

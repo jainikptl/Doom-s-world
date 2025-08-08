@@ -291,14 +291,14 @@ function openAddCandidateModal() {
   // Reset ability scores to default
   const scoreInputs = [
     "combatScore",
-    "defenseScore",
+    "defenceScore",
     "intelligenceScore",
     "leadershipScore",
     "stealthScore",
     "techScore",
   ]
   scoreInputs.forEach((inputId) => {
-    document.getElementById(inputId).value = 0
+    document.getElementById(inputId).value = 0;
     const slider = document.getElementById(inputId).parentElement.querySelector('input[type="range"]')
     if (slider) slider.value = 0
   })
