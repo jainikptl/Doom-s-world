@@ -674,7 +674,12 @@ async function scheduleInterview() {
     await loadBookedSlots()
     const candidateSnap = await getDoc(candidateRef);
     const candidateData = candidateSnap.data() || {}
-    sendNotification(candidateData.candidateEmail,candidateData.candidateName,'interview');
+    if(action=="rescheduled"){
+      sendNotification(candidateData.candidateEmail,candidateData.candidateName,'interview-reschedule');
+    }
+    else{
+      sendNotification(candidateData.candidateEmail,candidateData.candidateName,'interview');
+    }
   } catch (error) {
     console.error("Error scheduling interview:", error)
     window.showToast("Error scheduling interview", "error")
@@ -740,7 +745,7 @@ async function assignCandidate() {
     })
     const candidateSnap = await getDoc(candidateRef);
     const candidateData = candidateSnap.data() || {}
-    sendNotification(candidateData.candidateEmail,candidateData.candidateName,'interview');
+    sendNotification(candidateData.candidateEmail,candidateData.candidateName,'task-assigned');
     window.showToast("Candidate assigned successfully!", "success")
     closeAssignModal()
     await loadAcceptedCandidates()
@@ -1186,9 +1191,6 @@ async function confirmInterviewDecision() {
         assignedBy: window.auth.currentUser?.uid || "admin",
         updatedAt: new Date().toISOString(),
       })
-      const candidateSnap = await getDoc(candidateRef);
-      const candidateData = candidateSnap.data() || {}
-      sendNotification(candidateData.candidateEmail,candidateData.candidateName,'task-assigned');
 
       console.log("Candidate assigned successfully") // Debug log
       window.showToast("Candidate assigned successfully!", "success")

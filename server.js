@@ -30,6 +30,10 @@ app.post('/api/notify', async (req, res) => {
       subject = '📅 Interview Scheduled';
       html = `<p>Hi ${name}, your interview has been scheduled. Please check your dashboard for more details.</p>`;
       break;
+    case 'interview-reschedule':
+      subject = '📅 Interview Rescheduled';
+      html = `<p>Hi ${name}, your interview has been rescheduled. Please check your dashboard for more details.</p>`;
+      break;
     case 'task-assigned':
       subject = '📝 Task Assigned';
       html = `<p>Hi ${name}, a new task has been assigned to you. Please check your dashboard.</p>`;
