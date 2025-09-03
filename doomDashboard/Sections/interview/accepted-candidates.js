@@ -299,7 +299,7 @@ function shouldShowJoinButton(candidate) {
 
   const now = new Date()
   const interviewDateTime = new Date(`${candidate.interviewDate}T${candidate.interviewTime}:00`)
-  const fifteenMinutesBefore = new Date(interviewDateTime.getTime() - 15 * 60000)
+  const fifteenMinutesBefore = new Date(interviewDateTime.getTime() - 30 * 60000)
 
   return now >= fifteenMinutesBefore && now <= interviewDateTime
 }
@@ -1334,7 +1334,7 @@ function checkUpcomingInterviews() {
       const interviewDateTime = new Date(`${candidate.interviewDate}T${candidate.interviewTime}:00`)
 
       // Show join button if within 15 minutes of interview
-      if (now >= new Date(interviewDateTime.getTime() - 15 * 60000) && now <= interviewDateTime) {
+      if (now >= new Date(interviewDateTime.getTime() - 30 * 60000) && now <= interviewDateTime) {
         showJoinInterviewButton(candidate)
       }
     }
